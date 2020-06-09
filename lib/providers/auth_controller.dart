@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:healthbook/list_of_infomation/list_of_information.dart';
 import 'package:healthbook/models/sign_in_and_up.dart';
 import 'package:healthbook/services/network.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,7 +15,7 @@ class Auth with ChangeNotifier {
   String _token;
   String _userId;
   String _email;
-  String _userType='patient';
+  String _userType = 'patient';
   DateTime _expiryDate;
   Timer _authTimer;
   DateTime _timeToRefreshToken;
@@ -46,141 +47,101 @@ class Auth with ChangeNotifier {
     return _email;
   }
 
-  Future<void> signIn({String email, String password,String userType ='patient'}) async {
+  Future<String> signIn(
+      {String email, String password, String userType = 'patient'}) async {
 //doctor/login
-  //patient/login
+    //patient/login
     //admin/login
-    print(email);print(password);
+    print(email);
+    print(password);
     _userType = userType;
-    _signInAndUpModel = SignInAndUp(email: email,password: password);
-    print(_signInAndUpModel.email);print(_signInAndUpModel.password);
-    FormData formData = FormData.fromMap(_signInAndUpModel.toJson());
-    print(formData);
+    _signInAndUpModel = SignInAndUp(email: email, password: password);
+    print(_signInAndUpModel.email);
+    print(_signInAndUpModel.password);
+//    FormData formData = FormData.fromMap(_signInAndUpModel.toJson());
+//    print(formData);
     var data = await _netWork.postData(
       url: '$userType/login',
-      formData:formData,
-//      {
-//        "Content-type": "application/json"
-//      }
+      data: _signInAndUpModel.toJson(),
     );
     print(data);
-   //return _clientAddressesModel;
 
-//    final url =
-//        'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyBcnTCcGjCJhBJPD3gFGzY4pm6O_glZwAw';
-//    try {
-//      final response = await http.post(
-//        url,
-//        body: json.encode(
-//          {
-//            'email': email,
-//            'password': password,
-//            'returnSecureToken': true,
-//          },
-//        ),
-//      );
-//      final responseData = json.decode(response.body);
-//      if (responseData['error'] != null) {
-//        throw HttpException(responseData['error']['message']);
-//      }
-//      _token = responseData['idToken'];
-//      _userId = responseData['localId'];
-//      _email =email;
-//      _userType = userType;
-//      _refreshToken = responseData['refreshToken'];
-//      _expiryDate = DateTime.now()
-//          .add(Duration(seconds: int.parse(responseData['expiresIn'])));
-//      _timeToRefreshToken = _expiryDate.subtract(Duration(minutes: 20));
-//
-//      _funStaySignIn();
-//
-//      notifyListeners();
-//      final prefs = await SharedPreferences.getInstance();
-//      final dataToSignIn =json.encode({
-//        'email': email,
-//        'password': password,
-//      });
-//      prefs.setString('dataToSignIn', dataToSignIn);
-//      final userData = json.encode({
-//        'token': _token,
-//        'userId': _userId,
-//        'refreshToken': _refreshToken,
-//        'expiryDate': _expiryDate.toIso8601String(),
-//        'timeToRefreshToken': _timeToRefreshToken.toIso8601String(),
-//      });
-//      prefs.setString('dataToReload', userData);
-//    } catch (e) {
-//      throw e;
-//    }
+    if (data['message'] == 'Auth success') {
+      _token = data['token'];
+
+      final prefs = await SharedPreferences.getInstance();
+      final dataToSignIn = json.encode({
+        'email': email,
+        'password': password,
+      });
+      prefs.setString('dataToSignIn', dataToSignIn);
+      var userData = await _netWork.getData(
+        url: '$userType/login',
+      );
+    }
+    return data['message'];
   }
 
-  Future<void> signUp({String email, String password}) async {
-    print(email);print(password);
+  Future<String> signUp({String email, String password}) async {
+    print(email);
+    print(password);
     _userType = 'patient';
-    _signInAndUpModel = SignInAndUp(email: email,password: password);
-    print(_signInAndUpModel.email);print(_signInAndUpModel.password);
+    _signInAndUpModel = SignInAndUp(email: email, password: password);
+    print(_signInAndUpModel.email);
+    print(_signInAndUpModel.password);
     print(_signInAndUpModel.toJson());
-    FormData formData = FormData.fromMap(_signInAndUpModel.toJson());
+    // FormData formData = FormData.fromMap(_signInAndUpModel.toJson());
+//    formData.fields.forEach((x){
+//      print(x.value);
+//    });
+    var data = await _netWork.postData(
+      url: 'patient/signup',
+      data: _signInAndUpModel.toJson(),
+    );
+    print('data $data');
+    return data['message'];
+  }
+
+  Future<void> registerUserData({Map<String, String> listOfData}) async {
+    print(listOfData);
+    String birthDate =
+        '${listOfData['day']}/${listOfData['month']}/${listOfData['year']}';
+    print(birthDate);
+    String government = '';
+    for (int i = 0; i < governorateList.length; i++) {
+      if (listOfData['Location'].contains(governorateList[i])) {
+        government = governorateList[i];
+      }
+    }
+    print(government);
+    FormData formData = FormData.fromMap({
+      'number': listOfData['Phone number'],
+      'address': listOfData['Location'],
+      'status': listOfData['materialStatus'],
+      'lastName': listOfData['Last name'],
+      'firstName': listOfData['First name'],
+      'middleName': listOfData['Middle name'],
+      'birthDate': birthDate,
+      'patientImage': listOfData['UrlImg'],
+      'job': listOfData['Job'],
+      //'aboutYou': listOfData['aboutYouOrBio'],
+//       'lat': listOfData['lat'],
+//       'long': listOfData['long'],
+      'gender': listOfData['gender'],
+      'government': government,
+      'nationalID': listOfData['National ID'],
+    });
     formData.fields.forEach((x){
       print(x.value);
     });
     var data = await _netWork.postData(
       url: 'patient/signup',
-      formData:formData,
+     formData: formData,
+      headers: {
+
+      }
     );
-    print(data);
-    //ToDo: show response for signup patient
-   //return _clientAddressesModel;
-
-//    final url =
-//        'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyBcnTCcGjCJhBJPD3gFGzY4pm6O_glZwAw';
-//    try {
-//      final response = await http.post(
-//        url,
-//        body: json.encode(
-//          {
-//            'email': email,
-//            'password': password,
-//            'returnSecureToken': true,
-//          },
-//        ),
-//      );
-//      final responseData = json.decode(response.body);
-//      if (responseData['error'] != null) {
-//        throw HttpException(responseData['error']['message']);
-//      }
-//      _token = responseData['idToken'];
-//      _userId = responseData['localId'];
-//      _email =email;
-//      _userType = userType;
-//      _refreshToken = responseData['refreshToken'];
-//      _expiryDate = DateTime.now()
-//          .add(Duration(seconds: int.parse(responseData['expiresIn'])));
-//      _timeToRefreshToken = _expiryDate.subtract(Duration(minutes: 20));
-//
-//      _funStaySignIn();
-//
-//      notifyListeners();
-//      final prefs = await SharedPreferences.getInstance();
-//      final dataToSignIn =json.encode({
-//        'email': email,
-//        'password': password,
-//      });
-//      prefs.setString('dataToSignIn', dataToSignIn);
-//      final userData = json.encode({
-//        'token': _token,
-//        'userId': _userId,
-//        'refreshToken': _refreshToken,
-//        'expiryDate': _expiryDate.toIso8601String(),
-//        'timeToRefreshToken': _timeToRefreshToken.toIso8601String(),
-//      });
-//      prefs.setString('dataToReload', userData);
-//    } catch (e) {
-//      throw e;
-//    }
-  }
-  Future<void> registerUserData(){
-
+    print('data $data');
   }
 
   Future<bool> tryToLogin() async {
@@ -189,21 +150,22 @@ class Auth with ChangeNotifier {
       return false;
     }
     final dataToSignIn =
-    json.decode(prefs.getString('dataToSignIn')) as Map<String, Object>;
+        json.decode(prefs.getString('dataToSignIn')) as Map<String, Object>;
     print('${dataToSignIn['password']}');
     print('${dataToSignIn['email']}');
-    signIn(password:dataToSignIn['password'], email:dataToSignIn['email']);
+    signIn(password: dataToSignIn['password'], email: dataToSignIn['email']);
     notifyListeners();
     return true;
   }
+
   void _funStaySignIn() {
     if (_timerToRefreshToken != null) {
       _timerToRefreshToken.cancel();
     }
     _timerToRefreshToken = Timer(
         Duration(
-            seconds: (_timeToRefreshToken.difference(DateTime.now()))
-                .inSeconds),
+            seconds:
+                (_timeToRefreshToken.difference(DateTime.now())).inSeconds),
         _funRefreshToken);
   }
 
@@ -260,6 +222,4 @@ class Auth with ChangeNotifier {
     prefs.clear();
     notifyListeners();
   }
-
-
 }

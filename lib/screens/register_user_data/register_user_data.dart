@@ -35,7 +35,7 @@ class _RegisterUserDataState extends State<RegisterUserData> {
   bool _isClinicLocationEnable = false;
   bool _isEditLocationEnable = false;
   bool _selectUserLocationFromMap = false;
-  bool _isDoctor = true;
+  bool _isDoctor = false;
   bool _isClinic = false;
   bool _isMaterialStatus = false;
   bool _isDaySelected = false;
@@ -88,7 +88,7 @@ class _RegisterUserDataState extends State<RegisterUserData> {
     'long': '',
     'materialStatus': '',
     'aboutYouOrBio': '',
-    'speciatly': ''
+    'speciatly': '',
   };
 _resetForm(){
   _accountData = {
@@ -2155,8 +2155,8 @@ _resetForm(){
         }
       } else {
         print('hhhhhhh');
-
-        setState(() => complete = true);
+        Provider.of<Auth>(context,listen: false).registerUserData(listOfData: _accountData);
+        //setState(() => complete = true);
       }
     }
     _incrementStep() {
@@ -2165,7 +2165,6 @@ _resetForm(){
           : goTo(currentStep + 1);
     }
     nextStep() async {
-
       print(steps.length);
       print(currentStep);
 
@@ -2233,7 +2232,8 @@ _resetForm(){
         }
       }
       if (currentStep == 3) {
-        _isDoctor ? verifyUserData() : _incrementStep();
+        print('dxvb');
+        !_isDoctor ? verifyUserData() : _incrementStep();
         return;
       }
       if (currentStep == 4) {

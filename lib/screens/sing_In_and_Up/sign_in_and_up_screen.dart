@@ -2,10 +2,12 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:healthbook/screens/register_user_data/register_user_data.dart';
 import 'package:provider/provider.dart';
+import 'package:toast/toast.dart';
 
 import '../forget_password/send_sms_screen.dart';
 import '../../providers/auth_controller.dart';
 import '../../models/http_exception.dart';
+import '../main_screen.dart';
 
 class Login extends StatefulWidget {
   static const routeName = '/login_screen';
@@ -13,6 +15,7 @@ class Login extends StatefulWidget {
   @override
   _LoginState createState() => _LoginState();
 }
+
 class _LoginState extends State<Login> {
   AnimationController controller;
   Animation animation;
@@ -23,7 +26,8 @@ class _LoginState extends State<Login> {
   final FocusNode _emailNode = FocusNode();
   final FocusNode _passwordNode = FocusNode();
   final FocusNode _confirmPassNode = FocusNode();
-
+  int _selectedRadio = 1;
+  String _userType = 'patient';
   Map<String, String> _loginData = {
     'email': '',
     'password': '',
@@ -103,7 +107,13 @@ class _LoginState extends State<Login> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text('An Error Occurred!'),
-        content: Text(message),
+        content: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Text(message),
+          ],
+        ),
         actions: <Widget>[
           FlatButton(
             child: Text('Okay'),
@@ -124,33 +134,79 @@ class _LoginState extends State<Login> {
       });
       try {
         print(_goToSignUp);
-        if(_goToSignUp){
+        if (_goToSignUp) {
           //her sign up
-          await Provider.of<Auth>(context, listen: false).signUp(
-            email: _loginData['email'],
-            password: _loginData['password'],
-          );
           Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>RegisterUserData()));
-        }else{
+//          String message ;//=
+////              await Provider.of<Auth>(context, listen: false).signUp(
+////            email: _loginData['email'],
+////            password: _loginData['password'],
+////          );
+//          if (message == '') {
+//            //when success
+//            setState(() {
+//              _loadingUser = false;
+//            });
+//            Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>RegisterUserData()));
+//
+//            message = await Provider.of<Auth>(context, listen: false).signIn(
+//              email: _loginData['email'],
+//              password: _loginData['password'],
+//            );
+//            if (message == 'Auth success') {
+//             Toast.show('Successfully Sign Up', context,duration: Toast.LENGTH_SHORT, gravity:  Toast.BOTTOM);
+//              setState(() {
+//                _loadingUser = false;
+//              });
+//              return;
+//            } else {
+//              Toast.show('Please Try To SignIn', context,duration: Toast.LENGTH_SHORT, gravity:  Toast.BOTTOM);
+//              setState(() {
+//                _goToSignUp =false;
+//                _loadingUser = false;
+//              });
+//              return;
+//            }
+////            Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>RegisterUserData()));
+//            //TODO:dvbdbn
+//            return;
+//          } else if (message == 'Mail exists') {
+//            _showErrorDialog('Email Already Exists Try Another Email');
+//            setState(() {
+//              _loadingUser = false;
+//            });
+//            return;
+//          } else {
+//            _showErrorDialog('Please Try Again Later');
+//            setState(() {
+//              _loadingUser = false;
+//            });
+//            return;
+//          }
+        } else {
           //her sign in
-          if (_loginData['email'].contains('@doc')) {
-            bool _userType = await _signAsDocOrPat();
-            if (_userType) {
-              await Provider.of<Auth>(context, listen: false).signIn(
+          String message;
+          if (_userType =='doctor') {
+            message= await Provider.of<Auth>(context, listen: false).signIn(
                   email: _loginData['email'],
                   password: _loginData['password'],
                   userType: 'doctor');
-            }else{
-              await Provider.of<Auth>(context, listen: false).signIn(
-                email: _loginData['email'],
-                password: _loginData['password'],
-              );
+            if (message == 'Auth success') {
+              Toast.show('Successfully Sign In', context,duration: Toast.LENGTH_SHORT, gravity:  Toast.BOTTOM);
+              Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>HomeScreen()));
+              setState(() {
+                _loadingUser = false;
+              });
+              return;
+            } else {
+              Toast.show('Please Try Again', context,duration: Toast.LENGTH_SHORT, gravity:  Toast.BOTTOM);
+              setState(() {
+                _loadingUser = false;
+              });
+              return;
             }
-          }
-//          else if(_loginData['email'].contains('@admin')){
-//            await Provider.of<Auth>(context, listen: false).signIn(email: _loginData['email'],password: _loginData['password'],userType: 'admin');
-//          }
-          else {
+
+          }else {
             await Provider.of<Auth>(context, listen: false).signIn(
               email: _loginData['email'],
               password: _loginData['password'],
@@ -184,12 +240,24 @@ class _LoginState extends State<Login> {
     }
   }
 
+  onChangedRadio(val) {
+    setState(() {
+      _selectedRadio = val;
+    });
+    if (val == 1) {
+      _userType = 'patient';
+    } else {
+      _userType = 'doctor';
+    }
+    print(_userType);
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 15),
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 15),
           child: ListView(
             children: <Widget>[
               Container(
@@ -246,7 +314,9 @@ class _LoginState extends State<Login> {
                 ),
               ),
               SizedBox(
-                height: _goToSignUp ? MediaQuery.of(context).size.height/16:MediaQuery.of(context).size.height/8,
+                height: _goToSignUp
+                    ? MediaQuery.of(context).size.height / 16
+                    : MediaQuery.of(context).size.height / 8,
               ),
               Center(
                 child: Form(
@@ -260,46 +330,46 @@ class _LoginState extends State<Login> {
                           textInputAction: TextInputAction.next,
                           focusNode: _emailNode,
                           decoration: InputDecoration(
-                              prefixIcon: Icon(Icons.email),
-                              filled: true,
-                              fillColor: Colors.white,
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0)),
-                                borderSide: BorderSide(
-                                  color: Colors.blue,
-                                ),
+                            prefixIcon: Icon(Icons.email),
+                            filled: true,
+                            fillColor: Colors.white,
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
+                              borderSide: BorderSide(
+                                color: Colors.blue,
                               ),
-                              disabledBorder: OutlineInputBorder(
-                                borderRadius:
-                                BorderRadius.all(Radius.circular(10.0)),
-                                borderSide: BorderSide(color: Colors.blue),
-                              ),
-                              errorBorder: OutlineInputBorder(
-                                borderRadius:
-                                BorderRadius.all(Radius.circular(10.0)),
-                                borderSide: BorderSide(color: Colors.blue),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0)),
-                                borderSide: BorderSide(color: Colors.blue),
-                              ),
-                              focusedErrorBorder: OutlineInputBorder(
-                                borderRadius:
-                                BorderRadius.all(Radius.circular(10.0)),
-                                borderSide: BorderSide(color: Colors.blue),
-                              ),
-                              labelText: 'E-Mail',
-                              hintText: _goToSignUp?'___@pat.com':'___@pat.com or ___@doc.com'
+                            ),
+                            disabledBorder: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
+                              borderSide: BorderSide(color: Colors.blue),
+                            ),
+                            errorBorder: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
+                              borderSide: BorderSide(color: Colors.blue),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
+                              borderSide: BorderSide(color: Colors.blue),
+                            ),
+                            focusedErrorBorder: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
+                              borderSide: BorderSide(color: Colors.blue),
+                            ),
+                            labelText: 'E-Mail',
                           ),
                           keyboardType: TextInputType.emailAddress,
 // ignore: missing_return
                           validator: (value) {
+                            print(value);
                             if (value.trim().isEmpty) {
                               return "Please enter your email";
                             }
-                            if(!value.trim().contains("@doc") ||!value.trim().contains("@pat") ){
+                            if (!(value.contains("@"))) {
                               return "Invalid email";
                             }
                           },
@@ -317,7 +387,9 @@ class _LoginState extends State<Login> {
                         ),
                         TextFormField(
                           autofocus: false,
-                          textInputAction: _goToSignUp? TextInputAction.next:TextInputAction.done,
+                          textInputAction: _goToSignUp
+                              ? TextInputAction.next
+                              : TextInputAction.done,
                           focusNode: _passwordNode,
                           obscureText: _securePassword,
                           decoration: InputDecoration(
@@ -336,17 +408,17 @@ class _LoginState extends State<Login> {
                               fillColor: Colors.white,
                               disabledBorder: OutlineInputBorder(
                                 borderRadius:
-                                BorderRadius.all(Radius.circular(10.0)),
+                                    BorderRadius.all(Radius.circular(10.0)),
                                 borderSide: BorderSide(color: Colors.blue),
                               ),
                               errorBorder: OutlineInputBorder(
                                 borderRadius:
-                                BorderRadius.all(Radius.circular(10.0)),
+                                    BorderRadius.all(Radius.circular(10.0)),
                                 borderSide: BorderSide(color: Colors.blue),
                               ),
                               focusedErrorBorder: OutlineInputBorder(
                                 borderRadius:
-                                BorderRadius.all(Radius.circular(10.0)),
+                                    BorderRadius.all(Radius.circular(10.0)),
                                 borderSide: BorderSide(color: Colors.blue),
                               ),
                               focusedBorder: OutlineInputBorder(
@@ -368,101 +440,143 @@ class _LoginState extends State<Login> {
                             if (value.trim().isEmpty) {
                               return 'Please enter your password';
                             }
-                            if (value.trim().isEmpty || value.trim().length < 8) {
+                            if (value.trim().isEmpty ||
+                                value.trim().length < 8) {
                               return 'Password is too short!';
                             }
                           },
-                          onSaved: (_){
+                          onSaved: (_) {
                             _passwordNode.unfocus();
                           },
                           onChanged: (value) {
                             _loginData['password'] = value.trim();
                           },
-                          onFieldSubmitted: _goToSignUp ?(_){
-                            _passwordNode.unfocus();
-                            FocusScope.of(context).requestFocus(_confirmPassNode);
-                          }:(_) {
-                            _passwordNode.unfocus();
-                          },
+                          onFieldSubmitted: _goToSignUp
+                              ? (_) {
+                                  _passwordNode.unfocus();
+                                  FocusScope.of(context)
+                                      .requestFocus(_confirmPassNode);
+                                }
+                              : (_) {
+                                  _passwordNode.unfocus();
+                                },
                         ),
-                       SizedBox(height: 10.0,),
-                        _goToSignUp ? TextFormField(
-                          autofocus: false,
-                        textInputAction: TextInputAction.done,
-                        focusNode: _confirmPassNode,
-                        obscureText: true,
-                        decoration: InputDecoration(
-                            prefixIcon: Icon(Icons.lock_open),
-                            filled: true,
-                            fillColor: Colors.white,
-                            disabledBorder: OutlineInputBorder(
-                              borderRadius:
-                              BorderRadius.all(Radius.circular(10.0)),
-                              borderSide: BorderSide(color: Colors.blue),
-                            ),
-                            focusedErrorBorder: OutlineInputBorder(
-                              borderRadius:
-                              BorderRadius.all(Radius.circular(10.0)),
-                              borderSide: BorderSide(color: Colors.blue),
-                            ),
-                            errorBorder: OutlineInputBorder(
-                              borderRadius:
-                              BorderRadius.all(Radius.circular(10.0)),
-                              borderSide: BorderSide(color: Colors.blue),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius:
-                              BorderRadius.all(Radius.circular(10.0)),
-                              borderSide: BorderSide(
-                                color: Colors.blue,
-                              ),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius:
-                              BorderRadius.all(Radius.circular(10.0)),
-                              borderSide: BorderSide(color: Colors.blue),
-                            ),
-                            labelText: 'Confirm Password'),
+                        SizedBox(
+                          height: 10.0,
+                        ),
+                        _goToSignUp
+                            ? TextFormField(
+                                autofocus: false,
+                                textInputAction: TextInputAction.done,
+                                focusNode: _confirmPassNode,
+                                obscureText: true,
+                                decoration: InputDecoration(
+                                    prefixIcon: Icon(Icons.lock_open),
+                                    filled: true,
+                                    fillColor: Colors.white,
+                                    disabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(10.0)),
+                                      borderSide:
+                                          BorderSide(color: Colors.blue),
+                                    ),
+                                    focusedErrorBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(10.0)),
+                                      borderSide:
+                                          BorderSide(color: Colors.blue),
+                                    ),
+                                    errorBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(10.0)),
+                                      borderSide:
+                                          BorderSide(color: Colors.blue),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(10.0)),
+                                      borderSide: BorderSide(
+                                        color: Colors.blue,
+                                      ),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(10.0)),
+                                      borderSide:
+                                          BorderSide(color: Colors.blue),
+                                    ),
+                                    labelText: 'Confirm Password'),
 
 // ignore: missing_return
-                        validator: (value) {
-                          if (value.trim().isEmpty) {
-                            return 'Please enter your password';
-                          }
-                          if (value.trim() != _loginData['password']) {
-                            return 'Password not identical!';
-                          }
-                        },
-                          onSaved: (_){
-                            _confirmPassNode.unfocus();
-                          },
-                        onFieldSubmitted: (_) {
-                          _confirmPassNode.unfocus();
-                        },
-                      ):SizedBox(),
-                        _goToSignUp ?SizedBox():Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: <Widget>[
-                              InkWell(
-                                child: Text(
-                                  'ForgetPassword?',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .display1
-                                      .copyWith(
-                                        color: Colors.grey.shade500,
-                                        fontSize: 15,
-                                      ),
-                                ),
-                                onTap: () {
-                                  Navigator.of(context).pushNamed(SendSms.routeName);
+                                validator: (value) {
+                                  if (value.trim().isEmpty) {
+                                    return 'Please enter your password';
+                                  }
+                                  if (value.trim() != _loginData['password']) {
+                                    return 'Password not identical!';
+                                  }
                                 },
+                                onSaved: (_) {
+                                  _confirmPassNode.unfocus();
+                                },
+                                onFieldSubmitted: (_) {
+                                  _confirmPassNode.unfocus();
+                                },
+                              )
+                            : SizedBox(),
+                        _goToSignUp
+                            ? SizedBox():SizedBox(
+                          height: 50,
+                          width: double.infinity,
+                          child: Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: RadioListTile(
+                                  title: Text('Patient',style: TextStyle(color: _selectedRadio==1?Colors.blue:Colors.black,fontWeight: _selectedRadio==1?FontWeight.bold:FontWeight.normal),),
+                                  value: 1,
+                                  groupValue: _selectedRadio,
+                                  onChanged: onChangedRadio,
+                                  activeColor: Colors.blue,
+                                ),
+                              ),
+                              Expanded(
+                                child: RadioListTile(
+                                    title: Text('Doctor',style: TextStyle(color: _selectedRadio==2?Colors.blue:Colors.black,fontWeight: _selectedRadio==2?FontWeight.bold:FontWeight.normal),),
+                                    value: 2,
+                                    activeColor: Colors.blue,
+                                    groupValue: _selectedRadio,
+                                    onChanged: onChangedRadio),
                               ),
                             ],
                           ),
                         ),
+                        _goToSignUp
+                            ? SizedBox()
+                            : Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 10),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: <Widget>[
+                                    InkWell(
+                                      child: Text(
+                                        'ForgetPassword?',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .display1
+                                            .copyWith(
+                                              color: Colors.grey.shade500,
+                                              fontSize: 15,
+                                            ),
+                                      ),
+                                      onTap: () {
+                                        Navigator.of(context)
+                                            .pushNamed(SendSms.routeName);
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
                         SizedBox(
                           height: 50,
                         ),
@@ -471,11 +585,14 @@ class _LoginState extends State<Login> {
                                 backgroundColor: Colors.blue,
                               )
                             : RaisedButton(
-                                child: Text(_goToSignUp ?'SIGN UP':'SIGN IN'),
-                                onPressed:(){
-                                  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>RegisterUserData()));
-                                }
-                                  ,//_submit,
+                                child:
+                                    Text(_goToSignUp ? 'SIGN UP' : 'SIGN IN'),
+                                onPressed: _submit
+//                                    (){
+//                                  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>RegisterUserData()));
+//                                }
+                                ,
+                                //_submit,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(30),
                                 ),
@@ -494,7 +611,9 @@ class _LoginState extends State<Login> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             Text(
-                              _goToSignUp ? 'Already have acount ':'Not Regiter? ',
+                              _goToSignUp
+                                  ? 'Already have acount '
+                                  : 'Not Regiter? ',
                               style:
                                   Theme.of(context).textTheme.display1.copyWith(
                                         color: Colors.grey.shade500,
@@ -502,14 +621,14 @@ class _LoginState extends State<Login> {
                                       ),
                             ),
                             InkWell(
-                              onTap:() {
+                              onTap: () {
                                 setState(() {
                                   _goToSignUp = !_goToSignUp;
                                 });
                                 _formKey.currentState.reset();
                               },
                               child: Text(
-                                _goToSignUp? 'Sign In':'create new account',
+                                _goToSignUp ? 'Sign In' : 'create new account',
                                 style:
                                     Theme.of(context).textTheme.body2.copyWith(
                                           decoration: TextDecoration.underline,

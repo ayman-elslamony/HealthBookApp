@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
+
 class NetWork {
   Dio dio = Dio();
 
@@ -24,13 +25,20 @@ class NetWork {
   }
 
   Future<dynamic> postData(
-      {FormData formData, Map<String, dynamic> headers, String url}) async {
+      {Map<String,dynamic> data,FormData formData, Map<String, dynamic> headers, String url}) async {
     try {
       dio.options.baseUrl = baseUrl;
       headers != null ? dio.options.headers = headers : '';
       var jsonResponse;
-      Response response = await dio.post(url, data: formData);
+      Response response;
+      if(formData ==null){
+        print(data);
+        response = await dio.post(url, data: data);
+      }else {
+        response = await dio.post(url, data: formData);
+      }
       jsonResponse = json.decode(response.toString());
+      print(response.statusCode);
       if (response.statusCode >= 200 && response.statusCode < 300) {
         jsonResponse = json.decode(response.toString());
         return jsonResponse;
@@ -40,15 +48,13 @@ class NetWork {
         return response;
       }
     } on DioError catch (e) {
-      print("11111111111");
-      print(e.response.data);
-      print("2222");
-      print(e.response.headers);
-      print("33333333");
-      print(e.response.request);
       return e.response.data;
     }
   }
+
+
+
+
 //  Future<dynamic> postData(
 //      {FormData formData, Map<String, dynamic> headers, String url}) async {
 //    dio.options.baseUrl = baseUrl;
