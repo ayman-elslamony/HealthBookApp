@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
+import 'package:healthbook/providers/auth_controller.dart';
 //import 'package:flutter_sms/flutter_sms.dart';
 import 'package:healthbook/screens/user_profile/widgets/clinic_info_card.dart';
 import 'package:healthbook/screens/user_profile/widgets/personal_info_card.dart';
+import 'package:provider/provider.dart';
 
 import 'package:url_launcher/url_launcher.dart';
 
@@ -14,22 +18,13 @@ class UserProfile extends StatefulWidget {
 }
 
 class _UserProfileState extends State<UserProfile> {
-  String _patient_name = "Mohamed Salah Ismail";
-  String _patient_job = "Student";
-  String _about =
-      " A personal health record is a collection of information about your"
-      "health. If you have a vaccination record or a folder of medical papers,"
-      "you already have a basic personal health record. ";
-  String _address = "address............";
-  String _governorate = "governorate............";
-  String _gender = "male............";
-  String _marital_status = "maritalstatus............";
-  String _language = "language............";
-  String _email = "email............";
-  String _home_phone = "01211447755";
-  bool _isDoctor = true;
+  Auth _auth ;
   final GlobalKey<ScaffoldState> _userProfileState = GlobalKey<ScaffoldState>();
-
+  @override
+  void initState() {
+    super.initState();
+    _auth =Provider.of<Auth>(context, listen: false);
+  }
   @override
   Widget build(BuildContext context) {
     _cancelButton() {
@@ -167,18 +162,11 @@ class _UserProfileState extends State<UserProfile> {
                     height: 130,
                     child: CircleAvatar(
                       backgroundColor: Colors.white,
-                      backgroundImage: AssetImage('assets/user.png'),
+                      backgroundImage: _auth.userData.patientImage==null?AssetImage('assets/user.png'):FileImage(File(_auth.userData.patientImage)),
                     ),
                   ),
                 ),
               ),
-             Positioned(child: RaisedButton(color: Colors.red,shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10))),onPressed: (){
-               setState(() {
-                 _isDoctor = !_isDoctor;
-               });
-             },
-               child: Text(_isDoctor?'Show As Patient':'Show As Doctor',style: TextStyle(color: Colors.white,fontSize: 16),),
-             ),right: 5.0,top: 0.0,),
 //             _isDoctor? Positioned(
 //               child: FlatButton.icon(
 //                 color: Colors.red,
@@ -235,7 +223,7 @@ class _UserProfileState extends State<UserProfile> {
                       SizedBox(
                         height: 8.0,
                       ),
-                      Text(_isDoctor ? 'Dr. Mahmoud Essam' : "$_patient_name",
+                      Text(_auth.getUserType == 'doctor'? 'Dr. ${_auth.userData.firstName} ${_auth.userData.middleName} ${_auth.userData.lastName}' : '${_auth.userData.firstName} ${_auth.userData.middleName} ${_auth.userData.lastName}',
                           style: TextStyle(
                               color: Colors.blue,
                               fontSize: 20,
@@ -243,7 +231,7 @@ class _UserProfileState extends State<UserProfile> {
 
                       /// patient name
                       Text(
-                        _isDoctor ? 'Specialty: Dentist' : "$_patient_job",
+                        _auth.getUserType == 'doctor'? 'Specialty: ${_auth.userData.speciality}' : "Job: ${_auth.userData.job}",
                         style: TextStyle(
                             color: Colors.red,
                             fontSize: 18,
@@ -258,22 +246,22 @@ class _UserProfileState extends State<UserProfile> {
                         color: Colors.grey,
                         height: 4,
                       ),
-                      Padding(
+                      _auth.userData.aboutYou ==null?SizedBox(): Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Text(
-                              _isDoctor ? 'Bio' : "About",
+                              _auth.getUserType == 'doctor'? 'Bio' : "About",
                               style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.blue),
                             ),
-                            Padding(
+                           Padding(
                               padding:
                                   const EdgeInsets.only(left: 10, bottom: 5.0),
-                              child: Text(_isDoctor ? "$_about" : "$_about",
+                              child: Text( _auth.userData.aboutYou,
                                   textAlign: TextAlign.justify,
                                   style: TextStyle(
                                       color: Colors.black,
@@ -289,24 +277,24 @@ class _UserProfileState extends State<UserProfile> {
               ),
             ),
             PersonalInfoCard(
-              address: _address,
-              email: _email,
-              gender: _gender,
-              governorate: _governorate,
-              language: _language,
-              maritalStatus: _marital_status,
-              phoneNumber: _home_phone,
+              address:  _auth.userData.address,
+              email: _auth.email,
+              gender: _auth.userData.gender,
+              governorate: _auth.userData.government,
+              language: 'Arabic and English',
+              maritalStatus: _auth.userData.status,
+              phoneNumber: _auth.userData.number,
             ),
 //           _isDoctor? SizedBox():UserHistory(),
 //            _isDoctor? SizedBox(): UserVitals(),
 //            _isDoctor? SizedBox():UserLabResult(),
-            _isDoctor
-                ? ClinicInfoCard(
-                    address: _address,
-                    governorate: _governorate,
-                    fees: '200',
-                    watingTime: '30',
-                    workingDays: ['Sa', 'Mo', 'Tu', 'We'],
+    _auth.getUserType == 'doctor'?
+                 ClinicInfoCard(
+                    address:  _auth.getClinicData.address,
+                    governorate: _auth.getClinicData.government,
+                    fees: _auth.getClinicData.fees,
+                    watingTime: _auth.getClinicData.waitingTime,
+                    workingDays: [_auth.getClinicData.workingDays],
                   )
                 : SizedBox()
           ],

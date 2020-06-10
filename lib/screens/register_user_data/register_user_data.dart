@@ -14,6 +14,9 @@ import '../main_screen.dart';
 
 class RegisterUserData extends StatefulWidget {
   static const routeName = '/UserSignUp';
+  bool isEditingEnable;
+
+  RegisterUserData({this.isEditingEnable=false});
 
   @override
   _RegisterUserDataState createState() => _RegisterUserDataState();
@@ -25,6 +28,7 @@ class _RegisterUserDataState extends State<RegisterUserData> {
   GlobalKey<FormState> _newAcountKeyOne = GlobalKey<FormState>();
   GlobalKey<FormState> _newAcountKeyTwo = GlobalKey<FormState>();
   bool _showWorkingDays = false;
+  bool _isLoading = false;
   List<String> _selectedWorkingDays = List<String>();
   List<bool> _clicked = List<bool>.generate(7, (i) => false);
   List<String> _sortedWorkingDays = List<String>.generate(7, (i) => '');
@@ -47,7 +51,8 @@ class _RegisterUserDataState extends State<RegisterUserData> {
       TextEditingController();
   TextEditingController _clinicLocationTextEditingController =
       TextEditingController();
-  PickedFile _imageFile;
+
+  File _imageFile;
   List<int> _dayist = List.generate(31, (index) {
     return (5 + index);
   });
@@ -71,7 +76,7 @@ class _RegisterUserDataState extends State<RegisterUserData> {
     'fees': '',
     'workingDays': []
   };
-  Map<String, String> _accountData = {
+  Map<String, dynamic> _accountData = {
     'First name': '',
     'Middle name': '',
     'Last name': '',
@@ -90,50 +95,31 @@ class _RegisterUserDataState extends State<RegisterUserData> {
     'aboutYouOrBio': '',
     'speciatly': '',
   };
-_resetForm(){
-  _accountData = {
-    'First name': '',
-    'Middle name': '',
-    'Last name': '',
-    'National ID': '',
-    'Phone number': '',
-    'UrlImg': '',
-    'Job': '',
-    'gender': '',
-    'day': '',
-    'month': '',
-    'year': '',
-    'Location': '',
-    'lat': '',
-    'long': '',
-    'materialStatus': '',
-    'aboutYouOrBio': '',
-    'speciatly': ''
-  };
-  _clinicData = {
-    'Clinic Name': '',
-    'cliniclocation': '',
-    'cliniclat': '',
-    'cliniclong': '',
-    'watingTime': '',
-    'fees': '',
-    'workingDays': []
-  };
-  setState(() {
-
-  });
-}
   final FocusNode _middleNameNode = FocusNode();
   final FocusNode _lastNameNode = FocusNode();
   final FocusNode _nationalIDNode = FocusNode();
   final FocusNode _phoneNumberNode = FocusNode();
-
+  Auth _auth ;
   final FocusNode _jobNode = FocusNode();
   final FocusNode _hourNode = FocusNode();
   final FocusNode _minNode = FocusNode();
   final FocusNode _clinicLocationNode = FocusNode();
   final FocusNode _fees = FocusNode();
   final ImagePicker _picker = ImagePicker();
+
+  TextEditingController _firstTextEditingController =
+  TextEditingController();
+  TextEditingController _middleTextEditingController =
+  TextEditingController();
+  TextEditingController _lastTextEditingController =
+  TextEditingController();
+  TextEditingController _phoneTextEditingController =
+  TextEditingController();
+  TextEditingController _jobTextEditingController =
+  TextEditingController();
+  TextEditingController _aboutEditingController =
+  TextEditingController();
+
   _sort() {
     for (int i = 0; i < _selectedWorkingDays.length; i++) {
       int getIndex = workingDays.indexOf(_selectedWorkingDays[i]);
@@ -153,9 +139,38 @@ _resetForm(){
       _selectedWorkingDays.remove(workingDays[index]);
     }
   }
+  @override
+  void initState() {
+    super.initState();
+    _auth =Provider.of<Auth>(context, listen: false);
+  if(widget.isEditingEnable){
+    _firstTextEditingController.text= _auth.userData.firstName;
+    _middleTextEditingController.text= _auth.userData.middleName;
+    _lastTextEditingController.text= _auth.userData.lastName;
+    _phoneTextEditingController.text= _auth.userData.number;
+    _jobTextEditingController.text= _auth.userData.job;
+    _aboutEditingController.text= _auth.userData.aboutYou;
+    _locationTextEditingController.text = _auth.userData.address;
 
+    _isDaySelected=true;
+    _isMonthSelected=true;
+    _isYearSelected=true;
+    _isGenderSelected=true;
+    _isMaterialStatus=true;
+    _accountData['materialStatus']= _auth.userData.status;
+    _accountData['gender']= _auth.userData.gender;
+    List<String> birth=_auth.userData.birthDate.split('/');
+    _accountData['year']= birth[2];
+    _accountData['month']= birth[1];
+    _accountData['day']= birth[0];
+    _imageFile =File(_auth.userData.patientImage);
+    if(_auth.getUserType =='doctor'){
+      _isSpecialtySelected=true;
+      _accountData['speciatly']= _auth.userData.speciality;
+    }
+  }
 
-
+  }
 
 
   cancel() {
@@ -177,11 +192,13 @@ _resetForm(){
     IconData suffixIcon,
     bool isStopped = false,
     bool isEnable = true,
+    TextEditingController controller
   }) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 7.0),
       height: 80,
       child: TextFormField(
+        controller: controller,
         autofocus: false,
         textInputAction:
         isStopped ? TextInputAction.done : TextInputAction.next,
@@ -519,9 +536,10 @@ _resetForm(){
         .getImage(source: source, maxWidth: 400.0)
         .then((PickedFile image) {
       if (image != null) {
-        _accountData['UrlImg'] = image.path;
+        File x = File(image.path);
+        _accountData['UrlImg'] = x;
         setState(() {
-          _imageFile = image;
+          _imageFile = x;
         });
       }
       Navigator.pop(context);
@@ -638,7 +656,7 @@ _resetForm(){
         ),
       );
     }
-    List<Step> steps = _isDoctor
+    List<Step> steps = _auth.getUserType =='doctor'
         ? [
       Step(
         title: const Text('New Account'),
@@ -650,6 +668,7 @@ _resetForm(){
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               _createTextForm(
+                controller: _firstTextEditingController,
                   labelText: 'First name',
                   nextFocusNode: _middleNameNode,
                   // ignore: missing_return
@@ -662,6 +681,7 @@ _resetForm(){
                     }
                   }),
               _createTextForm(
+                controller: _middleTextEditingController,
                   labelText: 'Middle name',
                   currentFocusNode: _middleNameNode,
                   nextFocusNode: _lastNameNode,
@@ -675,6 +695,7 @@ _resetForm(){
                     }
                   }),
               _createTextForm(
+                controller: _lastTextEditingController,
                   labelText: 'Last name',
                   currentFocusNode: _lastNameNode,
                   nextFocusNode: _nationalIDNode,
@@ -705,6 +726,7 @@ _resetForm(){
                 padding: EdgeInsets.symmetric(vertical: 7.0),
                 height: 80,
                 child: TextFormField(
+                  controller: _phoneTextEditingController,
                   autofocus: false,
                   textInputAction: TextInputAction.next,
                   focusNode: _phoneNumberNode,
@@ -775,6 +797,7 @@ _resetForm(){
                 ),
               ),
               _createTextForm(
+                controller: _jobTextEditingController,
                   labelText: 'Job',
                   currentFocusNode: _jobNode,
                   // ignore: missing_return
@@ -1095,6 +1118,7 @@ _resetForm(){
                 padding: EdgeInsets.symmetric(vertical: 7.0),
                 height: 90,
                 child: TextFormField(
+                  controller: _aboutEditingController,
                   autofocus: false,
                   focusNode: null,
                   onChanged: (val) {
@@ -1174,7 +1198,7 @@ _resetForm(){
                 child: CircleAvatar(
                   backgroundImage: _imageFile == null
                       ? AssetImage('assets/user.png')
-                      : FileImage(File(_imageFile.path)),
+                      : FileImage(_imageFile),
                   backgroundColor: Colors.blue,
                 ),
               ),
@@ -1579,17 +1603,19 @@ _resetForm(){
             ],
           ))
     ]
-        : [
+        : widget.isEditingEnable?
+    [
       Step(
         title: const Text('New Account'),
         isActive: true,
         state: StepState.indexed,
         content: Form(
-          key: _newAcountKeyTwo,
+          key: _newAcountKeyOne,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               _createTextForm(
+                  controller: _firstTextEditingController,
                   labelText: 'First name',
                   nextFocusNode: _middleNameNode,
                   // ignore: missing_return
@@ -1602,6 +1628,7 @@ _resetForm(){
                     }
                   }),
               _createTextForm(
+                  controller: _middleTextEditingController,
                   labelText: 'Middle name',
                   currentFocusNode: _middleNameNode,
                   nextFocusNode: _lastNameNode,
@@ -1615,6 +1642,7 @@ _resetForm(){
                     }
                   }),
               _createTextForm(
+                  controller: _lastTextEditingController,
                   labelText: 'Last name',
                   currentFocusNode: _lastNameNode,
                   nextFocusNode: _nationalIDNode,
@@ -1627,24 +1655,11 @@ _resetForm(){
                       return 'Invalid Name';
                     }
                   }),
-              _createTextForm(
-                  labelText: 'National ID',
-                  currentFocusNode: _nationalIDNode,
-                  textInputType: TextInputType.number,
-                  nextFocusNode: _phoneNumberNode,
-                  // ignore: missing_return
-                  validator: (String val) {
-                    if (val.trim().isEmpty || val.trim().length != 14) {
-                      return 'Please enter National ID';
-                    }
-                    if (val.trim().length != 14) {
-                      return 'Invalid National ID';
-                    }
-                  }),
               Container(
                 padding: EdgeInsets.symmetric(vertical: 7.0),
                 height: 80,
                 child: TextFormField(
+                  controller: _phoneTextEditingController,
                   autofocus: false,
                   textInputAction: TextInputAction.next,
                   focusNode: _phoneNumberNode,
@@ -1715,6 +1730,554 @@ _resetForm(){
                 ),
               ),
               _createTextForm(
+                  controller: _jobTextEditingController,
+                  labelText: 'Job',
+                  currentFocusNode: _jobNode,
+                  // ignore: missing_return
+                  validator: (_) {},
+                  isStopped: true),
+            ],
+          ),
+        ),
+      ),
+      Step(
+        isActive: true,
+        state: StepState.indexed,
+        title: const Text('complete Your Data'),
+        content: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 7),
+              child: Text(
+                'Birth Date:',
+                style: TextStyle(fontSize: 18),
+              ),
+            ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                _createBirthDate(
+                  initialValue: 10,
+                  name: _isDaySelected ? _accountData['day'] : 'Day',
+                  list: _dayList,
+                  fun: (int val) {
+                    setState(() {
+                      _accountData['day'] = val.toString();
+                      _isDaySelected = true;
+                    });
+                  },
+                ),
+                _createBirthDate(
+                    initialValue: 10,
+                    name: _isMonthSelected
+                        ? _accountData['month']
+                        : 'Month',
+                    list: _monthList,
+                    fun: (int val) {
+                      setState(() {
+                        _accountData['month'] = val.toString();
+                        _isMonthSelected = true;
+                      });
+                    }),
+                _createBirthDate(
+                    initialValue: 1990,
+                    name: _isYearSelected ? _accountData['year'] : 'Year',
+                    list: _yearList,
+                    fun: (int val) {
+                      setState(() {
+                        _accountData['year'] = val.toString();
+                        _isYearSelected = true;
+                      });
+                    }),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8.0, top: 17),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 7),
+                    child: Text(
+                      'Gender:',
+                      style: TextStyle(fontSize: 18),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Material(
+                      shadowColor: Colors.blueAccent,
+                      elevation: 8.0,
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                      type: MaterialType.card,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: Text(
+                                _isGenderSelected == false
+                                    ? 'gender'
+                                    : _accountData['gender'],
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold)),
+                          ),
+                          Container(
+                            height: 40,
+                            width: 35,
+                            child: PopupMenuButton(
+                              initialValue: 'Male',
+                              tooltip: 'Select Gender',
+                              itemBuilder: (ctx) => ['Male', 'Female']
+                                  .map((String val) =>
+                                  PopupMenuItem<String>(
+                                    value: val,
+                                    child: Text(val.toString()),
+                                  ))
+                                  .toList(),
+                              onSelected: (val) {
+                                setState(() {
+                                  _accountData['gender'] = val.trim();
+                                  _isGenderSelected = true;
+                                });
+                              },
+                              icon: Icon(
+                                Icons.keyboard_arrow_down,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 7),
+              child: Text(
+                'Social status:',
+                style: TextStyle(fontSize: 18),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Material(
+                    shadowColor: Colors.blueAccent,
+                    elevation: 8.0,
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                    type: MaterialType.card,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: FittedBox(
+                            child: Text(
+                                _isMaterialStatus == false
+                                    ? 'Social status'
+                                    : _accountData['materialStatus'],
+                                style: TextStyle(fontSize: 16)),
+                          ),
+                        ),
+                        Container(
+                          height: 40,
+                          width: 35,
+                          child: PopupMenuButton(
+                            initialValue: 'Single',
+                            tooltip: 'Select social status',
+                            itemBuilder: (ctx) => materialStatus
+                                .map(
+                                    (String val) => PopupMenuItem<String>(
+                                  value: val,
+                                  child: Text(val.toString()),
+                                ))
+                                .toList(),
+                            onSelected: (val) {
+                              setState(() {
+                                _accountData['materialStatus'] = val.trim();
+                                _isMaterialStatus = true;
+                              });
+                            },
+                            icon: Icon(
+                              Icons.keyboard_arrow_down,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            _auth.getUserType =='doctor'
+                ? Padding(
+              padding: const EdgeInsets.symmetric(vertical: 7),
+              child: Text(
+                'Speciatly:',
+                style: TextStyle(fontSize: 18),
+              ),
+            )
+                : SizedBox(),
+            _isDoctor
+                ? Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Material(
+                    shadowColor: Colors.blueAccent,
+                    elevation: 8.0,
+                    borderRadius:
+                    BorderRadius.all(Radius.circular(10)),
+                    type: MaterialType.card,
+                    child: Row(
+                      mainAxisAlignment:
+                      MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: FittedBox(
+                            child: Text(
+                                _isSpecialtySelected == false
+                                    ? 'Speciatly'
+                                    : _accountData['speciatly'],
+                                style: TextStyle(fontSize: 16)),
+                          ),
+                        ),
+                        Container(
+                          height: 40,
+                          width: 35,
+                          child: PopupMenuButton(
+                            tooltip: 'Select Speciatly',
+                            itemBuilder: (ctx) => listSpecialty
+                                .map((String val) =>
+                                PopupMenuItem<String>(
+                                  value: val,
+                                  child: Text(val.toString()),
+                                ))
+                                .toList(),
+                            onSelected: (val) {
+                              setState(() {
+                                _accountData['speciatly'] = val.trim();
+                                _isSpecialtySelected = true;
+                              });
+                            },
+                            icon: Icon(
+                              Icons.keyboard_arrow_down,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            )
+                : SizedBox(),
+          ],
+        ),
+      ),
+      Step(
+          isActive: true,
+          state: StepState.indexed,
+          title: Text(
+              _isDoctor ? 'Address and Bio' : 'Address and about you'),
+          content: Column(
+            children: <Widget>[
+              InkWell(
+                  onTap: selectUserLocationType,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 7.0),
+                    height: 80,
+                    child: TextFormField(
+                      autofocus: false,
+                      style: TextStyle(fontSize: 15),
+                      controller: _locationTextEditingController,
+                      textInputAction: TextInputAction.done,
+                      enabled: _isEditLocationEnable,
+                      decoration: InputDecoration(
+                        suffixIcon: InkWell(
+                          onTap: selectUserLocationType,
+                          child: Icon(
+                            Icons.my_location,
+                            size: 20,
+                            color: Colors.blue,
+                          ),
+                        ),
+                        labelText: 'Location',
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(10.0)),
+                          borderSide: BorderSide(
+                            color: Colors.blue,
+                          ),
+                        ),
+                        disabledBorder: OutlineInputBorder(
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(10.0)),
+                          borderSide: BorderSide(
+                            color: Colors.blue,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(10.0)),
+                          borderSide: BorderSide(color: Colors.blue),
+                        ),
+                      ),
+                      keyboardType: TextInputType.text,
+                      autovalidate: true,
+// ignore: missing_return
+                      validator: (String val) {
+                        if (val.trim().isEmpty) {
+                          return 'Invalid Location';
+                        }
+                      },
+                    ),
+                  )),
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 7.0),
+                height: 90,
+                child: TextFormField(
+                  controller: _aboutEditingController,
+                  autofocus: false,
+                  focusNode: null,
+                  onChanged: (val) {
+                    _accountData['aboutYouOrBio'] = val.trim();
+                  },
+                  textInputAction: TextInputAction.newline,
+                  decoration: InputDecoration(
+                    labelText: _isDoctor ? "Bio" : 'About You',
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius:
+                      BorderRadius.all(Radius.circular(10.0)),
+                      borderSide: BorderSide(
+                        color: Colors.blue,
+                      ),
+                    ),
+                    disabledBorder: OutlineInputBorder(
+                      borderRadius:
+                      BorderRadius.all(Radius.circular(10.0)),
+                      borderSide: BorderSide(
+                        color: Colors.blue,
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius:
+                      BorderRadius.all(Radius.circular(10.0)),
+                      borderSide: BorderSide(color: Colors.blue),
+                    ),
+                  ),
+                  maxLines: 6,
+                  keyboardType: TextInputType.text,
+                ),
+              ),
+            ],
+          )),
+      Step(
+          isActive: true,
+          state: _isDoctor ? StepState.indexed : StepState.complete,
+          title: const Text('Profile picture'),
+          content: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              InkWell(
+                onTap: () {
+                  _openImagePicker();
+                },
+                child: Container(
+                  padding: EdgeInsets.all(10.0),
+                  height: 40,
+                  width: 150,
+                  decoration: BoxDecoration(
+                      color: Colors.blue,
+                      borderRadius: BorderRadius.circular(10)),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      Text(
+                        "Select Image",
+                        style: Theme.of(context)
+                            .textTheme
+                            .display1
+                            .copyWith(color: Colors.white, fontSize: 17),
+                      ),
+                      Icon(
+                        Icons.camera_alt,
+                        size: 20,
+                        color: Colors.white,
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              Container(
+                width: 100,
+                height: 100,
+                child: CircleAvatar(
+                  backgroundImage: _imageFile == null
+                      ? AssetImage('assets/user.png')
+                      : FileImage(_imageFile),
+                  backgroundColor: Colors.blue,
+                ),
+              ),
+            ],
+          )),
+    ]:[
+      Step(
+        title: const Text('New Account'),
+        isActive: true,
+        state: StepState.indexed,
+        content: Form(
+          key: _newAcountKeyOne,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              _createTextForm(
+                  controller: _firstTextEditingController,
+                  labelText: 'First name',
+                  nextFocusNode: _middleNameNode,
+                  // ignore: missing_return
+                  validator: (String val) {
+                    if (val.trim().isEmpty || val.trim().length < 2) {
+                      return 'Please enter first name';
+                    }
+                    if (val.trim().length < 2) {
+                      return 'Invalid Name';
+                    }
+                  }),
+              _createTextForm(
+                  controller: _middleTextEditingController,
+                  labelText: 'Middle name',
+                  currentFocusNode: _middleNameNode,
+                  nextFocusNode: _lastNameNode,
+                  // ignore: missing_return
+                  validator: (String val) {
+                    if (val.trim().isEmpty || val.trim().length < 2) {
+                      return 'Please enter middle name';
+                    }
+                    if (val.trim().length < 2) {
+                      return 'Invalid Name';
+                    }
+                  }),
+              _createTextForm(
+                  controller: _lastTextEditingController,
+                  labelText: 'Last name',
+                  currentFocusNode: _lastNameNode,
+                  nextFocusNode: _nationalIDNode,
+                  // ignore: missing_return
+                  validator: (String val) {
+                    if (val.trim().isEmpty || val.trim().length < 2) {
+                      return 'Please enter last name';
+                    }
+                    if (val.trim().length < 2) {
+                      return 'Invalid Name';
+                    }
+                  }),
+              _createTextForm(
+                  labelText: 'National ID',
+                  currentFocusNode: _nationalIDNode,
+                  textInputType: TextInputType.number,
+                  nextFocusNode: _phoneNumberNode,
+                  // ignore: missing_return
+                  validator: (String val) {
+                    if (val.trim().isEmpty || val.trim().length != 14) {
+                      return 'Please enter National ID';
+                    }
+                    if (val.trim().length != 14) {
+                      return 'Invalid National ID';
+                    }
+                  }),
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 7.0),
+                height: 80,
+                child: TextFormField(
+                  controller: _phoneTextEditingController,
+                  autofocus: false,
+                  textInputAction: TextInputAction.next,
+                  focusNode: _phoneNumberNode,
+                  decoration: InputDecoration(
+                    prefix: Container(
+                      padding: EdgeInsets.all(4.0),
+                      child: Text(
+                        "+20",
+                        style: TextStyle(
+                            fontSize: 15,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    labelText: "Phone number",
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius:
+                      BorderRadius.all(Radius.circular(10.0)),
+                      borderSide: BorderSide(
+                        color: Colors.blue,
+                      ),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderRadius:
+                      BorderRadius.all(Radius.circular(10.0)),
+                      borderSide: BorderSide(
+                        color: Colors.blue,
+                      ),
+                    ),
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderRadius:
+                      BorderRadius.all(Radius.circular(10.0)),
+                      borderSide: BorderSide(
+                        color: Colors.blue,
+                      ),
+                    ),
+                    disabledBorder: OutlineInputBorder(
+                      borderRadius:
+                      BorderRadius.all(Radius.circular(10.0)),
+                      borderSide: BorderSide(
+                        color: Colors.blue,
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius:
+                      BorderRadius.all(Radius.circular(10.0)),
+                      borderSide: BorderSide(color: Colors.blue),
+                    ),
+                  ),
+                  keyboardType: TextInputType.phone,
+// ignore: missing_return
+                  validator: (String value) {
+                    if (value.trim().isEmpty || value.trim().length != 10) {
+                      return "Please enter Phone number!";
+                    }
+                    if (value.trim().length != 10) {
+                      return "Invalid Phone number!";
+                    }
+                  },
+                  onSaved: (value) {
+                    _accountData['Phone number'] = value.trim();
+                    _phoneNumberNode.unfocus();
+                  },
+                  onFieldSubmitted: (_) {
+                    _phoneNumberNode.unfocus();
+                    FocusScope.of(context).requestFocus(_jobNode);
+                  },
+                ),
+              ),
+              _createTextForm(
+                  controller: _jobTextEditingController,
                   labelText: 'Job',
                   currentFocusNode: _jobNode,
                   // ignore: missing_return
@@ -2035,6 +2598,7 @@ _resetForm(){
                 padding: EdgeInsets.symmetric(vertical: 7.0),
                 height: 90,
                 child: TextFormField(
+                  controller: _aboutEditingController,
                   autofocus: false,
                   focusNode: null,
                   onChanged: (val) {
@@ -2114,14 +2678,14 @@ _resetForm(){
                 child: CircleAvatar(
                   backgroundImage: _imageFile == null
                       ? AssetImage('assets/user.png')
-                      : FileImage(File(_imageFile.path)),
+                      : FileImage(_imageFile),
                   backgroundColor: Colors.blue,
                 ),
               ),
             ],
           )),
     ];
-    verifyUserData() {
+    verifyUserData() async{
       if (_accountData['First name'] == '' ||
           _accountData['Middle name'] == '' ||
           _accountData['Last name'] == '' ||
@@ -2155,8 +2719,49 @@ _resetForm(){
         }
       } else {
         print('hhhhhhh');
-        Provider.of<Auth>(context,listen: false).registerUserData(listOfData: _accountData);
-        //setState(() => complete = true);
+        setState(() {
+          _isLoading =true;
+        });
+        bool isScuess = await Provider.of<Auth>(context,listen: false).registerUserData(listOfData: _accountData);
+        if(isScuess){
+          _isLoading =false;
+          await showDialog(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(25.0))),
+              contentPadding: EdgeInsets.only(top: 10.0),
+              title: Text("Profile Created"),
+              content: Text(
+                "Welcome ${_accountData['First name']}",
+              ),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text("Ok"),
+                  onPressed: () {
+                    Navigator.of(context)
+                        .pushNamed(HomeScreen.routeName);
+                  },
+                ),
+                FlatButton(
+                  child: Text("Cancel"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    setState(() => complete = true);
+                  },
+                ),
+              ],
+            ),
+          );
+        }else{
+          setState(() {
+            _isLoading =false;
+          });
+          Toast.show(
+              "Please try again", context,
+              duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+        }
+
       }
     }
     _incrementStep() {
@@ -2268,35 +2873,18 @@ _resetForm(){
     }
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: Navigator.of(context).canPop()?AppBar(
+        leading: BackButton(
+          color: Colors.blue,
+          onPressed: (){
+            Navigator.of(context).pop();
+          },
+        ),
+      ):null,
       body: SafeArea(
         child: Column(
           children: <Widget>[
-            complete
-                ? Expanded(
-                    child: Center(
-                    child: AlertDialog(
-                      title: Text("Profile Created"),
-                      content: Text(
-                        "Welcome ${_accountData['First name']}",
-                      ),
-                      actions: <Widget>[
-                        FlatButton(
-                          child: Text("Ok"),
-                          onPressed: () {
-                            Navigator.of(context)
-                                .pushNamed(HomeScreen.routeName);
-                          },
-                        ),
-                        FlatButton(
-                          child: Text("Cancel"),
-                          onPressed: () {
-                            setState(() => complete = false);
-                          },
-                        ),
-                      ],
-                    ),
-                  ))
-                : Expanded(
+            Expanded(
                     child: Stepper(
                       steps: steps,
                       currentStep: currentStep,

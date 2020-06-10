@@ -29,17 +29,50 @@ class NetWork {
     try {
       dio.options.baseUrl = baseUrl;
       headers != null ? dio.options.headers = headers : '';
+      print(headers);
+      print(url);
       var jsonResponse;
       Response response;
       if(formData ==null){
-        print(data);
+        print('datadata$data');
         response = await dio.post(url, data: data);
+        print('dbvdb');
       }else {
         response = await dio.post(url, data: formData);
       }
       jsonResponse = json.decode(response.toString());
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        jsonResponse = json.decode(response.toString());
+        return jsonResponse;
+      } else if (response == null) {
+        return response;
+      } else {
+        return response;
+      }
+    } on DioError catch (e) {
+      print(e);
+      return e.response.data;
+    }
+  }
+Future<dynamic> updateData(
+      {Map<String,dynamic> data,FormData formData, Map<String, dynamic> headers, String url}) async {
+    try {
+      dio.options.baseUrl = baseUrl;
+      headers != null ? dio.options.headers = headers : '';
+
+      var jsonResponse;
+      Response response;
+      if(formData ==null){
+        print(data);
+        response = await dio.patch(url, data: data);
+      }else {
+
+        response = await dio.patch(url, data: formData);
+      }
+     // jsonResponse = json.decode(response.toString());
       print(response.statusCode);
       if (response.statusCode >= 200 && response.statusCode < 300) {
+        print('success');
         jsonResponse = json.decode(response.toString());
         return jsonResponse;
       } else if (response == null) {

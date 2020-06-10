@@ -4,6 +4,7 @@ import 'package:healthbook/screens/patient_prescription/widgets/patient_prescrip
 import 'package:healthbook/screens/register_user_data/register_user_data.dart';
 import 'package:healthbook/screens/sing_In_and_Up/sign_in_and_up_screen.dart';
 import 'package:healthbook/screens/specific_search/map.dart';
+import 'package:healthbook/screens/splash_screen.dart';
 import 'package:healthbook/services/size_config.dart';
 
 import 'package:provider/provider.dart';
@@ -102,27 +103,27 @@ class MyApp extends StatelessWidget {
               RegisterUserData.routeName:(ctx) =>RegisterUserData(),
               PatientPrescription.routeName:(ctx) =>PatientPrescription()
             },
-            home: Login(),
+            //home: Login(),
            // UserSignUp()
             //HomeScreen(),
-//          home: auth.isAuth
-//              ? HomeScreen()
-//              : FutureBuilder(
-//                  future: auth.tryToLogin(),
-//                  builder: (ctx, authResultSnapshot) {
-//                    if (authResultSnapshot.connectionState ==
-//                        ConnectionState.done && auth.isAuth) {
-//                      return HomeScreen();
-//                    } else if (authResultSnapshot.connectionState ==
-//                        ConnectionState.waiting ||
-//                        authResultSnapshot.connectionState ==
-//                            ConnectionState.active && !auth.isAuth) {
-//                      return Splash();
-//                    } else{
-//                      return Login();
-//                    }
-//                  }
-//                  ),
+          home: auth.isAuth
+              ? HomeScreen()
+              : FutureBuilder(
+                  future: auth.tryToLogin(),
+                  builder: (ctx, authResultSnapshot) {
+                    if (authResultSnapshot.connectionState ==
+                        ConnectionState.done && auth.isAuth) {
+                      return HomeScreen();
+                    } else if (authResultSnapshot.connectionState ==
+                        ConnectionState.waiting ||
+                        authResultSnapshot.connectionState ==
+                            ConnectionState.active && !auth.isAuth) {
+                      return Splash();
+                    } else{
+                      return Login();
+                    }
+                  }
+                  ),
           );
     }
     );

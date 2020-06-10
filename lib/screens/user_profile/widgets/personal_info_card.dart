@@ -22,7 +22,7 @@ class PersonalInfoCard extends StatefulWidget {
 }
 
 class _PersonalInfoCardState extends State<PersonalInfoCard> {
-  bool _showPersonalInfo = false;
+  bool _showPersonalInfo = true;
 
   Widget _data({String title, String content}) {
     return Padding(

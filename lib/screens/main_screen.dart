@@ -17,6 +17,7 @@ import 'forget_password/forget_password.dart';
 import 'forget_password/send_sms_screen.dart';
 import 'home/home_for_doctor_and_patient.dart';
 import 'radiology_and_analysis/radiology_and_analysis.dart';
+import 'register_user_data/register_user_data.dart';
 import 'user_profile/user_profile.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -40,11 +41,12 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
   String _searchContent;
   List<String> _suggestionList = List<String>();
-
+  Auth _auth ;
   @override
   void initState() {
     super.initState();
     _pageController = PageController();
+    _auth =Provider.of<Auth>(context, listen: false);
   }
 
   @override
@@ -231,17 +233,21 @@ class _HomeScreenState extends State<HomeScreen> {
             children: <Widget>[
               UserAccountsDrawerHeader(
                 onDetailsPressed: (){
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context)=>UserProfile()));
+                  Navigator.of(context).pop();
+                  setState(() {
+                    _page = 2;
+                  });
+                  _pageController.jumpToPage(_page);
                 },
-                accountName: Text("Ayman"),
-                accountEmail: Text("ayman11@gmail.com"),
+                accountName: Text("${_auth.userData.firstName.toUpperCase()} ${_auth.userData.lastName.toUpperCase()}"),
+                accountEmail: Text("${_auth.email}"),
                 currentAccountPicture: CircleAvatar(
                   backgroundColor:
                       Theme.of(context).platform == TargetPlatform.iOS
                           ? Colors.blue
                           : Colors.white,
                   child: Text(
-                    "A",
+                    "${_auth.userData.firstName.substring(0,1).toUpperCase()}",
                     style: TextStyle(fontSize: 40.0),
                   ),
                 ),
@@ -253,9 +259,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   imgPath: 'assets/icons/clinic.png',
                   onTap: () {}),
               _drawerListTile(
-                  name: "Profile",
+                  name: "Edit Profile",
                   imgPath: 'assets/icons/profile.png',
-                  onTap: () {}),
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context)=>RegisterUserData(isEditingEnable: true,)));
+                  }),
               _drawerListTile(
                   name: "Drug List",
                   isIcon: true,
@@ -287,7 +295,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   name: "Log Out",
                   isIcon: true,
                   icon: Icons.exit_to_app,
-                  onTap: () {}),
+                  onTap: () async{
+                    await Provider.of<Auth>(context, listen: false).logout();
+                  }),
             ],
           ),
         ),

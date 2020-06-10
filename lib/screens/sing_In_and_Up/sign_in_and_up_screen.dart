@@ -27,80 +27,10 @@ class _LoginState extends State<Login> {
   final FocusNode _passwordNode = FocusNode();
   final FocusNode _confirmPassNode = FocusNode();
   int _selectedRadio = 1;
-  String _userType = 'patient';
   Map<String, String> _loginData = {
     'email': '',
     'password': '',
   };
-
-  Future<bool> _signAsDocOrPat() async {
-    bool userType = true;
-    await showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(25.0))),
-        contentPadding: EdgeInsets.only(top: 10.0),
-        title: Text(
-          'Sign in As',
-          textAlign: TextAlign.center,
-        ),
-        content: Container(
-          height: 130,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              InkWell(
-                onTap: () {
-                  setState(() {
-                    userType = true;
-                  });
-                  Navigator.of(context).pop();
-                },
-                child: Column(
-                  children: <Widget>[
-                    Image.asset(
-                      'assets/doctor.png',
-                      width: 120.0,
-                      height: 100.0,
-                    ),
-                    Text('Doctor')
-                  ],
-                ),
-              ),
-              InkWell(
-                onTap: () {
-                  setState(() {
-                    userType = false;
-                  });
-                  Navigator.of(context).pop();
-                },
-                child: Column(
-                  children: <Widget>[
-                    Image.asset(
-                      'assets/patient.png',
-                      width: 120,
-                      height: 100,
-                    ),
-                    Text('Patient')
-                  ],
-                ),
-              )
-            ],
-          ),
-        ),
-        actions: <Widget>[
-          FlatButton(
-            child: Text('Cancel'),
-            onPressed: () {
-              Navigator.of(ctx).pushNamed(Login.routeName);
-            },
-          )
-        ],
-      ),
-    );
-    return userType;
-  }
 
   Future<void> _showErrorDialog(String message) async {
     await showDialog(
@@ -132,65 +62,64 @@ class _LoginState extends State<Login> {
       setState(() {
         _loadingUser = true;
       });
-      try {
+
         print(_goToSignUp);
         if (_goToSignUp) {
           //her sign up
-          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>RegisterUserData()));
-//          String message ;//=
-////              await Provider.of<Auth>(context, listen: false).signUp(
-////            email: _loginData['email'],
-////            password: _loginData['password'],
-////          );
-//          if (message == '') {
-//            //when success
-//            setState(() {
-//              _loadingUser = false;
-//            });
+          String message =
+              await Provider.of<Auth>(context, listen: false).signUp(
+            email: _loginData['email'],
+            password: _loginData['password'],
+          );
+          print(message);
+          if (message == 'Patient account created') {
+            //when success
+            setState(() {
+              _loadingUser = false;
+            });
+            message = await Provider.of<Auth>(context, listen: false).signIn(
+              email: _loginData['email'],
+              password: _loginData['password'],
+            );
+            if (message == 'Auth success') {
+             Toast.show('Successfully Sign Up', context,duration: Toast.LENGTH_SHORT, gravity:  Toast.BOTTOM);
+              setState(() {
+                _loadingUser = false;
+              });
+                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>RegisterUserData()));
+             return;
+            } else {
+              Toast.show('Please Try To SignIn', context,duration: Toast.LENGTH_SHORT, gravity:  Toast.BOTTOM);
+              setState(() {
+                _goToSignUp =false;
+                _loadingUser = false;
+              });
+              return;
+            }
 //            Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>RegisterUserData()));
-//
-//            message = await Provider.of<Auth>(context, listen: false).signIn(
-//              email: _loginData['email'],
-//              password: _loginData['password'],
-//            );
-//            if (message == 'Auth success') {
-//             Toast.show('Successfully Sign Up', context,duration: Toast.LENGTH_SHORT, gravity:  Toast.BOTTOM);
-//              setState(() {
-//                _loadingUser = false;
-//              });
-//              return;
-//            } else {
-//              Toast.show('Please Try To SignIn', context,duration: Toast.LENGTH_SHORT, gravity:  Toast.BOTTOM);
-//              setState(() {
-//                _goToSignUp =false;
-//                _loadingUser = false;
-//              });
-//              return;
-//            }
-////            Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>RegisterUserData()));
-//            //TODO:dvbdbn
-//            return;
-//          } else if (message == 'Mail exists') {
-//            _showErrorDialog('Email Already Exists Try Another Email');
-//            setState(() {
-//              _loadingUser = false;
-//            });
-//            return;
-//          } else {
-//            _showErrorDialog('Please Try Again Later');
-//            setState(() {
-//              _loadingUser = false;
-//            });
-//            return;
-//          }
+            //TODO:dvbdbn
+            return;
+          } else if (message == 'Mail exists') {
+            _showErrorDialog('Email Already Exists Try Another Email');
+            setState(() {
+              _loadingUser = false;
+            });
+            return;
+          } else {
+            _showErrorDialog('Please Try Again Later');
+            setState(() {
+              _loadingUser = false;
+            });
+            return;
+          }
         } else {
           //her sign in
           String message;
-          if (_userType =='doctor') {
+          if ( Provider.of<Auth>(context, listen: false).getUserType =='doctor') {
             message= await Provider.of<Auth>(context, listen: false).signIn(
                   email: _loginData['email'],
                   password: _loginData['password'],
-                  userType: 'doctor');
+                 );
             if (message == 'Auth success') {
               Toast.show('Successfully Sign In', context,duration: Toast.LENGTH_SHORT, gravity:  Toast.BOTTOM);
               Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>HomeScreen()));
@@ -205,33 +134,49 @@ class _LoginState extends State<Login> {
               });
               return;
             }
-
           }else {
-            await Provider.of<Auth>(context, listen: false).signIn(
+            //is patient
+            print('dxbb');
+            message= await Provider.of<Auth>(context, listen: false).signIn(
               email: _loginData['email'],
               password: _loginData['password'],
             );
+            print(message);
+            if (message == 'Auth success') {
+                Toast.show('Successfully Sign In', context,duration: Toast.LENGTH_SHORT, gravity:  Toast.BOTTOM);
+                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>HomeScreen()));
+              setState(() {
+                _loadingUser = false;
+              });
+            } else {
+              Toast.show('Please Try Again', context,duration: Toast.LENGTH_SHORT, gravity:  Toast.BOTTOM);
+              setState(() {
+                _loadingUser = false;
+              });
+            }
           }
         }
-      } on HttpException catch (error) {
-        var errorMessage = 'Authentication failed';
-        if (error.toString().contains('EMAIL_EXISTS')) {
-          errorMessage = 'This email address is already in use.';
-        } else if (error.toString().contains('INVALID_EMAIL')) {
-          errorMessage = 'This is not a valid email address';
-        } else if (error.toString().contains('WEAK_PASSWORD')) {
-          errorMessage = 'This password is too weak.';
-        } else if (error.toString().contains('EMAIL_NOT_FOUND')) {
-          errorMessage = 'Could not find a user with that email.';
-        } else if (error.toString().contains('INVALID_PASSWORD')) {
-          errorMessage = 'Invalid password.';
-        }
-        _showErrorDialog(errorMessage);
-      } catch (error) {
-        const errorMessage =
-            'Could not authenticate you. Please try again later.';
-        _showErrorDialog(errorMessage);
-      }
+
+
+//      on HttpException catch (error) {
+//        var errorMessage = 'Authentication failed';
+//        if (error.toString().contains('EMAIL_EXISTS')) {
+//          errorMessage = 'This email address is already in use.';
+//        } else if (error.toString().contains('INVALID_EMAIL')) {
+//          errorMessage = 'This is not a valid email address';
+//        } else if (error.toString().contains('WEAK_PASSWORD')) {
+//          errorMessage = 'This password is too weak.';
+//        } else if (error.toString().contains('EMAIL_NOT_FOUND')) {
+//          errorMessage = 'Could not find a user with that email.';
+//        } else if (error.toString().contains('INVALID_PASSWORD')) {
+//          errorMessage = 'Invalid password.';
+//        }
+//        _showErrorDialog(errorMessage);
+//      } catch (error) {
+//        const errorMessage =
+//            'Could not authenticate you. Please try again later.';
+//        _showErrorDialog(errorMessage);
+//      }
     } else {
       setState(() {
         _loadingUser = false;
@@ -245,13 +190,18 @@ class _LoginState extends State<Login> {
       _selectedRadio = val;
     });
     if (val == 1) {
-      _userType = 'patient';
-    } else {
-      _userType = 'doctor';
-    }
-    print(_userType);
-  }
+      Provider.of<Auth>(context, listen: false).setUserType ='patient';
 
+    } else {
+      Provider.of<Auth>(context, listen: false).setUserType ='doctor';
+    }
+    print(Provider.of<Auth>(context, listen: false).getUserType);
+  }
+@override
+  void initState() {
+
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -441,7 +391,7 @@ class _LoginState extends State<Login> {
                               return 'Please enter your password';
                             }
                             if (value.trim().isEmpty ||
-                                value.trim().length < 8) {
+                                value.trim().length < 1) {
                               return 'Password is too short!';
                             }
                           },

@@ -1,3 +1,5 @@
+import 'package:healthbook/providers/auth_controller.dart';
+
 class RegisterPatientData{
   String firstName;
   String middleName;
@@ -13,7 +15,9 @@ class RegisterPatientData{
   String government;
   String patientImage;
   String aboutYou;
-  RegisterPatientData({
+  String speciality;
+
+  RegisterPatientData({this.speciality,
     this.firstName, this.middleName, this.lastName, this.birthDate,
     this.gender, this.nationalID, this.email, this.job, this.status,
     this.number, this.address, this.government, this.patientImage,
@@ -29,11 +33,15 @@ class RegisterPatientData{
      email= json['email'];
      job= json['job'];
      status= json['status'];
-     number= json['number'];
+     number= json['number'][0];
      address= json['address'];
      government= json['government'];
      patientImage= json['patientImage'];
      aboutYou= json['aboutYou'];
+     if( Auth().getUserType == 'doctor'){
+       speciality =json['speciality']??'';
+     }
+     print(firstName);print(gender);print(address);print(birthDate);print(middleName);
   }
 
   Map<String, dynamic> toJson() {
@@ -52,6 +60,9 @@ class RegisterPatientData{
     data['gender'] = this.gender;
     data['government'] = this.government;
     data['nationalID'] = this.nationalID;
+    if( Auth().getUserType == 'doctor'){
+      data['speciality']=this.speciality??'';
+    }
     return data;
   }
 }
@@ -88,7 +99,7 @@ class RegisterDoctorData{
     email= json['email'];
     job= json['job'];
     status= json['status'];
-    number= json['number'];
+    number= json['number'][0];
     address= json['address'];
     government= json['government'];
     doctorImage= json['doctorImage'];
