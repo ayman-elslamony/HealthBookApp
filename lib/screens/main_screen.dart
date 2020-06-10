@@ -253,18 +253,30 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               _drawerListTile(
-                  name: "Home", imgPath: 'assets/icons/home.png', onTap: () {}),
+                  name: "Home", imgPath: 'assets/icons/home.png', onTap: () {
+                    Navigator.of(context).pop();
+                setState(() {
+                  _page = 0;
+                });
+                _pageController.jumpToPage(_page);
+              }),
               _drawerListTile(
                   name: "Clinic",
                   imgPath: 'assets/icons/clinic.png',
-                  onTap: () {}),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    setState(() {
+                      _page = 1;
+                    });
+                    _pageController.jumpToPage(_page);
+                  }),
               _drawerListTile(
                   name: "Edit Profile",
                   imgPath: 'assets/icons/profile.png',
                   onTap: () {
                     Navigator.of(context).push(MaterialPageRoute(builder: (context)=>RegisterUserData(isEditingEnable: true,)));
                   }),
-              _drawerListTile(
+             _auth.getUserType=='doctor'?SizedBox():_drawerListTile(
                   name: "Drug List",
                   isIcon: true,
                   icon: Icons.assignment,
@@ -272,7 +284,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Navigator.of(context)
                         .push(MaterialPageRoute(builder: (context) => Drug()));
                   }),
-              _drawerListTile(
+              _auth.getUserType=='doctor'?SizedBox():_drawerListTile(
                   name: "Radiology And Analysis",
                   isIcon: true,
                   icon: Icons.insert_drive_file,
@@ -280,12 +292,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => RadiologyAndAnalysis()));
                   }),
-
-              _drawerListTile(
-                  name: "Switch Acount",
-                  isIcon: true,
-                  icon: Icons.compare_arrows,
-                  onTap: () {}),
 //              _drawerListTile(
 //                  name: "Setting",
 //                  isIcon: true,
@@ -345,25 +351,8 @@ class _HomeScreenState extends State<HomeScreen> {
             // ForgetPassword(),
             // PatientPrescription(),
             _pageContent(pageBody: Home()),
-            Stack(
-              children: <Widget>[
-                _pageContent(pageBody: !_isDoctor?ClinicInfo():SpecificSearch()),
-                Positioned(child:  RaisedButton(color: Colors.blue,shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10))),onPressed: (){
-                  setState(() {
-                    _isDoctor = !_isDoctor;
-                  });
-                },
-                  child: Text(_isDoctor?'Show As Patient':'Show As Doctor',style: TextStyle(color: Colors.white,fontSize: 16),),
-                ),
-                  top: 0.0,right: 0.0,)
-              ],
-            ),
+            _pageContent(pageBody: _auth.getUserType =='doctor'?ClinicInfo():SpecificSearch()),
             _pageContent(pageBody: UserProfile()),
-
-            //UserSignUp(),
-
-//            Booking(),
-            // Home(),
           ],
         ),
       ),

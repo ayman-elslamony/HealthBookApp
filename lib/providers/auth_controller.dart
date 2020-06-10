@@ -67,29 +67,35 @@ class Auth with ChangeNotifier {
       _email = email;
       final prefs = await SharedPreferences.getInstance();
       print(_userId);
-      final dataToSignIn = json.encode({
-        'email': email,
-        'password': password,
-        'userType': _userType,
-        'userId': _userId,
-      });
-      prefs.setString('dataToSignIn', dataToSignIn);
-      var userData = await _netWork
-          .getData(url: 'patient/5ec8a00afa6d9b35d08f0055', headers: {
-        'Authorization': 'Bearer $_token',
-      });
-      print(userData['patient']);
-      if (userData['patient'] != null) {
-        rgisterPatientData=RegisterPatientData.fromJson(userData['patient']);
-
-        print(rgisterPatientData.gender);
-        print(rgisterPatientData.birthDate);
-        print(rgisterPatientData.address);
+      if(!prefs.containsKey('dataToSignIn')){
+        final dataToSignIn = json.encode({
+          'email': email,
+          'password': password,
+          'userType': _userType,
+          'userId': _userId,
+        });
+        prefs.setString('dataToSignIn', dataToSignIn);
       }
+      await getUserData();
     }
     return data['message'];
   }
-
+Future<void>  getUserData()async{
+    var userData = await _userType=='doctor'? _netWork
+        .getData(url: 'doctor/5ec8a319fa6d9b35d08f0058', headers: {
+      'Authorization': 'Bearer $_token',
+    }):await _netWork
+        .getData(url: 'patient/5ec8a00afa6d9b35d08f0055', headers: {
+      'Authorization': 'Bearer $_token',
+    });
+    print(userData['patient']);
+    if (userData['patient'] != null) {
+      rgisterPatientData=RegisterPatientData.fromJson(userData['patient']);
+      print(rgisterPatientData.gender);
+      print(rgisterPatientData.birthDate);
+      print(rgisterPatientData.address);
+    }
+  }
   Future<String> signUp({String email, String password}) async {
     _userType = 'patient';
     _signInAndUpModel =
@@ -119,20 +125,38 @@ class Auth with ChangeNotifier {
     //'aboutYou': listOfData['aboutYouOrBio'],
 //       'lat': listOfData['lat'],
 //       'long': listOfData['long'],
-    FormData formData = FormData.fromMap({
-      'number': listOfData['Phone number'],
-      'address': listOfData['Location'],
-      'status': listOfData['materialStatus'],
-      'lastName': listOfData['Last name'],
-      'firstName': listOfData['First name'],
-      'middleName': listOfData['Middle name'],
-      'birthDate': birthDate,
-      'patientImage': listOfData['UrlImg'],
-      'job': listOfData['Job'],
-      'gender': listOfData['gender'],
-      'government': government,
-      'nationalID': listOfData['National ID'],
-    });
+    FormData formData;
+    if(listOfData['National ID'] == ''){
+      formData = FormData.fromMap({
+        'number': listOfData['Phone number'],
+        'address': listOfData['Location'],
+        'status': listOfData['materialStatus'],
+        'lastName': listOfData['Last name'],
+        'firstName': listOfData['First name'],
+        'middleName': listOfData['Middle name'],
+        'birthDate': birthDate,
+        'patientImage': listOfData['UrlImg'],
+        'job': listOfData['Job'],
+        'gender': listOfData['gender'],
+        'government': government,
+      });
+    }else{
+      formData = FormData.fromMap({
+        'number': listOfData['Phone number'],
+        'address': listOfData['Location'],
+        'status': listOfData['materialStatus'],
+        'lastName': listOfData['Last name'],
+        'firstName': listOfData['First name'],
+        'middleName': listOfData['Middle name'],
+        'birthDate': birthDate,
+        'patientImage': listOfData['UrlImg'],
+        'job': listOfData['Job'],
+        'gender': listOfData['gender'],
+        'government': government,
+        'nationalID': listOfData['National ID'],
+      });
+    }
+
     try {
       var data = await _netWork.updateData(
           url: 'patient/5ec8a00afa6d9b35d08f0055',

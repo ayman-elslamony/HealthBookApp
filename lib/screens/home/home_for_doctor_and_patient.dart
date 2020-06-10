@@ -1,6 +1,8 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:healthbook/providers/auth_controller.dart';
 //import 'package:flutter_sms/flutter_sms.dart';
 import 'package:healthbook/screens/user_profile/user_profile.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
 
@@ -18,8 +20,12 @@ class _HomeState extends State<Home> {
 
   final bool _isAppointmentAvailable = true;
 
-  bool _isDoctor = true;
-
+  Auth _auth ;
+  @override
+  void initState() {
+    super.initState();
+    _auth =Provider.of<Auth>(context, listen: false);
+  }
   @override
   Widget build(BuildContext context) {
     _cancelButton() {
@@ -154,30 +160,20 @@ class _HomeState extends State<Home> {
               Padding(
                 padding: const EdgeInsets.only(left: 10.0, top: 10.0),
                 child: Text(
-                    _isDoctor == false ? 'Welcome Ayman!' : 'Welcome Dr. Mahmoud',
+                    _auth.getUserType !='doctor' ? 'Welcome ${_auth.userData.firstName} ${_auth.userData.lastName} !' : 'Welcome Dr. ${_auth.userData.firstName} ${_auth.userData.lastName} ',
                     style: Theme
                         .of(context)
                         .textTheme
                         .display1),
               ),
-              
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: RaisedButton(color: Colors.blue,shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10))),onPressed: (){
-                  setState(() {
-                    _isDoctor = !_isDoctor;
-                  });
-                },
-                  child: Text(_isDoctor?'Show As Patient':'Show As Doctor',style: TextStyle(color: Colors.white,fontSize: 16),),
-                ),
-              )
+
             ],
           ),
-          AppointmentsDateCard(isdoctor: _isDoctor,),
+          AppointmentsDateCard(isdoctor: _auth.getUserType =='doctor',),
           Expanded(
               child: _isAppointmentAvailable
                   ?  ListView.builder(
-                itemBuilder: (ctx, index) =>_isDoctor == false ? InkWell(
+                itemBuilder: (ctx, index) =>_auth.getUserType !='doctor' ? InkWell(
                     onTap: (){
                       Navigator.of(context).pushNamed(UserProfile.routeName);
                     },

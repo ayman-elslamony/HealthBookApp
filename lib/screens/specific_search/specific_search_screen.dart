@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:healthbook/providers/auth_controller.dart';
 import 'package:healthbook/screens/specific_search/map.dart';
 import 'package:healthbook/screens/specific_search/search_result.dart';
+import 'package:provider/provider.dart';
 import './search_card.dart';
 import '../../list_of_infomation/list_of_information.dart';
 
@@ -24,7 +26,13 @@ class _SpecificSearchState extends State<SpecificSearch> {
   String _specialty;
 
   String _governorate;
+  Auth _auth ;
+  @override
+  void initState() {
+    super.initState();
 
+    _auth =Provider.of<Auth>(context, listen: false);
+  }
   Future<void> _getUserLocation() async {
     Position position = await Geolocator()
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);

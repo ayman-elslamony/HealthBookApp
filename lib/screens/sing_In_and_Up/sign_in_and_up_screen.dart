@@ -127,7 +127,12 @@ class _LoginState extends State<Login> {
                 _loadingUser = false;
               });
               return;
-            } else {
+            }else if(message == 'Auth failed'){
+                  _showErrorDialog('Could not find a user with that email.');
+                  setState(() {
+                    _loadingUser = false;
+                  });
+            }else {
               Toast.show('Please Try Again', context,duration: Toast.LENGTH_SHORT, gravity:  Toast.BOTTOM);
               setState(() {
                 _loadingUser = false;
@@ -148,7 +153,12 @@ class _LoginState extends State<Login> {
               setState(() {
                 _loadingUser = false;
               });
-            } else {
+            } else if(message == 'Auth failed'){
+              _showErrorDialog('Could not find a user with that email.');
+              setState(() {
+                _loadingUser = false;
+              });
+            }else {
               Toast.show('Please Try Again', context,duration: Toast.LENGTH_SHORT, gravity:  Toast.BOTTOM);
               setState(() {
                 _loadingUser = false;

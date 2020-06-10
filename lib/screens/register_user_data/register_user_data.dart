@@ -27,6 +27,7 @@ class RegisterUserData extends StatefulWidget {
 class _RegisterUserDataState extends State<RegisterUserData> {
   GlobalKey<FormState> _newAcountKeyOne = GlobalKey<FormState>();
   GlobalKey<FormState> _newAcountKeyTwo = GlobalKey<FormState>();
+  GlobalKey<FormState> _editingKey= GlobalKey<FormState>();
   bool _showWorkingDays = false;
   bool _isLoading = false;
   List<String> _selectedWorkingDays = List<String>();
@@ -39,7 +40,6 @@ class _RegisterUserDataState extends State<RegisterUserData> {
   bool _isClinicLocationEnable = false;
   bool _isEditLocationEnable = false;
   bool _selectUserLocationFromMap = false;
-  bool _isDoctor = false;
   bool _isClinic = false;
   bool _isMaterialStatus = false;
   bool _isDaySelected = false;
@@ -151,7 +151,17 @@ class _RegisterUserDataState extends State<RegisterUserData> {
     _jobTextEditingController.text= _auth.userData.job;
     _aboutEditingController.text= _auth.userData.aboutYou;
     _locationTextEditingController.text = _auth.userData.address;
-
+    _accountData['First name'] =_auth.userData.firstName;
+        _accountData['Middle name'] =_auth.userData.middleName;
+        _accountData['Last name'] =_auth.userData.lastName;
+        _accountData['National ID'] =
+        _accountData['Phone number'] =_auth.userData.number;
+        _accountData['UrlImg'] =_auth.userData.patientImage;
+        _accountData['gender'] =_auth.userData.gender;
+        _accountData['Location'] =_auth.userData.address;
+        _accountData['lat'] =0.0;
+        _accountData['long'] =0.0;
+        _accountData['materialStatus'] =_auth.userData.status;
     _isDaySelected=true;
     _isMonthSelected=true;
     _isYearSelected=true;
@@ -986,7 +996,7 @@ class _RegisterUserDataState extends State<RegisterUserData> {
                 ],
               ),
             ),
-            _isDoctor
+            _auth.getUserType =='doctor'
                 ? Padding(
               padding: const EdgeInsets.symmetric(vertical: 7),
               child: Text(
@@ -995,7 +1005,7 @@ class _RegisterUserDataState extends State<RegisterUserData> {
               ),
             )
                 : SizedBox(),
-            _isDoctor
+            _auth.getUserType =='doctor'
                 ? Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: Row(
@@ -1060,7 +1070,7 @@ class _RegisterUserDataState extends State<RegisterUserData> {
           isActive: true,
           state: StepState.indexed,
           title: Text(
-              _isDoctor ? 'Address and Bio' : 'Address and about you'),
+              _auth.getUserType =='doctor' ? 'Address and Bio' : 'Address and about you'),
           content: Column(
             children: <Widget>[
               InkWell(
@@ -1126,7 +1136,7 @@ class _RegisterUserDataState extends State<RegisterUserData> {
                   },
                   textInputAction: TextInputAction.newline,
                   decoration: InputDecoration(
-                    labelText: _isDoctor ? "Bio" : 'About You',
+                    labelText: _auth.getUserType =='doctor' ? "Bio" : 'About You',
                     focusedBorder: OutlineInputBorder(
                       borderRadius:
                       BorderRadius.all(Radius.circular(10.0)),
@@ -1155,7 +1165,7 @@ class _RegisterUserDataState extends State<RegisterUserData> {
           )),
       Step(
           isActive: true,
-          state: _isDoctor ? StepState.indexed : StepState.complete,
+          state: _auth.getUserType =='doctor' ? StepState.indexed : StepState.complete,
           title: const Text('Profile picture'),
           content: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -1610,7 +1620,7 @@ class _RegisterUserDataState extends State<RegisterUserData> {
         isActive: true,
         state: StepState.indexed,
         content: Form(
-          key: _newAcountKeyOne,
+          key: _editingKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -1928,7 +1938,7 @@ class _RegisterUserDataState extends State<RegisterUserData> {
               ),
             )
                 : SizedBox(),
-            _isDoctor
+            _auth.getUserType =='doctor'
                 ? Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: Row(
@@ -1993,7 +2003,7 @@ class _RegisterUserDataState extends State<RegisterUserData> {
           isActive: true,
           state: StepState.indexed,
           title: Text(
-              _isDoctor ? 'Address and Bio' : 'Address and about you'),
+              _auth.getUserType =='doctor' ? 'Address and Bio' : 'Address and about you'),
           content: Column(
             children: <Widget>[
               InkWell(
@@ -2059,7 +2069,7 @@ class _RegisterUserDataState extends State<RegisterUserData> {
                   },
                   textInputAction: TextInputAction.newline,
                   decoration: InputDecoration(
-                    labelText: _isDoctor ? "Bio" : 'About You',
+                    labelText: _auth.getUserType =='doctor' ? "Bio" : 'About You',
                     focusedBorder: OutlineInputBorder(
                       borderRadius:
                       BorderRadius.all(Radius.circular(10.0)),
@@ -2088,7 +2098,7 @@ class _RegisterUserDataState extends State<RegisterUserData> {
           )),
       Step(
           isActive: true,
-          state: _isDoctor ? StepState.indexed : StepState.complete,
+          state: _auth.getUserType =='doctor' ? StepState.indexed : StepState.complete,
           title: const Text('Profile picture'),
           content: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -2466,7 +2476,7 @@ class _RegisterUserDataState extends State<RegisterUserData> {
                 ],
               ),
             ),
-            _isDoctor
+            _auth.getUserType =='doctor'
                 ? Padding(
               padding: const EdgeInsets.symmetric(vertical: 7),
               child: Text(
@@ -2475,7 +2485,7 @@ class _RegisterUserDataState extends State<RegisterUserData> {
               ),
             )
                 : SizedBox(),
-            _isDoctor
+            _auth.getUserType =='doctor'
                 ? Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: Row(
@@ -2540,7 +2550,7 @@ class _RegisterUserDataState extends State<RegisterUserData> {
           isActive: true,
           state: StepState.indexed,
           title: Text(
-              _isDoctor ? 'Address and Bio' : 'Address and about you'),
+              _auth.getUserType =='doctor' ? 'Address and Bio' : 'Address and about you'),
           content: Column(
             children: <Widget>[
               InkWell(
@@ -2606,7 +2616,7 @@ class _RegisterUserDataState extends State<RegisterUserData> {
                   },
                   textInputAction: TextInputAction.newline,
                   decoration: InputDecoration(
-                    labelText: _isDoctor ? "Bio" : 'About You',
+                    labelText: _auth.getUserType =='doctor' ? "Bio" : 'About You',
                     focusedBorder: OutlineInputBorder(
                       borderRadius:
                       BorderRadius.all(Radius.circular(10.0)),
@@ -2635,7 +2645,7 @@ class _RegisterUserDataState extends State<RegisterUserData> {
           )),
       Step(
           isActive: true,
-          state: _isDoctor ? StepState.indexed : StepState.complete,
+          state: _auth.getUserType =='doctor' ? StepState.indexed : StepState.complete,
           title: const Text('Profile picture'),
           content: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -2686,6 +2696,9 @@ class _RegisterUserDataState extends State<RegisterUserData> {
           )),
     ];
     verifyUserData() async{
+      if(widget.isEditingEnable){
+        _accountData['National ID'] ='51210';
+      }
       if (_accountData['First name'] == '' ||
           _accountData['Middle name'] == '' ||
           _accountData['Last name'] == '' ||
@@ -2702,7 +2715,7 @@ class _RegisterUserDataState extends State<RegisterUserData> {
           _accountData['materialStatus'] == '') {
         Toast.show("Please complete your Data", context,
             duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-        if (_isDoctor) {
+        if (_auth.getUserType =='doctor') {
           if (_accountData['speciatly'] == '' ||
               _clinicData['Clinic Name'] == '' ||
               _clinicData['cliniclocation'] == '' ||
@@ -2722,37 +2735,50 @@ class _RegisterUserDataState extends State<RegisterUserData> {
         setState(() {
           _isLoading =true;
         });
+        if(widget.isEditingEnable){
+          _accountData['National ID'] ='';
+        }
         bool isScuess = await Provider.of<Auth>(context,listen: false).registerUserData(listOfData: _accountData);
         if(isScuess){
-          _isLoading =false;
-          await showDialog(
-            context: context,
-            builder: (ctx) => AlertDialog(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(25.0))),
-              contentPadding: EdgeInsets.only(top: 10.0),
-              title: Text("Profile Created"),
-              content: Text(
-                "Welcome ${_accountData['First name']}",
+          setState(() {
+            _isLoading =false;
+          });
+          if(widget.isEditingEnable){
+            await _auth.getUserData();
+            Toast.show(
+                "Successfully Editing", context,
+                duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+            Navigator.of(context).pop();
+          }else{
+            await showDialog(
+              context: context,
+              builder: (ctx) => AlertDialog(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(25.0))),
+                contentPadding: EdgeInsets.only(top: 10.0),
+                title: Text("Profile Created"),
+                content: Text(
+                  "Welcome ${_accountData['First name']}",
+                ),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text("Ok"),
+                    onPressed: () {
+                      Navigator.of(context)
+                          .pushNamed(HomeScreen.routeName);
+                    },
+                  ),
+                  FlatButton(
+                    child: Text("Cancel"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      setState(() => complete = true);
+                    },
+                  ),
+                ],
               ),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text("Ok"),
-                  onPressed: () {
-                    Navigator.of(context)
-                        .pushNamed(HomeScreen.routeName);
-                  },
-                ),
-                FlatButton(
-                  child: Text("Cancel"),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    setState(() => complete = true);
-                  },
-                ),
-              ],
-            ),
-          );
+            );
+          }
         }else{
           setState(() {
             _isLoading =false;
@@ -2774,7 +2800,33 @@ class _RegisterUserDataState extends State<RegisterUserData> {
       print(currentStep);
 
       if (currentStep == 0) {
-        if(_isDoctor){
+        print(_accountData);
+        if(widget.isEditingEnable){
+          if(_auth.getUserType =='doctor'){
+            if (_editingKey.currentState.validate()) {
+              _editingKey.currentState.save();
+              _middleNameNode.unfocus();
+              _lastNameNode.unfocus();
+              _nationalIDNode.unfocus();
+              _phoneNumberNode.unfocus();
+              _jobNode.unfocus();
+              _incrementStep();
+              return;
+            }
+          }else{
+            if (_editingKey.currentState.validate()) {
+              _editingKey.currentState.save();
+              _middleNameNode.unfocus();
+              _lastNameNode.unfocus();
+              _nationalIDNode.unfocus();
+              _phoneNumberNode.unfocus();
+              _jobNode.unfocus();
+              _incrementStep();
+            }
+          }
+          return;
+        }
+        if(_auth.getUserType =='doctor'){
           if (_newAcountKeyOne.currentState.validate()) {
             _newAcountKeyOne.currentState.save();
             _middleNameNode.unfocus();
@@ -2800,7 +2852,7 @@ class _RegisterUserDataState extends State<RegisterUserData> {
 
       }
       if (currentStep == 1) {
-        if (_isDoctor) {
+        if (_auth.getUserType =='doctor') {
           if (_accountData['day'] == '' ||
               _accountData['month'] == '' ||
               _accountData['year'] == '' ||
@@ -2838,7 +2890,7 @@ class _RegisterUserDataState extends State<RegisterUserData> {
       }
       if (currentStep == 3) {
         print('dxvb');
-        !_isDoctor ? verifyUserData() : _incrementStep();
+        _auth.getUserType !='doctor' ? verifyUserData() : _incrementStep();
         return;
       }
       if (currentStep == 4) {
