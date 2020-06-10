@@ -273,8 +273,10 @@ class _HomeScreenState extends State<HomeScreen> {
               _drawerListTile(
                   name: "Edit Profile",
                   imgPath: 'assets/icons/profile.png',
-                  onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context)=>RegisterUserData(isEditingEnable: true,)));
+                  onTap: () async{
+                    print('njb');
+                    await Navigator.of(context).push(MaterialPageRoute(builder: (context)=>RegisterUserData(isEditingEnable: true,)));
+                    Navigator.of(context).pop();
                   }),
              _auth.getUserType=='doctor'?SizedBox():_drawerListTile(
                   name: "Drug List",

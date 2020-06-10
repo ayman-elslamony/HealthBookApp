@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:healthbook/providers/auth_controller.dart';
+
 //import 'package:flutter_sms/flutter_sms.dart';
 import 'package:healthbook/screens/user_profile/widgets/clinic_info_card.dart';
 import 'package:healthbook/screens/user_profile/widgets/personal_info_card.dart';
@@ -18,13 +19,16 @@ class UserProfile extends StatefulWidget {
 }
 
 class _UserProfileState extends State<UserProfile> {
-  Auth _auth ;
+  Auth _auth;
+
   final GlobalKey<ScaffoldState> _userProfileState = GlobalKey<ScaffoldState>();
+
   @override
   void initState() {
     super.initState();
-    _auth =Provider.of<Auth>(context, listen: false);
+    _auth = Provider.of<Auth>(context, listen: false);
   }
+
   @override
   Widget build(BuildContext context) {
     _cancelButton() {
@@ -34,23 +38,21 @@ class _UserProfileState extends State<UserProfile> {
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(25.0))),
           contentPadding: EdgeInsets.only(top: 10.0),
-          title:  ColorizeAnimatedTextKit(
+          title: ColorizeAnimatedTextKit(
               totalRepeatCount: 9,
               pause: Duration(milliseconds: 1000),
               isRepeatingAnimation: true,
               speed: Duration(seconds: 1),
               text: [' please tell the patient '],
               textAlign: TextAlign.center,
-              textStyle: TextStyle(
-                  fontSize: 23.0, fontFamily: "Horizon"),
+              textStyle: TextStyle(fontSize: 23.0, fontFamily: "Horizon"),
               colors: [
                 Colors.blue,
                 Colors.green,
                 Colors.blue,
               ],
-              alignment: AlignmentDirectional
-                  .topStart // or Alignment.topLeft
-          ),
+              alignment: AlignmentDirectional.topStart // or Alignment.topLeft
+              ),
           content: Padding(
             padding: const EdgeInsets.only(top: 10),
             child: Container(
@@ -59,12 +61,12 @@ class _UserProfileState extends State<UserProfile> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   InkWell(
-                    onTap: (){
+                    onTap: () {
                       launch("tel://21213123123");
                       Navigator.of(context).pop();
                     },
                     child: Container(
-                        height:  38,
+                        height: 38,
                         width: 75,
                         decoration: BoxDecoration(
                             color: Colors.green,
@@ -79,13 +81,13 @@ class _UserProfileState extends State<UserProfile> {
                             Text(
                               'Call ',
                               style:
-                              TextStyle(color: Colors.white, fontSize: 18),
+                                  TextStyle(color: Colors.white, fontSize: 18),
                             ),
                           ],
                         )),
                   ),
                   InkWell(
-                    onTap: (){
+                    onTap: () {
 //                      sendSMS(message: 'Hello Patient', recipients: ['+201145523795'])
 //                          .catchError((onError) {
 //                        print(onError);
@@ -108,7 +110,7 @@ class _UserProfileState extends State<UserProfile> {
                             Text(
                               'Message ',
                               style:
-                              TextStyle(color: Colors.white, fontSize: 18),
+                                  TextStyle(color: Colors.white, fontSize: 18),
                             ),
                           ],
                         )),
@@ -123,20 +125,22 @@ class _UserProfileState extends State<UserProfile> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-            ),FlatButton(
+            ),
+            FlatButton(
               child: Text('Ok'),
               onPressed: () {
                 final snackBar = SnackBar(
-                  content: Text('SuccessFully deleted',style:
-                  TextStyle(color: Colors.white, fontSize: 15),),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                  content: Text(
+                    'SuccessFully deleted',
+                    style: TextStyle(color: Colors.white, fontSize: 15),
+                  ),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5)),
                   duration: Duration(seconds: 5),
                   backgroundColor: Colors.blue,
                   action: SnackBarAction(
                     label: 'Undo',
-                    onPressed: () {
-
-                    },
+                    onPressed: () {},
                   ),
                 );
                 _userProfileState.currentState.showSnackBar(snackBar);
@@ -147,8 +151,9 @@ class _UserProfileState extends State<UserProfile> {
         ),
       );
     }
+
     return Scaffold(
-      key: _userProfileState,
+        key: _userProfileState,
         body: ListView(
           children: <Widget>[
             Stack(children: [
@@ -160,9 +165,12 @@ class _UserProfileState extends State<UserProfile> {
                   child: SizedBox(
                     width: 130,
                     height: 130,
-                    child: CircleAvatar(
-                      backgroundColor: Colors.white,
-                      backgroundImage: _auth.userData.patientImage==null?AssetImage('assets/user.png'):FileImage(File(_auth.userData.patientImage)),
+                    child: ClipRRect(
+                      //backgroundColor: Colors.white,
+                      //backgroundImage:
+                         child:  _auth.getUserType == 'patient'?
+                    FadeInImage.assetNetwork(placeholder: 'assets/user.png',image: _auth.userData.patientImage)
+                :FadeInImage.assetNetwork(placeholder: 'assets/user.png',image: _auth.userData.doctorImage)
                     ),
                   ),
                 ),
@@ -223,7 +231,10 @@ class _UserProfileState extends State<UserProfile> {
                       SizedBox(
                         height: 8.0,
                       ),
-                      Text(_auth.getUserType == 'doctor'? 'Dr. ${_auth.userData.firstName} ${_auth.userData.middleName} ${_auth.userData.lastName}' : '${_auth.userData.firstName} ${_auth.userData.middleName} ${_auth.userData.lastName}',
+                      Text(
+                          _auth.getUserType == 'doctor'
+                              ? 'Dr. ${_auth.userData.firstName} ${_auth.userData.middleName} ${_auth.userData.lastName}'
+                              : '${_auth.userData.firstName} ${_auth.userData.middleName} ${_auth.userData.lastName}',
                           style: TextStyle(
                               color: Colors.blue,
                               fontSize: 20,
@@ -231,7 +242,9 @@ class _UserProfileState extends State<UserProfile> {
 
                       /// patient name
                       Text(
-                        _auth.getUserType == 'doctor'? 'Specialty: ${_auth.userData.speciality}' : "Job: ${_auth.userData.job}",
+                        _auth.getUserType == 'doctor'
+                            ? 'Specialty: ${_auth.userData.speciality}'
+                            : "Job: ${_auth.userData.job}",
                         style: TextStyle(
                             color: Colors.red,
                             fontSize: 18,
@@ -246,38 +259,42 @@ class _UserProfileState extends State<UserProfile> {
                         color: Colors.grey,
                         height: 4,
                       ),
-                      _auth.userData.aboutYou ==null?SizedBox(): Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              _auth.getUserType == 'doctor'? 'Bio' : "About",
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.blue),
-                            ),
-                           Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 10, bottom: 5.0),
-                              child: Text( _auth.userData.aboutYou,
-                                  textAlign: TextAlign.justify,
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.normal)),
+                      _auth.userData.aboutYou == null
+                          ? SizedBox()
+                          : Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(
+                                    _auth.getUserType == 'doctor'
+                                        ? 'Bio'
+                                        : "About",
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.blue),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 10, bottom: 5.0),
+                                    child: Text(_auth.userData.aboutYou,
+                                        textAlign: TextAlign.justify,
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.normal)),
+                                  )
+                                ],
+                              ),
                             )
-                          ],
-                        ),
-                      )
                     ],
                   ),
                 ),
               ),
             ),
             PersonalInfoCard(
-              address:  _auth.userData.address,
+              address: _auth.userData.address,
               email: _auth.email,
               gender: _auth.userData.gender,
               governorate: _auth.userData.government,
@@ -293,6 +310,8 @@ class _UserProfileState extends State<UserProfile> {
                     address:  _auth.getClinicData.address,
                     governorate: _auth.getClinicData.government,
                     fees: _auth.getClinicData.fees,
+                   startTime: _auth.getClinicData.openingTime,
+                   endTime: _auth.getClinicData.clossingTime,
                     watingTime: _auth.getClinicData.waitingTime,
                     workingDays: [_auth.getClinicData.workingDays],
                   )

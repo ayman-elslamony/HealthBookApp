@@ -1,15 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:path/path.dart';
 import 'package:healthbook/list_of_infomation/list_of_information.dart';
 import 'package:healthbook/models/clinic_data.dart';
 import 'package:healthbook/models/register_user_data.dart';
 import 'package:healthbook/models/sign_in_and_up.dart';
 import 'package:healthbook/services/network.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
-import '../models/http_exception.dart';
 
 class Auth with ChangeNotifier {
   NetWork _netWork = NetWork();
@@ -18,7 +17,7 @@ class Auth with ChangeNotifier {
   static String _userId;
   String _email;
   String _userType = 'patient';
-  static RegisterPatientData rgisterPatientData;
+  static RegisterData rgisterData;
   static ClinicData clinicData;
   bool get isAuth {
     return token != null;
@@ -29,8 +28,8 @@ class Auth with ChangeNotifier {
   String get token {
     return _token;
   }
-  RegisterPatientData get userData{
-    return rgisterPatientData;
+  RegisterData get userData{
+    return rgisterData;
   }
   ClinicData get getClinicData{
     return clinicData;
@@ -81,20 +80,46 @@ class Auth with ChangeNotifier {
     return data['message'];
   }
 Future<void>  getUserData()async{
-    var userData = await _userType=='doctor'? _netWork
-        .getData(url: 'doctor/5ec8a319fa6d9b35d08f0058', headers: {
-      'Authorization': 'Bearer $_token',
-    }):await _netWork
-        .getData(url: 'patient/5ec8a00afa6d9b35d08f0055', headers: {
-      'Authorization': 'Bearer $_token',
-    });
-    print(userData['patient']);
-    if (userData['patient'] != null) {
-      rgisterPatientData=RegisterPatientData.fromJson(userData['patient']);
-      print(rgisterPatientData.gender);
-      print(rgisterPatientData.birthDate);
-      print(rgisterPatientData.address);
+  var userData;
+  print('_userType_userType$_userType');
+    if(_userType=='doctor'){
+      userData = await _netWork
+          .getData(url: 'doctor/5ec8a319fa6d9b35d08f0058', headers: {
+        'Authorization': 'Bearer $_token',
+      });
+    }else{
+      userData = await _netWork
+          .getData(url: 'patient/5ec8a00afa6d9b35d08f0055', headers: {
+        'Authorization': 'Bearer $_token',
+      });
     }
+    print(userData);
+    print(userData['patient']);
+    if (userData['patient'] != null && _userType =='patient') {
+      rgisterData=RegisterData.fromJson(userData['patient'],'patient');
+      print(rgisterData.gender);
+      print(rgisterData.birthDate);
+      print(rgisterData.patientImage);
+      return;
+    }
+
+    if(userData['doctor'] != null && _userType =='doctor'){
+      rgisterData=RegisterData.fromJson(userData['doctor'],'doctor');
+      print(rgisterData.gender);
+      print(rgisterData.birthDate);
+      print('rgisterData.doctorImage${rgisterData.doctorImage}');
+      var dataForClinic =await _netWork
+          .getData(url: 'clinic/5ed6899e7966c600175a388b', headers: {
+        'Authorization': 'Bearer $_token',
+      });
+      print(dataForClinic);
+      if(dataForClinic['clinic'] !=null){
+        clinicData = ClinicData.fromJson(dataForClinic['clinic']);
+      print(clinicData);
+      }
+      return ;
+    }
+
   }
   Future<String> signUp({String email, String password}) async {
     _userType = 'patient';
@@ -113,7 +138,7 @@ Future<void>  getUserData()async{
     return data['message'];
   }
 
-  Future<bool> registerUserData({Map<String, dynamic> listOfData}) async {
+  Future<String> registerUserDataAndEditing({Map<String, dynamic> listOfData}) async {
     String birthDate =
         '${listOfData['day']}/${listOfData['month']}/${listOfData['year']}';
     String government = '';
@@ -125,21 +150,47 @@ Future<void>  getUserData()async{
     //'aboutYou': listOfData['aboutYouOrBio'],
 //       'lat': listOfData['lat'],
 //       'long': listOfData['long'],
+    String fileName;
+    if (listOfData['UrlImg'] != null &&
+        listOfData['UrlImg'].path != null &&
+        listOfData['UrlImg'].path.isNotEmpty) {
+      fileName = listOfData['UrlImg'].path.split('/').last;
+      print("File Name : $fileName");
+      print("File Size : ${listOfData['UrlImg'].lengthSync()}");
+    }
     FormData formData;
     if(listOfData['National ID'] == ''){
-      formData = FormData.fromMap({
-        'number': listOfData['Phone number'],
-        'address': listOfData['Location'],
-        'status': listOfData['materialStatus'],
-        'lastName': listOfData['Last name'],
-        'firstName': listOfData['First name'],
-        'middleName': listOfData['Middle name'],
-        'birthDate': birthDate,
-        'patientImage': listOfData['UrlImg'],
-        'job': listOfData['Job'],
-        'gender': listOfData['gender'],
-        'government': government,
-      });
+      if(_userType =='patient'){
+        formData = FormData.fromMap({
+          'number': listOfData['Phone number'],
+          'address': listOfData['Location'],
+          'status': listOfData['materialStatus'],
+          'lastName': listOfData['Last name'],
+          'firstName': listOfData['First name'],
+          'middleName': listOfData['Middle name'],
+          'birthDate': birthDate,
+          'patientImage': listOfData['UrlImg']!=null?await MultipartFile.fromFile(listOfData['UrlImg'].path, filename:fileName):listOfData['UrlImg'],
+          'job': listOfData['Job'],
+          'gender': listOfData['gender'],
+          'government': government,
+        });
+      }else{
+        formData = FormData.fromMap({
+          'number': listOfData['Phone number'],
+          'address': listOfData['Location'],
+          'status': listOfData['materialStatus'],
+          'lastName': listOfData['Last name'],
+          'firstName': listOfData['First name'],
+          'middleName': listOfData['Middle name'],
+          'birthDate': birthDate,
+          'bio':listOfData['aboutYouOrBio'],
+          'doctorImage': listOfData['UrlImg']!=null?await MultipartFile.fromFile(listOfData['UrlImg'].path, filename:fileName):null,
+          'job': listOfData['Job'],
+          'gender': listOfData['gender'],
+          'government': government,
+        'speciality':listOfData['speciatly'],
+        });
+      }
     }else{
       formData = FormData.fromMap({
         'number': listOfData['Phone number'],
@@ -149,15 +200,13 @@ Future<void>  getUserData()async{
         'firstName': listOfData['First name'],
         'middleName': listOfData['Middle name'],
         'birthDate': birthDate,
-        'patientImage': listOfData['UrlImg'],
+        'patientImage': listOfData['UrlImg']!=null?await MultipartFile.fromFile(listOfData['UrlImg'].path, filename:fileName):listOfData['UrlImg'],
         'job': listOfData['Job'],
         'gender': listOfData['gender'],
         'government': government,
         'nationalID': listOfData['National ID'],
       });
     }
-
-    try {
       var data = await _netWork.updateData(
           url: 'patient/5ec8a00afa6d9b35d08f0055',
           formData: formData,
@@ -165,10 +214,50 @@ Future<void>  getUserData()async{
             'Authorization': 'Bearer $_token',
           });
       print('data $data');
-      return true;
-    } catch (e) {
-      return false;
+      return data['message'];
+  }
+  Future<String> registerClinicDataAndEditing({Map<String, dynamic> listOfClinicData,bool isEditing=false}) async {
+    String government = '';
+    for (int i = 0; i < governorateList.length; i++) {
+      if (listOfClinicData['cliniclocation'].contains(governorateList[i])) {
+        government = governorateList[i];
+      }
     }
+    var data;
+    Map<String,dynamic> _clinicData={
+    'clinicName': listOfClinicData['Clinic Name'],
+    'waitingTime': listOfClinicData['watingTime'],
+    'workingDays': listOfClinicData[''],
+    'openingTime': listOfClinicData['startTime'],
+    'clossingTime': listOfClinicData['endTime'],
+    'number': [listOfClinicData['number']],
+    'government': government,
+    'address': listOfClinicData['cliniclocation'],
+    'fees': listOfClinicData['fees'],
+    'doctorID': _userId,
+    };
+    if(isEditing){
+      data = await _netWork.updateData(
+          url: 'clinic/5ec8a43dfa6d9b35d08f005a',
+          data: _clinicData,
+          headers: {
+            'Authorization': 'Bearer $_token',
+          });
+      print('data $data');
+    }else{
+      data = await _netWork.postData(
+          url: 'clinic/',
+          data: _clinicData,
+          headers: {
+            'Authorization': 'Bearer $_token',
+          });
+      print('data $data');
+
+    }
+    //'aboutYou': listOfData['aboutYouOrBio'],
+//       'lat': listOfData['lat'],
+//       'long': listOfData['long'],
+      return data['message'];
   }
 
   Future<bool> tryToLogin() async {
@@ -183,6 +272,7 @@ Future<void>  getUserData()async{
     print('${dataToSignIn['userType']}');
     print(dataToSignIn['userId']);
     _userId = dataToSignIn['userId'];
+    _userType =dataToSignIn['userType'];
     await signIn(
         password: dataToSignIn['password'],
         email: dataToSignIn['email'],);

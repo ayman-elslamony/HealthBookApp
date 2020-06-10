@@ -25,10 +25,10 @@ class ClinicData {
   ClinicData.fromJson(Map<String, dynamic> json) {
     clinicName = json['clinicName'];
     waitingTime = json['waitingTime'];
-    workingDays = json['workingDays'];
+    workingDays = json['workingDays'][0];
     openingTime = json['openingTime'];
     clossingTime = json['clossingTime'];
-    number = json['number'];
+    number = json['number'][0];
     government = json['government'];
     address = json['address'];
     fees = json['fees'];
@@ -42,7 +42,7 @@ class ClinicData {
     data['workingDays'] = this.workingDays;
     data['openingTime'] = this.openingTime;
     data['clossingTime'] = this.clossingTime;
-    data['number'] = this.number;
+    data['number'] = [this.number];
     data['government'] = this.government;
     data['address'] = this.address;
     data['fees'] = this.fees;

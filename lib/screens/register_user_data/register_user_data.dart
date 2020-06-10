@@ -74,6 +74,7 @@ class _RegisterUserDataState extends State<RegisterUserData> {
     'startTime':'',
     'endTime':'',
     'fees': '',
+    'number':'',
     'workingDays': []
   };
   Map<String, dynamic> _accountData = {
@@ -164,16 +165,17 @@ class _RegisterUserDataState extends State<RegisterUserData> {
         _accountData['materialStatus'] =_auth.userData.status;
     _isDaySelected=true;
     _isMonthSelected=true;
-    _isYearSelected=true;
+   // _isYearSelected=true;
     _isGenderSelected=true;
     _isMaterialStatus=true;
     _accountData['materialStatus']= _auth.userData.status;
     _accountData['gender']= _auth.userData.gender;
-    List<String> birth=_auth.userData.birthDate.split('/');
-    _accountData['year']= birth[2];
+    List<String> birth=_auth.userData.birthDate.split('-');
+    print(birth); print(_auth.userData.birthDate);
+
+//    _accountData['year']= birth[2];
     _accountData['month']= birth[1];
     _accountData['day']= birth[0];
-    _imageFile =File(_auth.userData.patientImage);
     if(_auth.getUserType =='doctor'){
       _isSpecialtySelected=true;
       _accountData['speciatly']= _auth.userData.speciality;
@@ -666,955 +668,8 @@ class _RegisterUserDataState extends State<RegisterUserData> {
         ),
       );
     }
-    List<Step> steps = _auth.getUserType =='doctor'
+    List<Step> steps = widget.isEditingEnable
         ? [
-      Step(
-        title: const Text('New Account'),
-        isActive: true,
-        state: StepState.indexed,
-        content: Form(
-          key: _newAcountKeyOne,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              _createTextForm(
-                controller: _firstTextEditingController,
-                  labelText: 'First name',
-                  nextFocusNode: _middleNameNode,
-                  // ignore: missing_return
-                  validator: (String val) {
-                    if (val.trim().isEmpty || val.trim().length < 2) {
-                      return 'Please enter first name';
-                    }
-                    if (val.trim().length < 2) {
-                      return 'Invalid Name';
-                    }
-                  }),
-              _createTextForm(
-                controller: _middleTextEditingController,
-                  labelText: 'Middle name',
-                  currentFocusNode: _middleNameNode,
-                  nextFocusNode: _lastNameNode,
-                  // ignore: missing_return
-                  validator: (String val) {
-                    if (val.trim().isEmpty || val.trim().length < 2) {
-                      return 'Please enter middle name';
-                    }
-                    if (val.trim().length < 2) {
-                      return 'Invalid Name';
-                    }
-                  }),
-              _createTextForm(
-                controller: _lastTextEditingController,
-                  labelText: 'Last name',
-                  currentFocusNode: _lastNameNode,
-                  nextFocusNode: _nationalIDNode,
-                  // ignore: missing_return
-                  validator: (String val) {
-                    if (val.trim().isEmpty || val.trim().length < 2) {
-                      return 'Please enter last name';
-                    }
-                    if (val.trim().length < 2) {
-                      return 'Invalid Name';
-                    }
-                  }),
-              _createTextForm(
-                  labelText: 'National ID',
-                  currentFocusNode: _nationalIDNode,
-                  textInputType: TextInputType.number,
-                  nextFocusNode: _phoneNumberNode,
-                  // ignore: missing_return
-                  validator: (String val) {
-                    if (val.trim().isEmpty || val.trim().length != 14) {
-                      return 'Please enter National ID';
-                    }
-                    if (val.trim().length != 14) {
-                      return 'Invalid National ID';
-                    }
-                  }),
-              Container(
-                padding: EdgeInsets.symmetric(vertical: 7.0),
-                height: 80,
-                child: TextFormField(
-                  controller: _phoneTextEditingController,
-                  autofocus: false,
-                  textInputAction: TextInputAction.next,
-                  focusNode: _phoneNumberNode,
-                  decoration: InputDecoration(
-                    prefix: Container(
-                      padding: EdgeInsets.all(4.0),
-                      child: Text(
-                        "+20",
-                        style: TextStyle(
-                            fontSize: 15,
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    labelText: "Phone number",
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius:
-                      BorderRadius.all(Radius.circular(10.0)),
-                      borderSide: BorderSide(
-                        color: Colors.blue,
-                      ),
-                    ),
-                    errorBorder: OutlineInputBorder(
-                      borderRadius:
-                      BorderRadius.all(Radius.circular(10.0)),
-                      borderSide: BorderSide(
-                        color: Colors.blue,
-                      ),
-                    ),
-                    focusedErrorBorder: OutlineInputBorder(
-                      borderRadius:
-                      BorderRadius.all(Radius.circular(10.0)),
-                      borderSide: BorderSide(
-                        color: Colors.blue,
-                      ),
-                    ),
-                    disabledBorder: OutlineInputBorder(
-                      borderRadius:
-                      BorderRadius.all(Radius.circular(10.0)),
-                      borderSide: BorderSide(
-                        color: Colors.blue,
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius:
-                      BorderRadius.all(Radius.circular(10.0)),
-                      borderSide: BorderSide(color: Colors.blue),
-                    ),
-                  ),
-                  keyboardType: TextInputType.phone,
-// ignore: missing_return
-                  validator: (String value) {
-                    if (value.trim().isEmpty || value.trim().length != 10) {
-                      return "Please enter Phone number!";
-                    }
-                    if (value.trim().length != 10) {
-                      return "Invalid Phone number!";
-                    }
-                  },
-                  onSaved: (value) {
-                    _accountData['Phone number'] = value.trim();
-                    _phoneNumberNode.unfocus();
-                  },
-                  onFieldSubmitted: (_) {
-                    _phoneNumberNode.unfocus();
-                    FocusScope.of(context).requestFocus(_jobNode);
-                  },
-                ),
-              ),
-              _createTextForm(
-                controller: _jobTextEditingController,
-                  labelText: 'Job',
-                  currentFocusNode: _jobNode,
-                  // ignore: missing_return
-                  validator: (_) {},
-                  isStopped: true),
-            ],
-          ),
-        ),
-      ),
-      Step(
-        isActive: true,
-        state: StepState.indexed,
-        title: const Text('complete Your Data'),
-        content: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 7),
-              child: Text(
-                'Birth Date:',
-                style: TextStyle(fontSize: 18),
-              ),
-            ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                _createBirthDate(
-                  initialValue: 10,
-                  name: _isDaySelected ? _accountData['day'] : 'Day',
-                  list: _dayList,
-                  fun: (int val) {
-                    setState(() {
-                      _accountData['day'] = val.toString();
-                      _isDaySelected = true;
-                    });
-                  },
-                ),
-                _createBirthDate(
-                    initialValue: 10,
-                    name: _isMonthSelected
-                        ? _accountData['month']
-                        : 'Month',
-                    list: _monthList,
-                    fun: (int val) {
-                      setState(() {
-                        _accountData['month'] = val.toString();
-                        _isMonthSelected = true;
-                      });
-                    }),
-                _createBirthDate(
-                    initialValue: 1990,
-                    name: _isYearSelected ? _accountData['year'] : 'Year',
-                    list: _yearList,
-                    fun: (int val) {
-                      setState(() {
-                        _accountData['year'] = val.toString();
-                        _isYearSelected = true;
-                      });
-                    }),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8.0, top: 17),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 7),
-                    child: Text(
-                      'Gender:',
-                      style: TextStyle(fontSize: 18),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: Material(
-                      shadowColor: Colors.blueAccent,
-                      elevation: 8.0,
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                      type: MaterialType.card,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.only(left: 8.0),
-                            child: Text(
-                                _isGenderSelected == false
-                                    ? 'gender'
-                                    : _accountData['gender'],
-                                style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold)),
-                          ),
-                          Container(
-                            height: 40,
-                            width: 35,
-                            child: PopupMenuButton(
-                              initialValue: 'Male',
-                              tooltip: 'Select Gender',
-                              itemBuilder: (ctx) => ['Male', 'Female']
-                                  .map((String val) =>
-                                  PopupMenuItem<String>(
-                                    value: val,
-                                    child: Text(val.toString()),
-                                  ))
-                                  .toList(),
-                              onSelected: (val) {
-                                setState(() {
-                                  _accountData['gender'] = val.trim();
-                                  _isGenderSelected = true;
-                                });
-                              },
-                              icon: Icon(
-                                Icons.keyboard_arrow_down,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 7),
-              child: Text(
-                'Social status:',
-                style: TextStyle(fontSize: 18),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Material(
-                    shadowColor: Colors.blueAccent,
-                    elevation: 8.0,
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                    type: MaterialType.card,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: FittedBox(
-                            child: Text(
-                                _isMaterialStatus == false
-                                    ? 'Social status'
-                                    : _accountData['materialStatus'],
-                                style: TextStyle(fontSize: 16)),
-                          ),
-                        ),
-                        Container(
-                          height: 40,
-                          width: 35,
-                          child: PopupMenuButton(
-                            initialValue: 'Single',
-                            tooltip: 'Select social status',
-                            itemBuilder: (ctx) => materialStatus
-                                .map(
-                                    (String val) => PopupMenuItem<String>(
-                                  value: val,
-                                  child: Text(val.toString()),
-                                ))
-                                .toList(),
-                            onSelected: (val) {
-                              setState(() {
-                                _accountData['materialStatus'] = val.trim();
-                                _isMaterialStatus = true;
-                              });
-                            },
-                            icon: Icon(
-                              Icons.keyboard_arrow_down,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            _auth.getUserType =='doctor'
-                ? Padding(
-              padding: const EdgeInsets.symmetric(vertical: 7),
-              child: Text(
-                'Speciatly:',
-                style: TextStyle(fontSize: 18),
-              ),
-            )
-                : SizedBox(),
-            _auth.getUserType =='doctor'
-                ? Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Material(
-                    shadowColor: Colors.blueAccent,
-                    elevation: 8.0,
-                    borderRadius:
-                    BorderRadius.all(Radius.circular(10)),
-                    type: MaterialType.card,
-                    child: Row(
-                      mainAxisAlignment:
-                      MainAxisAlignment.spaceEvenly,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: FittedBox(
-                            child: Text(
-                                _isSpecialtySelected == false
-                                    ? 'Speciatly'
-                                    : _accountData['speciatly'],
-                                style: TextStyle(fontSize: 16)),
-                          ),
-                        ),
-                        Container(
-                          height: 40,
-                          width: 35,
-                          child: PopupMenuButton(
-                            tooltip: 'Select Speciatly',
-                            itemBuilder: (ctx) => listSpecialty
-                                .map((String val) =>
-                                PopupMenuItem<String>(
-                                  value: val,
-                                  child: Text(val.toString()),
-                                ))
-                                .toList(),
-                            onSelected: (val) {
-                              setState(() {
-                                _accountData['speciatly'] = val.trim();
-                                _isSpecialtySelected = true;
-                              });
-                            },
-                            icon: Icon(
-                              Icons.keyboard_arrow_down,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            )
-                : SizedBox(),
-          ],
-        ),
-      ),
-      Step(
-          isActive: true,
-          state: StepState.indexed,
-          title: Text(
-              _auth.getUserType =='doctor' ? 'Address and Bio' : 'Address and about you'),
-          content: Column(
-            children: <Widget>[
-              InkWell(
-                  onTap: selectUserLocationType,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 7.0),
-                    height: 80,
-                    child: TextFormField(
-                      autofocus: false,
-                      style: TextStyle(fontSize: 15),
-                      controller: _locationTextEditingController,
-                      textInputAction: TextInputAction.done,
-                      enabled: _isEditLocationEnable,
-                      decoration: InputDecoration(
-                        suffixIcon: InkWell(
-                          onTap: selectUserLocationType,
-                          child: Icon(
-                            Icons.my_location,
-                            size: 20,
-                            color: Colors.blue,
-                          ),
-                        ),
-                        labelText: 'Location',
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius:
-                          BorderRadius.all(Radius.circular(10.0)),
-                          borderSide: BorderSide(
-                            color: Colors.blue,
-                          ),
-                        ),
-                        disabledBorder: OutlineInputBorder(
-                          borderRadius:
-                          BorderRadius.all(Radius.circular(10.0)),
-                          borderSide: BorderSide(
-                            color: Colors.blue,
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius:
-                          BorderRadius.all(Radius.circular(10.0)),
-                          borderSide: BorderSide(color: Colors.blue),
-                        ),
-                      ),
-                      keyboardType: TextInputType.text,
-                      autovalidate: true,
-// ignore: missing_return
-                      validator: (String val) {
-                        if (val.trim().isEmpty) {
-                          return 'Invalid Location';
-                        }
-                      },
-                    ),
-                  )),
-              Container(
-                padding: EdgeInsets.symmetric(vertical: 7.0),
-                height: 90,
-                child: TextFormField(
-                  controller: _aboutEditingController,
-                  autofocus: false,
-                  focusNode: null,
-                  onChanged: (val) {
-                    _accountData['aboutYouOrBio'] = val.trim();
-                  },
-                  textInputAction: TextInputAction.newline,
-                  decoration: InputDecoration(
-                    labelText: _auth.getUserType =='doctor' ? "Bio" : 'About You',
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius:
-                      BorderRadius.all(Radius.circular(10.0)),
-                      borderSide: BorderSide(
-                        color: Colors.blue,
-                      ),
-                    ),
-                    disabledBorder: OutlineInputBorder(
-                      borderRadius:
-                      BorderRadius.all(Radius.circular(10.0)),
-                      borderSide: BorderSide(
-                        color: Colors.blue,
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius:
-                      BorderRadius.all(Radius.circular(10.0)),
-                      borderSide: BorderSide(color: Colors.blue),
-                    ),
-                  ),
-                  maxLines: 6,
-                  keyboardType: TextInputType.text,
-                ),
-              ),
-            ],
-          )),
-      Step(
-          isActive: true,
-          state: _auth.getUserType =='doctor' ? StepState.indexed : StepState.complete,
-          title: const Text('Profile picture'),
-          content: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              InkWell(
-                onTap: () {
-                  _openImagePicker();
-                },
-                child: Container(
-                  padding: EdgeInsets.all(10.0),
-                  height: 40,
-                  width: 150,
-                  decoration: BoxDecoration(
-                      color: Colors.blue,
-                      borderRadius: BorderRadius.circular(10)),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      Text(
-                        "Select Image",
-                        style: Theme.of(context)
-                            .textTheme
-                            .display1
-                            .copyWith(color: Colors.white, fontSize: 17),
-                      ),
-                      Icon(
-                        Icons.camera_alt,
-                        size: 20,
-                        color: Colors.white,
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              Container(
-                width: 100,
-                height: 100,
-                child: CircleAvatar(
-                  backgroundImage: _imageFile == null
-                      ? AssetImage('assets/user.png')
-                      : FileImage(_imageFile),
-                  backgroundColor: Colors.blue,
-                ),
-              ),
-            ],
-          )),
-      Step(
-          isActive: true,
-          state: StepState.indexed,
-          title: const Text('Clinic Data'),
-          content: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              _createTextForm(
-                labelText: 'Clinic Name',
-                nextFocusNode: null,
-                isStopped: true,
-                currentFocusNode: null,
-                validator: (_) {},
-              ),
-              InkWell(
-                  onTap: _selectClinicLocationType,
-                  child: Container(
-                    padding: EdgeInsets.only(top: 7.0),
-                    height: 80,
-                    child: TextFormField(
-                      autofocus: false,
-                      style: TextStyle(fontSize: 15),
-                      controller: _clinicLocationTextEditingController,
-                      textInputAction: TextInputAction.done,
-                      enabled: _isClinicLocationEnable,
-                      onFieldSubmitted: (_) {
-                        _clinicLocationNode.unfocus();
-                        FocusScope.of(context).requestFocus(_hourNode);
-                      },
-                      decoration: InputDecoration(
-                        suffixIcon: InkWell(
-                          onTap: _selectClinicLocationType,
-                          child: Icon(
-                            Icons.my_location,
-                            size: 20,
-                            color: Colors.blue,
-                          ),
-                        ),
-                        labelText: 'Clinic Location',
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius:
-                          BorderRadius.all(Radius.circular(10.0)),
-                          borderSide: BorderSide(
-                            color: Colors.blue,
-                          ),
-                        ),
-                        disabledBorder: OutlineInputBorder(
-                          borderRadius:
-                          BorderRadius.all(Radius.circular(10.0)),
-                          borderSide: BorderSide(
-                            color: Colors.blue,
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius:
-                          BorderRadius.all(Radius.circular(10.0)),
-                          borderSide: BorderSide(color: Colors.blue),
-                        ),
-                      ),
-                      keyboardType: TextInputType.text,
-                    ),
-                  )),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                child: Text(
-                  'Reservation in all days start: ',
-                  style: TextStyle(fontSize: 20, color: Colors.blue),
-                ),
-              ),
-              SizedBox(
-                height: 18.0,
-              ),
-              Row(
-                children: <Widget>[
-                  Text(
-                    ' From : ',
-                    style: TextStyle(fontSize: 18, color: Colors.blue),
-                  ),
-                  TimePickerSpinner(
-                    is24HourMode: false,
-                    normalTextStyle:
-                    TextStyle(fontSize: 18, color: Colors.deepOrange),
-                    highlightedTextStyle:
-                    TextStyle(fontSize: 18, color: Colors.blue),
-                    spacing: 30,
-                    itemHeight: 40,
-                    isForce2Digits: true,
-                    onTimeChange: (time) {
-                      _clinicData['startTime']=time.toIso8601String();
-                      setState(() {
-                        // _dateTime = time;
-                      });
-                    },
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 18.0,
-              ),
-              Row(
-                children: <Widget>[
-                  Text(
-                    ' To:      ',
-                    style: TextStyle(fontSize: 18, color: Colors.blue),
-                  ),
-                  TimePickerSpinner(
-                    is24HourMode: false,
-                    normalTextStyle:
-                    TextStyle(fontSize: 18, color: Colors.deepOrange),
-                    highlightedTextStyle:
-                    TextStyle(fontSize: 18, color: Colors.blue),
-                    spacing: 30,
-                    itemHeight: 40,
-                    isForce2Digits: true,
-                    onTimeChange: (time) {
-
-                      _clinicData['endTime']=time.toIso8601String();
-//                            setState(() {
-//                              // _dateTime = time;
-//                            });
-                    },
-                  ),
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                child: Text(
-                  'Wating Time for each Patient: ',
-                  style: TextStyle(fontSize: 20, color: Colors.blue),
-                ),
-              ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Container(
-                    height: 50,
-                    width: 50,
-                    child: TextFormField(
-                      autofocus: false,
-                      focusNode: _hourNode,
-                      textAlign: TextAlign.center,
-                      keyboardType: TextInputType.number,
-                      textInputAction: TextInputAction.next,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.white,
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius:
-                          BorderRadius.all(Radius.circular(10.0)),
-                          borderSide: BorderSide(
-                            color: Colors.blue,
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius:
-                          BorderRadius.all(Radius.circular(10.0)),
-                          borderSide: BorderSide(color: Colors.blue),
-                        ),
-                        errorStyle: TextStyle(color: Colors.blue),
-                        errorBorder: OutlineInputBorder(
-                          borderRadius:
-                          BorderRadius.all(Radius.circular(10.0)),
-                          borderSide: BorderSide(color: Colors.blue),
-                        ),
-                        focusedErrorBorder: OutlineInputBorder(
-                          borderRadius:
-                          BorderRadius.all(Radius.circular(10.0)),
-                          borderSide: BorderSide(color: Colors.blue),
-                        ),
-                      ),
-                      onChanged: (val) {
-                        _watingTimeHour = val.trim();
-                        if (val.trim().length == 1) {
-                          _hourNode.unfocus();
-                          FocusScope.of(context).requestFocus(_minNode);
-                        }
-                      },
-                      onFieldSubmitted: (value) {
-                        _hourNode.unfocus();
-                        FocusScope.of(context).requestFocus(_minNode);
-                      },
-                    ),
-                  ),
-                  Text(
-                    ' Hour : ',
-                    style: TextStyle(fontSize: 18, color: Colors.blue),
-                  ),
-                  Container(
-                    height: 50,
-                    width: 50,
-                    child: TextFormField(
-                      autofocus: false,
-                      focusNode: _minNode,
-                      textAlign: TextAlign.center,
-                      keyboardType: TextInputType.number,
-                      textInputAction: TextInputAction.done,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.white,
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius:
-                          BorderRadius.all(Radius.circular(10.0)),
-                          borderSide: BorderSide(
-                            color: Colors.blue,
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius:
-                          BorderRadius.all(Radius.circular(10.0)),
-                          borderSide: BorderSide(color: Colors.blue),
-                        ),
-                        errorStyle: TextStyle(color: Colors.blue),
-                        errorBorder: OutlineInputBorder(
-                          borderRadius:
-                          BorderRadius.all(Radius.circular(10.0)),
-                          borderSide: BorderSide(color: Colors.blue),
-                        ),
-                        focusedErrorBorder: OutlineInputBorder(
-                          borderRadius:
-                          BorderRadius.all(Radius.circular(10.0)),
-                          borderSide: BorderSide(color: Colors.blue),
-                        ),
-                      ),
-                      onChanged: (val) {
-                        _wattingTimeMin = val.trim();
-                        if (val.trim().length == 2) {
-                          _minNode.unfocus();
-                          FocusScope.of(context).requestFocus(_fees);
-                        }
-                      },
-                      onFieldSubmitted: (value) {
-                        _minNode.unfocus();
-                        FocusScope.of(context).requestFocus(_fees);
-                      },
-                    ),
-                  ),
-                  Text(
-                    ' Minute ',
-                    style: TextStyle(fontSize: 18, color: Colors.blue),
-                  ),
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4.0),
-                child: Row(
-                  children: <Widget>[
-                    Text(
-                      'Fees: ',
-                      style: TextStyle(fontSize: 18, color: Colors.blue),
-                    ),
-                    SizedBox(
-                      width: 43,
-                    ),
-                    Container(
-                      height: 50,
-                      width: 75,
-                      child: TextFormField(
-                        autofocus: false,
-                        focusNode: _fees,
-                        textAlign: TextAlign.center,
-                        keyboardType: TextInputType.number,
-                        textInputAction: TextInputAction.done,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.white,
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius:
-                            BorderRadius.all(Radius.circular(10.0)),
-                            borderSide: BorderSide(
-                              color: Colors.blue,
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius:
-                            BorderRadius.all(Radius.circular(10.0)),
-                            borderSide: BorderSide(color: Colors.blue),
-                          ),
-                          errorStyle: TextStyle(color: Colors.blue),
-                          errorBorder: OutlineInputBorder(
-                            borderRadius:
-                            BorderRadius.all(Radius.circular(10.0)),
-                            borderSide: BorderSide(color: Colors.blue),
-                          ),
-                          focusedErrorBorder: OutlineInputBorder(
-                            borderRadius:
-                            BorderRadius.all(Radius.circular(10.0)),
-                            borderSide: BorderSide(color: Colors.blue),
-                          ),
-                        ),
-                        onChanged: (val) {
-                          _clinicData['fees'] = val.trim();
-                        },
-                        onFieldSubmitted: (value) {
-                          _minNode.unfocus();
-                        },
-                      ),
-                    ),
-                    Text(
-                      '  EGP ',
-                      style: TextStyle(fontSize: 18, color: Colors.blue),
-                    )
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 7,
-              ),
-              Material(
-                shadowColor: Colors.blueAccent,
-                elevation: 8.0,
-                borderRadius: BorderRadius.all(Radius.circular(10)),
-                type: MaterialType.card,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    InkWell(
-                        onTap: () {
-                          setState(() {
-                            _showWorkingDays = !_showWorkingDays;
-                          });
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment:
-                            MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              SizedBox(),
-                              Text("Working Days",
-                                  style: TextStyle(
-                                    color: Colors.blue,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  )),
-                              Icon(
-                                _showWorkingDays
-                                    ? Icons.keyboard_arrow_up
-                                    : Icons.keyboard_arrow_down,
-                                size: 25,
-                              ),
-                            ],
-                          ),
-                        )),
-                    _showWorkingDays
-                        ? Divider(
-                      color: Colors.grey,
-                      height: 4,
-                    )
-                        : SizedBox(),
-                    _showWorkingDays
-                        ? Padding(
-                        padding: const EdgeInsets.only(
-                            bottom: 8.0,
-                            left: 15,
-                            right: 15,
-                            top: 6.0),
-                        child: Container(
-                          height: 135,
-                          //width: double.infinity,
-                          child: GridView.builder(
-                              itemCount: workingDays.length,
-                              gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2,
-                                  childAspectRatio: 2.5,
-                                  crossAxisSpacing: 10,
-                                  mainAxisSpacing: 10),
-                              itemBuilder: (ctx, index) => InkWell(
-                                onTap: () {
-                                  getDays(index);
-                                  print(_selectedWorkingDays);
-                                },
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                      color: _clicked[index]
-                                          ? Colors.grey
-                                          : Colors.blue,
-                                      borderRadius:
-                                      BorderRadius.circular(
-                                          10)),
-                                  child: Center(
-                                    child: Text(
-                                      workingDays[index],
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 15),
-                                    ),
-                                  ),
-                                ),
-                              )),
-                        ))
-                        : SizedBox(),
-                  ],
-                ),
-              )
-            ],
-          ))
-    ]
-        : widget.isEditingEnable?
-    [
       Step(
         title: const Text('New Account'),
         isActive: true,
@@ -2138,15 +1193,964 @@ class _RegisterUserDataState extends State<RegisterUserData> {
               Container(
                 width: 100,
                 height: 100,
-                child: CircleAvatar(
-                  backgroundImage: _imageFile == null
-                      ? AssetImage('assets/user.png')
-                      : FileImage(_imageFile),
-                  backgroundColor: Colors.blue,
+                child: ClipRRect(
+                  //backgroundColor: Colors.white,
+                  //backgroundImage:
+                  child:  widget.isEditingEnable &&_imageFile ==null?
+                  _auth.getUserType=='patient'? FadeInImage.assetNetwork(placeholder: 'assets/user.png',image: _auth.userData.patientImage):FadeInImage.assetNetwork(placeholder: 'assets/user.png',image: _auth.userData.doctorImage)
+                      :_imageFile==null?Image.asset('assets/user.png'):Image.file(_imageFile),
                 ),
               ),
             ],
           )),
+    ]
+        : _auth.getUserType =='doctor'?
+    [
+      Step(
+        title: const Text('New Account'),
+        isActive: true,
+        state: StepState.indexed,
+        content: Form(
+          key: _newAcountKeyOne,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              _createTextForm(
+                  controller: _firstTextEditingController,
+                  labelText: 'First name',
+                  nextFocusNode: _middleNameNode,
+                  // ignore: missing_return
+                  validator: (String val) {
+                    if (val.trim().isEmpty || val.trim().length < 2) {
+                      return 'Please enter first name';
+                    }
+                    if (val.trim().length < 2) {
+                      return 'Invalid Name';
+                    }
+                  }),
+              _createTextForm(
+                  controller: _middleTextEditingController,
+                  labelText: 'Middle name',
+                  currentFocusNode: _middleNameNode,
+                  nextFocusNode: _lastNameNode,
+                  // ignore: missing_return
+                  validator: (String val) {
+                    if (val.trim().isEmpty || val.trim().length < 2) {
+                      return 'Please enter middle name';
+                    }
+                    if (val.trim().length < 2) {
+                      return 'Invalid Name';
+                    }
+                  }),
+              _createTextForm(
+                  controller: _lastTextEditingController,
+                  labelText: 'Last name',
+                  currentFocusNode: _lastNameNode,
+                  nextFocusNode: _nationalIDNode,
+                  // ignore: missing_return
+                  validator: (String val) {
+                    if (val.trim().isEmpty || val.trim().length < 2) {
+                      return 'Please enter last name';
+                    }
+                    if (val.trim().length < 2) {
+                      return 'Invalid Name';
+                    }
+                  }),
+              _createTextForm(
+                  labelText: 'National ID',
+                  currentFocusNode: _nationalIDNode,
+                  textInputType: TextInputType.number,
+                  nextFocusNode: _phoneNumberNode,
+                  // ignore: missing_return
+                  validator: (String val) {
+                    if (val.trim().isEmpty || val.trim().length != 14) {
+                      return 'Please enter National ID';
+                    }
+                    if (val.trim().length != 14) {
+                      return 'Invalid National ID';
+                    }
+                  }),
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 7.0),
+                height: 80,
+                child: TextFormField(
+                  controller: _phoneTextEditingController,
+                  autofocus: false,
+                  textInputAction: TextInputAction.next,
+                  focusNode: _phoneNumberNode,
+                  decoration: InputDecoration(
+                    prefix: Container(
+                      padding: EdgeInsets.all(4.0),
+                      child: Text(
+                        "+20",
+                        style: TextStyle(
+                            fontSize: 15,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    labelText: "Phone number",
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius:
+                      BorderRadius.all(Radius.circular(10.0)),
+                      borderSide: BorderSide(
+                        color: Colors.blue,
+                      ),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderRadius:
+                      BorderRadius.all(Radius.circular(10.0)),
+                      borderSide: BorderSide(
+                        color: Colors.blue,
+                      ),
+                    ),
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderRadius:
+                      BorderRadius.all(Radius.circular(10.0)),
+                      borderSide: BorderSide(
+                        color: Colors.blue,
+                      ),
+                    ),
+                    disabledBorder: OutlineInputBorder(
+                      borderRadius:
+                      BorderRadius.all(Radius.circular(10.0)),
+                      borderSide: BorderSide(
+                        color: Colors.blue,
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius:
+                      BorderRadius.all(Radius.circular(10.0)),
+                      borderSide: BorderSide(color: Colors.blue),
+                    ),
+                  ),
+                  keyboardType: TextInputType.phone,
+// ignore: missing_return
+                  validator: (String value) {
+                    if (value.trim().isEmpty || value.trim().length != 10) {
+                      return "Please enter Phone number!";
+                    }
+                    if (value.trim().length != 10) {
+                      return "Invalid Phone number!";
+                    }
+                  },
+                  onSaved: (value) {
+                    _accountData['Phone number'] = value.trim();
+                    _phoneNumberNode.unfocus();
+                  },
+                  onFieldSubmitted: (_) {
+                    _phoneNumberNode.unfocus();
+                    FocusScope.of(context).requestFocus(_jobNode);
+                  },
+                ),
+              ),
+              _createTextForm(
+                  controller: _jobTextEditingController,
+                  labelText: 'Job',
+                  currentFocusNode: _jobNode,
+                  // ignore: missing_return
+                  validator: (_) {},
+                  isStopped: true),
+            ],
+          ),
+        ),
+      ),
+      Step(
+        isActive: true,
+        state: StepState.indexed,
+        title: const Text('complete Your Data'),
+        content: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 7),
+              child: Text(
+                'Birth Date:',
+                style: TextStyle(fontSize: 18),
+              ),
+            ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                _createBirthDate(
+                  initialValue: 10,
+                  name: _isDaySelected ? _accountData['day'] : 'Day',
+                  list: _dayList,
+                  fun: (int val) {
+                    setState(() {
+                      _accountData['day'] = val.toString();
+                      _isDaySelected = true;
+                    });
+                  },
+                ),
+                _createBirthDate(
+                    initialValue: 10,
+                    name: _isMonthSelected
+                        ? _accountData['month']
+                        : 'Month',
+                    list: _monthList,
+                    fun: (int val) {
+                      setState(() {
+                        _accountData['month'] = val.toString();
+                        _isMonthSelected = true;
+                      });
+                    }),
+                _createBirthDate(
+                    initialValue: 1990,
+                    name: _isYearSelected ? _accountData['year'] : 'Year',
+                    list: _yearList,
+                    fun: (int val) {
+                      setState(() {
+                        _accountData['year'] = val.toString();
+                        _isYearSelected = true;
+                      });
+                    }),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8.0, top: 17),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 7),
+                    child: Text(
+                      'Gender:',
+                      style: TextStyle(fontSize: 18),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Material(
+                      shadowColor: Colors.blueAccent,
+                      elevation: 8.0,
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                      type: MaterialType.card,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: Text(
+                                _isGenderSelected == false
+                                    ? 'gender'
+                                    : _accountData['gender'],
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold)),
+                          ),
+                          Container(
+                            height: 40,
+                            width: 35,
+                            child: PopupMenuButton(
+                              initialValue: 'Male',
+                              tooltip: 'Select Gender',
+                              itemBuilder: (ctx) => ['Male', 'Female']
+                                  .map((String val) =>
+                                  PopupMenuItem<String>(
+                                    value: val,
+                                    child: Text(val.toString()),
+                                  ))
+                                  .toList(),
+                              onSelected: (val) {
+                                setState(() {
+                                  _accountData['gender'] = val.trim();
+                                  _isGenderSelected = true;
+                                });
+                              },
+                              icon: Icon(
+                                Icons.keyboard_arrow_down,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 7),
+              child: Text(
+                'Social status:',
+                style: TextStyle(fontSize: 18),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Material(
+                    shadowColor: Colors.blueAccent,
+                    elevation: 8.0,
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                    type: MaterialType.card,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: FittedBox(
+                            child: Text(
+                                _isMaterialStatus == false
+                                    ? 'Social status'
+                                    : _accountData['materialStatus'],
+                                style: TextStyle(fontSize: 16)),
+                          ),
+                        ),
+                        Container(
+                          height: 40,
+                          width: 35,
+                          child: PopupMenuButton(
+                            initialValue: 'Single',
+                            tooltip: 'Select social status',
+                            itemBuilder: (ctx) => materialStatus
+                                .map(
+                                    (String val) => PopupMenuItem<String>(
+                                  value: val,
+                                  child: Text(val.toString()),
+                                ))
+                                .toList(),
+                            onSelected: (val) {
+                              setState(() {
+                                _accountData['materialStatus'] = val.trim();
+                                _isMaterialStatus = true;
+                              });
+                            },
+                            icon: Icon(
+                              Icons.keyboard_arrow_down,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            _auth.getUserType =='doctor'
+                ? Padding(
+              padding: const EdgeInsets.symmetric(vertical: 7),
+              child: Text(
+                'Speciatly:',
+                style: TextStyle(fontSize: 18),
+              ),
+            )
+                : SizedBox(),
+            _auth.getUserType =='doctor'
+                ? Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Material(
+                    shadowColor: Colors.blueAccent,
+                    elevation: 8.0,
+                    borderRadius:
+                    BorderRadius.all(Radius.circular(10)),
+                    type: MaterialType.card,
+                    child: Row(
+                      mainAxisAlignment:
+                      MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: FittedBox(
+                            child: Text(
+                                _isSpecialtySelected == false
+                                    ? 'Speciatly'
+                                    : _accountData['speciatly'],
+                                style: TextStyle(fontSize: 16)),
+                          ),
+                        ),
+                        Container(
+                          height: 40,
+                          width: 35,
+                          child: PopupMenuButton(
+                            tooltip: 'Select Speciatly',
+                            itemBuilder: (ctx) => listSpecialty
+                                .map((String val) =>
+                                PopupMenuItem<String>(
+                                  value: val,
+                                  child: Text(val.toString()),
+                                ))
+                                .toList(),
+                            onSelected: (val) {
+                              setState(() {
+                                _accountData['speciatly'] = val.trim();
+                                _isSpecialtySelected = true;
+                              });
+                            },
+                            icon: Icon(
+                              Icons.keyboard_arrow_down,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            )
+                : SizedBox(),
+          ],
+        ),
+      ),
+      Step(
+          isActive: true,
+          state: StepState.indexed,
+          title: Text(
+              _auth.getUserType =='doctor' ? 'Address and Bio' : 'Address and about you'),
+          content: Column(
+            children: <Widget>[
+              InkWell(
+                  onTap: selectUserLocationType,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 7.0),
+                    height: 80,
+                    child: TextFormField(
+                      autofocus: false,
+                      style: TextStyle(fontSize: 15),
+                      controller: _locationTextEditingController,
+                      textInputAction: TextInputAction.done,
+                      enabled: _isEditLocationEnable,
+                      decoration: InputDecoration(
+                        suffixIcon: InkWell(
+                          onTap: selectUserLocationType,
+                          child: Icon(
+                            Icons.my_location,
+                            size: 20,
+                            color: Colors.blue,
+                          ),
+                        ),
+                        labelText: 'Location',
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(10.0)),
+                          borderSide: BorderSide(
+                            color: Colors.blue,
+                          ),
+                        ),
+                        disabledBorder: OutlineInputBorder(
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(10.0)),
+                          borderSide: BorderSide(
+                            color: Colors.blue,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(10.0)),
+                          borderSide: BorderSide(color: Colors.blue),
+                        ),
+                      ),
+                      keyboardType: TextInputType.text,
+                      autovalidate: true,
+// ignore: missing_return
+                      validator: (String val) {
+                        if (val.trim().isEmpty) {
+                          return 'Invalid Location';
+                        }
+                      },
+                    ),
+                  )),
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 7.0),
+                height: 90,
+                child: TextFormField(
+                  controller: _aboutEditingController,
+                  autofocus: false,
+                  focusNode: null,
+                  onChanged: (val) {
+                    _accountData['aboutYouOrBio'] = val.trim();
+                  },
+                  textInputAction: TextInputAction.newline,
+                  decoration: InputDecoration(
+                    labelText: _auth.getUserType =='doctor' ? "Bio" : 'About You',
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius:
+                      BorderRadius.all(Radius.circular(10.0)),
+                      borderSide: BorderSide(
+                        color: Colors.blue,
+                      ),
+                    ),
+                    disabledBorder: OutlineInputBorder(
+                      borderRadius:
+                      BorderRadius.all(Radius.circular(10.0)),
+                      borderSide: BorderSide(
+                        color: Colors.blue,
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius:
+                      BorderRadius.all(Radius.circular(10.0)),
+                      borderSide: BorderSide(color: Colors.blue),
+                    ),
+                  ),
+                  maxLines: 6,
+                  keyboardType: TextInputType.text,
+                ),
+              ),
+            ],
+          )),
+      Step(
+          isActive: true,
+          state: _auth.getUserType =='doctor' ? StepState.indexed : StepState.complete,
+          title: const Text('Profile picture'),
+          content: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              InkWell(
+                onTap: () {
+                  _openImagePicker();
+                },
+                child: Container(
+                  padding: EdgeInsets.all(10.0),
+                  height: 40,
+                  width: 150,
+                  decoration: BoxDecoration(
+                      color: Colors.blue,
+                      borderRadius: BorderRadius.circular(10)),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      Text(
+                        "Select Image",
+                        style: Theme.of(context)
+                            .textTheme
+                            .display1
+                            .copyWith(color: Colors.white, fontSize: 17),
+                      ),
+                      Icon(
+                        Icons.camera_alt,
+                        size: 20,
+                        color: Colors.white,
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              Container(
+                width: 100,
+                height: 100,
+                child: ClipRRect(
+                  //backgroundColor: Colors.white,
+                  //backgroundImage:
+                  child:  widget.isEditingEnable?
+                  _auth.getUserType=='patient'? FadeInImage.assetNetwork(placeholder: 'assets/user.png',image: _auth.userData.patientImage):FadeInImage.assetNetwork(placeholder: 'assets/user.png',image: _auth.userData.doctorImage)
+                      :_imageFile==null?Image.asset('assets/user.png'):Image.file(_imageFile),
+                ),
+              ),
+            ],
+          )),
+      Step(
+          isActive: true,
+          state: StepState.indexed,
+          title: const Text('Clinic Data'),
+          content: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              _createTextForm(
+                labelText: 'Clinic Name',
+                nextFocusNode: null,
+                isStopped: true,
+                currentFocusNode: null,
+                validator: (_) {},
+              ),
+              InkWell(
+                  onTap: _selectClinicLocationType,
+                  child: Container(
+                    padding: EdgeInsets.only(top: 7.0),
+                    height: 80,
+                    child: TextFormField(
+                      autofocus: false,
+                      style: TextStyle(fontSize: 15),
+                      controller: _clinicLocationTextEditingController,
+                      textInputAction: TextInputAction.done,
+                      enabled: _isClinicLocationEnable,
+                      onFieldSubmitted: (_) {
+                        _clinicLocationNode.unfocus();
+                        FocusScope.of(context).requestFocus(_hourNode);
+                      },
+                      decoration: InputDecoration(
+                        suffixIcon: InkWell(
+                          onTap: _selectClinicLocationType,
+                          child: Icon(
+                            Icons.my_location,
+                            size: 20,
+                            color: Colors.blue,
+                          ),
+                        ),
+                        labelText: 'Clinic Location',
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(10.0)),
+                          borderSide: BorderSide(
+                            color: Colors.blue,
+                          ),
+                        ),
+                        disabledBorder: OutlineInputBorder(
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(10.0)),
+                          borderSide: BorderSide(
+                            color: Colors.blue,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(10.0)),
+                          borderSide: BorderSide(color: Colors.blue),
+                        ),
+                      ),
+                      keyboardType: TextInputType.text,
+                    ),
+                  )),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Text(
+                  'Reservation in all days start: ',
+                  style: TextStyle(fontSize: 20, color: Colors.blue),
+                ),
+              ),
+              SizedBox(
+                height: 18.0,
+              ),
+              Row(
+                children: <Widget>[
+                  Text(
+                    ' From : ',
+                    style: TextStyle(fontSize: 18, color: Colors.blue),
+                  ),
+                  TimePickerSpinner(
+                    is24HourMode: false,
+                    normalTextStyle:
+                    TextStyle(fontSize: 18, color: Colors.deepOrange),
+                    highlightedTextStyle:
+                    TextStyle(fontSize: 18, color: Colors.blue),
+                    spacing: 30,
+                    itemHeight: 40,
+                    isForce2Digits: true,
+                    onTimeChange: (time) {
+                      _clinicData['startTime']=time.toIso8601String();
+                      setState(() {
+                        // _dateTime = time;
+                      });
+                    },
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 18.0,
+              ),
+              Row(
+                children: <Widget>[
+                  Text(
+                    ' To:      ',
+                    style: TextStyle(fontSize: 18, color: Colors.blue),
+                  ),
+                  TimePickerSpinner(
+                    is24HourMode: false,
+                    normalTextStyle:
+                    TextStyle(fontSize: 18, color: Colors.deepOrange),
+                    highlightedTextStyle:
+                    TextStyle(fontSize: 18, color: Colors.blue),
+                    spacing: 30,
+                    itemHeight: 40,
+                    isForce2Digits: true,
+                    onTimeChange: (time) {
+
+                      _clinicData['endTime']=time.toIso8601String();
+//                            setState(() {
+//                              // _dateTime = time;
+//                            });
+                    },
+                  ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Text(
+                  'Wating Time for each Patient: ',
+                  style: TextStyle(fontSize: 20, color: Colors.blue),
+                ),
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                    height: 50,
+                    width: 50,
+                    child: TextFormField(
+                      autofocus: false,
+                      focusNode: _hourNode,
+                      textAlign: TextAlign.center,
+                      keyboardType: TextInputType.number,
+                      textInputAction: TextInputAction.next,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(10.0)),
+                          borderSide: BorderSide(
+                            color: Colors.blue,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(10.0)),
+                          borderSide: BorderSide(color: Colors.blue),
+                        ),
+                        errorStyle: TextStyle(color: Colors.blue),
+                        errorBorder: OutlineInputBorder(
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(10.0)),
+                          borderSide: BorderSide(color: Colors.blue),
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(10.0)),
+                          borderSide: BorderSide(color: Colors.blue),
+                        ),
+                      ),
+                      onChanged: (val) {
+                        _watingTimeHour = val.trim();
+                        if (val.trim().length == 1) {
+                          _hourNode.unfocus();
+                          FocusScope.of(context).requestFocus(_minNode);
+                        }
+                      },
+                      onFieldSubmitted: (value) {
+                        _hourNode.unfocus();
+                        FocusScope.of(context).requestFocus(_minNode);
+                      },
+                    ),
+                  ),
+                  Text(
+                    ' Hour : ',
+                    style: TextStyle(fontSize: 18, color: Colors.blue),
+                  ),
+                  Container(
+                    height: 50,
+                    width: 50,
+                    child: TextFormField(
+                      autofocus: false,
+                      focusNode: _minNode,
+                      textAlign: TextAlign.center,
+                      keyboardType: TextInputType.number,
+                      textInputAction: TextInputAction.done,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(10.0)),
+                          borderSide: BorderSide(
+                            color: Colors.blue,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(10.0)),
+                          borderSide: BorderSide(color: Colors.blue),
+                        ),
+                        errorStyle: TextStyle(color: Colors.blue),
+                        errorBorder: OutlineInputBorder(
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(10.0)),
+                          borderSide: BorderSide(color: Colors.blue),
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(10.0)),
+                          borderSide: BorderSide(color: Colors.blue),
+                        ),
+                      ),
+                      onChanged: (val) {
+                        _wattingTimeMin = val.trim();
+                        if (val.trim().length == 2) {
+                          _minNode.unfocus();
+                          FocusScope.of(context).requestFocus(_fees);
+                        }
+                      },
+                      onFieldSubmitted: (value) {
+                        _minNode.unfocus();
+                        FocusScope.of(context).requestFocus(_fees);
+                      },
+                    ),
+                  ),
+                  Text(
+                    ' Minute ',
+                    style: TextStyle(fontSize: 18, color: Colors.blue),
+                  ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                child: Row(
+                  children: <Widget>[
+                    Text(
+                      'Fees: ',
+                      style: TextStyle(fontSize: 18, color: Colors.blue),
+                    ),
+                    SizedBox(
+                      width: 43,
+                    ),
+                    Container(
+                      height: 50,
+                      width: 75,
+                      child: TextFormField(
+                        autofocus: false,
+                        focusNode: _fees,
+                        textAlign: TextAlign.center,
+                        keyboardType: TextInputType.number,
+                        textInputAction: TextInputAction.done,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Colors.white,
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius:
+                            BorderRadius.all(Radius.circular(10.0)),
+                            borderSide: BorderSide(
+                              color: Colors.blue,
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius:
+                            BorderRadius.all(Radius.circular(10.0)),
+                            borderSide: BorderSide(color: Colors.blue),
+                          ),
+                          errorStyle: TextStyle(color: Colors.blue),
+                          errorBorder: OutlineInputBorder(
+                            borderRadius:
+                            BorderRadius.all(Radius.circular(10.0)),
+                            borderSide: BorderSide(color: Colors.blue),
+                          ),
+                          focusedErrorBorder: OutlineInputBorder(
+                            borderRadius:
+                            BorderRadius.all(Radius.circular(10.0)),
+                            borderSide: BorderSide(color: Colors.blue),
+                          ),
+                        ),
+                        onChanged: (val) {
+                          _clinicData['fees'] = val.trim();
+                        },
+                        onFieldSubmitted: (value) {
+                          _minNode.unfocus();
+                        },
+                      ),
+                    ),
+                    Text(
+                      '  EGP ',
+                      style: TextStyle(fontSize: 18, color: Colors.blue),
+                    )
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 7,
+              ),
+              Material(
+                shadowColor: Colors.blueAccent,
+                elevation: 8.0,
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+                type: MaterialType.card,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    InkWell(
+                        onTap: () {
+                          setState(() {
+                            _showWorkingDays = !_showWorkingDays;
+                          });
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment:
+                            MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              SizedBox(),
+                              Text("Working Days",
+                                  style: TextStyle(
+                                    color: Colors.blue,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  )),
+                              Icon(
+                                _showWorkingDays
+                                    ? Icons.keyboard_arrow_up
+                                    : Icons.keyboard_arrow_down,
+                                size: 25,
+                              ),
+                            ],
+                          ),
+                        )),
+                    _showWorkingDays
+                        ? Divider(
+                      color: Colors.grey,
+                      height: 4,
+                    )
+                        : SizedBox(),
+                    _showWorkingDays
+                        ? Padding(
+                        padding: const EdgeInsets.only(
+                            bottom: 8.0,
+                            left: 15,
+                            right: 15,
+                            top: 6.0),
+                        child: Container(
+                          height: 135,
+                          //width: double.infinity,
+                          child: GridView.builder(
+                              itemCount: workingDays.length,
+                              gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  childAspectRatio: 2.5,
+                                  crossAxisSpacing: 10,
+                                  mainAxisSpacing: 10),
+                              itemBuilder: (ctx, index) => InkWell(
+                                onTap: () {
+                                  getDays(index);
+                                  print(_selectedWorkingDays);
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      color: _clicked[index]
+                                          ? Colors.grey
+                                          : Colors.blue,
+                                      borderRadius:
+                                      BorderRadius.circular(
+                                          10)),
+                                  child: Center(
+                                    child: Text(
+                                      workingDays[index],
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 15),
+                                    ),
+                                  ),
+                                ),
+                              )),
+                        ))
+                        : SizedBox(),
+                  ],
+                ),
+              )
+            ],
+          ))
     ]:[
       Step(
         title: const Text('New Account'),
@@ -2685,11 +2689,12 @@ class _RegisterUserDataState extends State<RegisterUserData> {
               Container(
                 width: 100,
                 height: 100,
-                child: CircleAvatar(
-                  backgroundImage: _imageFile == null
-                      ? AssetImage('assets/user.png')
-                      : FileImage(_imageFile),
-                  backgroundColor: Colors.blue,
+                child: ClipRRect(
+                  //backgroundColor: Colors.white,
+                  //backgroundImage:
+                  child:  widget.isEditingEnable?
+                  _auth.getUserType=='patient'? FadeInImage.assetNetwork(placeholder: 'assets/user.png',image: _auth.userData.patientImage):FadeInImage.assetNetwork(placeholder: 'assets/user.png',image: _auth.userData.doctorImage)
+                      :_imageFile==null?Image.asset('assets/user.png'):Image.file(_imageFile),
                 ),
               ),
             ],
@@ -2715,7 +2720,7 @@ class _RegisterUserDataState extends State<RegisterUserData> {
           _accountData['materialStatus'] == '') {
         Toast.show("Please complete your Data", context,
             duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-        if (_auth.getUserType =='doctor') {
+        if (_auth.getUserType =='doctor' &&widget.isEditingEnable ==false) {
           if (_accountData['speciatly'] == '' ||
               _clinicData['Clinic Name'] == '' ||
               _clinicData['cliniclocation'] == '' ||
@@ -2738,8 +2743,8 @@ class _RegisterUserDataState extends State<RegisterUserData> {
         if(widget.isEditingEnable){
           _accountData['National ID'] ='';
         }
-        bool isScuess = await Provider.of<Auth>(context,listen: false).registerUserData(listOfData: _accountData);
-        if(isScuess){
+        String isScuess = await Provider.of<Auth>(context,listen: false).registerUserDataAndEditing(listOfData: _accountData);
+        if(isScuess == ''){
           setState(() {
             _isLoading =false;
           });
@@ -2890,7 +2895,11 @@ class _RegisterUserDataState extends State<RegisterUserData> {
       }
       if (currentStep == 3) {
         print('dxvb');
-        _auth.getUserType !='doctor' ? verifyUserData() : _incrementStep();
+        if(widget.isEditingEnable){
+         verifyUserData();
+        }else {
+          _auth.getUserType != 'doctor' ? verifyUserData() : _incrementStep();
+        }
         return;
       }
       if (currentStep == 4) {
@@ -2929,7 +2938,7 @@ class _RegisterUserDataState extends State<RegisterUserData> {
         leading: BackButton(
           color: Colors.blue,
           onPressed: (){
-            Navigator.of(context).pop();
+            Navigator.of(context).pop(true);
           },
         ),
       ):null,
@@ -2937,7 +2946,7 @@ class _RegisterUserDataState extends State<RegisterUserData> {
         child: Column(
           children: <Widget>[
             Expanded(
-                    child: Stepper(
+                    child: _isLoading?Center(child: CircularProgressIndicator(backgroundColor: Colors.blue,),):Stepper(
                       steps: steps,
                       currentStep: currentStep,
                       onStepContinue: nextStep,

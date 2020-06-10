@@ -1,6 +1,6 @@
 import 'package:healthbook/providers/auth_controller.dart';
 
-class RegisterPatientData{
+class RegisterData{
   String firstName;
   String middleName;
   String lastName;
@@ -16,14 +16,15 @@ class RegisterPatientData{
   String patientImage;
   String aboutYou;
   String speciality;
+  String doctorImage;
 
-  RegisterPatientData({this.speciality,
+  RegisterData({this.speciality,this.doctorImage,
     this.firstName, this.middleName, this.lastName, this.birthDate,
     this.gender, this.nationalID, this.email, this.job, this.status,
     this.number, this.address, this.government, this.patientImage,
     this.aboutYou
 });
-  RegisterPatientData.fromJson(Map<String, dynamic> json){
+  RegisterData.fromJson(Map<String, dynamic> json,String userType){
      nationalID= json['nationalID'];
      firstName= json['firstName'];
      middleName= json['middleName'];
@@ -36,32 +37,40 @@ class RegisterPatientData{
      number= json['number'][0];
      address= json['address'];
      government= json['government'];
-     patientImage= json['patientImage'];
-     aboutYou= json['aboutYou'];
-     if( Auth().getUserType == 'doctor'){
+
+     print('Auth().getUserType${Auth().getUserType}');
+     if(userType == 'doctor'){
        speciality =json['speciality']??'';
+       doctorImage = json['doctorImage']??'';
+       aboutYou =json['bio'];
+     }else{
+       patientImage= json['patientImage'];
+       aboutYou= json['aboutYou'];
      }
      print(firstName);print(gender);print(address);print(birthDate);print(middleName);
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toJson(String userType) {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['email'] = this.email;
-    data['number'] = this.number;
+    data['number'] = [this.number];
     data['address'] = this.address;
     data['status'] = this.status;
     data['lastName'] = this.lastName;
     data['firstName'] = this.firstName;
     data['middleName'] = this.middleName;
     data['birthDate'] = this.birthDate;
-    data['patientImage']=this.patientImage;
     data['job'] = this.job;
-    data['aboutYou'] = this.aboutYou;
     data['gender'] = this.gender;
     data['government'] = this.government;
     data['nationalID'] = this.nationalID;
-    if( Auth().getUserType == 'doctor'){
+    if( userType == 'doctor'){
       data['speciality']=this.speciality??'';
+      data['doctorImage']=this.doctorImage;
+      data['bio']=this.aboutYou;
+    }else{
+      data['patientImage']=this.patientImage;
+      data['aboutYou'] = this.aboutYou;
     }
     return data;
   }

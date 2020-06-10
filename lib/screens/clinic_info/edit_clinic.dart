@@ -3,13 +3,16 @@ import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:healthbook/list_of_infomation/list_of_information.dart';
+import 'package:healthbook/providers/auth_controller.dart';
 import 'package:healthbook/screens/specific_search/map.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class EditClinic extends StatefulWidget {
   @override
   _EditClinicState createState() => _EditClinicState();
 }
-
+Auth _auth;
 class _EditClinicState extends State<EditClinic> {
   Map<String, dynamic> _clinicData = {
     'Clinic Name': '',
@@ -17,11 +20,15 @@ class _EditClinicState extends State<EditClinic> {
     'cliniclat': '',
     'cliniclong': '',
     'watingTime': '',
+    'startTime': '',
+    'endTime': '',
     'fees': '',
+    'number': '',
     'workingDays': []
   };
   final FocusNode _hourNode = FocusNode();
   final FocusNode _minNode = FocusNode();
+  final FocusNode _phoneNumberNode = FocusNode();
   final FocusNode _clinicLocationNode = FocusNode();
   final FocusNode _fees = FocusNode();
   bool _isClinicLocationEnable = false;
@@ -33,7 +40,16 @@ class _EditClinicState extends State<EditClinic> {
   String _wattingTimeMin = '';
   TextEditingController _clinicLocationTextEditingController =
       TextEditingController();
-
+  TextEditingController _clinicNameTextEditingController =
+      TextEditingController();
+  TextEditingController _clinicNumberTextEditingController =
+      TextEditingController();
+  TextEditingController _hourTextEditingController =
+  TextEditingController();
+  TextEditingController _minuteTextEditingController =
+  TextEditingController();
+  TextEditingController _feesTextEditingController =
+  TextEditingController();
   void selectLocationFromTheMap(String address, double lat, double long) {
     setState(() {
       _clinicLocationTextEditingController.text = address;
@@ -59,7 +75,8 @@ class _EditClinicState extends State<EditClinic> {
     });
     Navigator.of(context).pop();
   }
-
+  DateTime dateTimeInHour ;
+  DateTime dateTimeInMinutes ;
   void _selectClinicLocationType() async {
     await showDialog(
       context: context,
@@ -137,7 +154,43 @@ class _EditClinicState extends State<EditClinic> {
       ),
     );
   }
+@override
+  void initState() {
+    super.initState();
+    _auth =Provider.of<Auth>(context, listen: false);
+    _clinicLocationTextEditingController.text=_auth.getClinicData.address;
+  _clinicNameTextEditingController.text=_auth.getClinicData.clinicName;
+  _clinicNumberTextEditingController.text=_auth.getClinicData.number;
+   double time= double.parse(_auth.getClinicData.waitingTime);
+  if(time >59){
+    final int hour = time ~/ 60;
+    final double minutes = time % 60;
+    _hourTextEditingController.text=hour.toString();
+  _minuteTextEditingController.text=minutes.toString();
+  }else{
+    _minuteTextEditingController.text=_auth.getClinicData.waitingTime;
+  }
+    List<String> start =_auth.getClinicData.openingTime.split(':');
+  List<String> end =_auth.getClinicData.clossingTime.split(':');
+    var timeNow = DateTime.now();
+    timeNow = timeNow.toLocal();
+    dateTimeInHour = DateTime(timeNow.year, timeNow.month, timeNow.day,start.length!=1?0: int.parse(start[0]),start.length!=2?0 :int.parse(start[1]), timeNow.second, timeNow.millisecond, timeNow.microsecond);
+    dateTimeInMinutes = DateTime(timeNow.year, timeNow.month, timeNow.day,end.length!=1?0: int.parse(end[0]),end.length!=2?0 :int.parse(end[1]),timeNow.second, timeNow.millisecond, timeNow.microsecond);
+    print(dateTimeInHour);
+  //TimeOfDay.fromDateTime(dateTime);DateTime.parse(_auth.getClinicData.openingTime);
+// print( );
 
+  _feesTextEditingController.text=_auth.getClinicData.fees;
+  _clinicData['Clinic Name']=_auth.getClinicData.clinicName;
+  _clinicData['cliniclocation']=_auth.getClinicData.address;
+  _clinicData['watingTime']=_auth.getClinicData.waitingTime;
+  _clinicData['startTime']=_auth.getClinicData.openingTime;
+  _clinicData['endTime']=_auth.getClinicData.clossingTime;
+  _clinicData['fees']=_auth.getClinicData.fees;
+  _clinicData['number']=_auth.getClinicData.number;
+  _clinicData['workingDays']=_auth.getClinicData.workingDays;
+
+  }
   @override
   Widget build(BuildContext context) {
     _sort() {
@@ -175,20 +228,24 @@ class _EditClinicState extends State<EditClinic> {
           color: Colors.white,
         ),
         actions: <Widget>[
-
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: RaisedButton(onPressed: (){},
-            color: Colors.blue,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10))),
-              child: Text('Save',style: TextStyle(color: Colors.white),),
+            child: RaisedButton(
+              onPressed: () {},
+              color: Colors.blue,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10))),
+              child: Text(
+                'Save',
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           )
         ],
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14,vertical: 8.0),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -196,7 +253,9 @@ class _EditClinicState extends State<EditClinic> {
                 padding: EdgeInsets.symmetric(vertical: 7.0),
                 height: 60,
                 child: TextFormField(
-                  textInputAction: TextInputAction.done,
+                  autofocus: false,
+                  controller: _clinicNameTextEditingController,
+                  textInputAction: TextInputAction.next,
                   decoration: InputDecoration(
                     labelText: 'Clinic Name',
                     focusedBorder: OutlineInputBorder(
@@ -217,7 +276,76 @@ class _EditClinicState extends State<EditClinic> {
                     ),
                   ),
                   keyboardType: TextInputType.text,
-                  onChanged: (value) {},
+                  // ignore: missing_return
+                  onChanged: (value) {
+                    _clinicData['Clinic Name']=value;
+                  },
+                  onFieldSubmitted: (_){
+                    FocusScope.of(context).requestFocus(_phoneNumberNode);
+                  },
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 7.0),
+                height: 80,
+                child: TextFormField(
+                  controller: _clinicNumberTextEditingController,
+                  autofocus: false,
+                  textInputAction: TextInputAction.next,
+                  focusNode: _phoneNumberNode,
+                  decoration: InputDecoration(
+                    prefix: Container(
+                      padding: EdgeInsets.all(4.0),
+                      child: Text(
+                        "+20",
+                        style: TextStyle(
+                            fontSize: 15,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    labelText: "Clinic Number",
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius:
+                      BorderRadius.all(Radius.circular(10.0)),
+                      borderSide: BorderSide(
+                        color: Colors.blue,
+                      ),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderRadius:
+                      BorderRadius.all(Radius.circular(10.0)),
+                      borderSide: BorderSide(
+                        color: Colors.blue,
+                      ),
+                    ),
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderRadius:
+                      BorderRadius.all(Radius.circular(10.0)),
+                      borderSide: BorderSide(
+                        color: Colors.blue,
+                      ),
+                    ),
+                    disabledBorder: OutlineInputBorder(
+                      borderRadius:
+                      BorderRadius.all(Radius.circular(10.0)),
+                      borderSide: BorderSide(
+                        color: Colors.blue,
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius:
+                      BorderRadius.all(Radius.circular(10.0)),
+                      borderSide: BorderSide(color: Colors.blue),
+                    ),
+                  ),
+                  keyboardType: TextInputType.phone,
+                  onChanged: (value) {
+                    _clinicData['number'] = value.trim();
+                  },
+                  onFieldSubmitted: (_) {
+                    _phoneNumberNode.unfocus();
+                  },
                 ),
               ),
               InkWell(
@@ -264,6 +392,7 @@ class _EditClinicState extends State<EditClinic> {
                       keyboardType: TextInputType.text,
                     ),
                   )),
+
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 child: Text(
@@ -274,54 +403,63 @@ class _EditClinicState extends State<EditClinic> {
               SizedBox(
                 height: 18.0,
               ),
-              Row(
-                children: <Widget>[
-                  Text(
-                    ' From : ',
-                    style: TextStyle(fontSize: 18, color: Colors.blue),
-                  ),
-                  TimePickerSpinner(
-                    is24HourMode: false,
-                    normalTextStyle:
-                        TextStyle(fontSize: 18, color: Colors.deepOrange),
-                    highlightedTextStyle:
-                        TextStyle(fontSize: 18, color: Colors.blue),
-                    spacing: 30,
-                    itemHeight: 40,
-                    isForce2Digits: true,
-                    onTimeChange: (time) {
-                      setState(() {
-                        // _dateTime = time;
-                      });
-                    },
-                  ),
-                ],
+              Padding(
+                padding: const EdgeInsets.only(left: 50),
+                child: Row(
+                  children: <Widget>[
+                    Text(
+                      ' From : ',
+                      style: TextStyle(fontSize: 18, color: Colors.blue),
+                    ),
+                    TimePickerSpinner(
+                      is24HourMode: true,
+                      normalTextStyle:
+                          TextStyle(fontSize: 18, color: Colors.deepOrange),
+                      highlightedTextStyle:
+                          TextStyle(fontSize: 18, color: Colors.blue),
+                      spacing: 30,
+                      itemHeight: 40,
+                      time: dateTimeInHour==null?DateTime.now():dateTimeInHour,
+                      isForce2Digits: true,
+                      onTimeChange: (time) {
+                        setState(() {
+                          // _dateTime = time;
+                          _clinicData['startTime ']='${time.hour}:${time.minute}';
+                        });
+                      },
+                    ),
+                  ],
+                ),
               ),
               SizedBox(
                 height: 18.0,
               ),
-              Row(
-                children: <Widget>[
-                  Text(
-                    ' To:      ',
-                    style: TextStyle(fontSize: 18, color: Colors.blue),
-                  ),
-                  TimePickerSpinner(
-                    is24HourMode: false,
-                    normalTextStyle:
-                        TextStyle(fontSize: 18, color: Colors.deepOrange),
-                    highlightedTextStyle:
-                        TextStyle(fontSize: 18, color: Colors.blue),
-                    spacing: 30,
-                    itemHeight: 40,
-                    isForce2Digits: true,
-                    onTimeChange: (time) {
-                      setState(() {
-                        // _dateTime = time;
-                      });
-                    },
-                  ),
-                ],
+              Padding(
+                padding: const EdgeInsets.only(left: 50),
+                child: Row(
+                  children: <Widget>[
+                    Text(
+                      ' To:      ',
+                      style: TextStyle(fontSize: 18, color: Colors.blue),
+                    ),
+                    TimePickerSpinner(
+                      is24HourMode: true,
+                      time: dateTimeInMinutes==null?DateTime.now():dateTimeInMinutes,
+                      normalTextStyle:
+                          TextStyle(fontSize: 18, color: Colors.deepOrange),
+                      highlightedTextStyle:
+                          TextStyle(fontSize: 18, color: Colors.blue),
+                      spacing: 30,
+                      itemHeight: 40,
+                      isForce2Digits: true,
+                      onTimeChange: (time) {
+                        setState(() {
+                          _clinicData['startTime ']='${time.hour}:${time.minute}';
+                        });
+                      },
+                    ),
+                  ],
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),
@@ -338,6 +476,7 @@ class _EditClinicState extends State<EditClinic> {
                     height: 50,
                     width: 50,
                     child: TextFormField(
+                      controller: _hourTextEditingController,
                       focusNode: _hourNode,
                       textAlign: TextAlign.center,
                       keyboardType: TextInputType.number,
@@ -386,6 +525,7 @@ class _EditClinicState extends State<EditClinic> {
                     height: 50,
                     width: 50,
                     child: TextFormField(
+                      controller: _minuteTextEditingController,
                       focusNode: _minNode,
                       textAlign: TextAlign.center,
                       keyboardType: TextInputType.number,
@@ -435,7 +575,6 @@ class _EditClinicState extends State<EditClinic> {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4.0),
                 child: Row(
-
                   children: <Widget>[
                     Text(
                       'Fees: ',
@@ -448,6 +587,7 @@ class _EditClinicState extends State<EditClinic> {
                       height: 50,
                       width: 75,
                       child: TextFormField(
+                        controller: _feesTextEditingController,
                         focusNode: _fees,
                         textAlign: TextAlign.center,
                         keyboardType: TextInputType.number,
@@ -456,22 +596,26 @@ class _EditClinicState extends State<EditClinic> {
                           filled: true,
                           fillColor: Colors.white,
                           focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10.0)),
                             borderSide: BorderSide(
                               color: Colors.blue,
                             ),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10.0)),
                             borderSide: BorderSide(color: Colors.blue),
                           ),
                           errorStyle: TextStyle(color: Colors.blue),
                           errorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10.0)),
                             borderSide: BorderSide(color: Colors.blue),
                           ),
                           focusedErrorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10.0)),
                             borderSide: BorderSide(color: Colors.blue),
                           ),
                         ),
@@ -576,7 +720,9 @@ class _EditClinicState extends State<EditClinic> {
                   ],
                 ),
               ),
-              SizedBox(height: 20,)
+              SizedBox(
+                height: 20,
+              )
             ],
           ),
         ),

@@ -6,9 +6,14 @@ class ClinicInfoCard extends StatefulWidget {
   final String watingTime;
   final String fees;
   final List<String> workingDays;
+  final String startTime;
+  final String endTime;
+
 
   ClinicInfoCard(
       {this.address,
+        this.startTime,
+        this.endTime,
       this.governorate,
       this.watingTime,
       this.fees,
@@ -118,7 +123,7 @@ class _ClinicInfoCardState extends State<ClinicInfoCard> {
                             content: 'Name'),
                         _data(
                             title: 'Working Time:',
-                            content: 'From 4 AM To 8 PM '),
+                            content: 'From ${widget.startTime} To ${widget.endTime}'),
                         _data(
                             title: 'Working Days:', content: _getWorkingDays()),
                         _data(
