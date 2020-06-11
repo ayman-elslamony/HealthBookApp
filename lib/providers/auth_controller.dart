@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:healthbook/models/appointment.dart';
+import 'package:healthbook/models/doctor_appointment.dart';
+import 'package:healthbook/models/patient_appointment.dart';
 import 'package:path/path.dart';
 import 'package:healthbook/list_of_infomation/list_of_information.dart';
 import 'package:healthbook/models/clinic_data.dart';
@@ -18,6 +21,8 @@ class Auth with ChangeNotifier {
   String _email;
   String _userType = 'patient';
   static RegisterData rgisterData;
+  static List<DoctorAppointment> appointmentForDoctor=[];
+  static List<PatientAppointment> appointmentForPatient=[];
   static ClinicData clinicData;
   bool get isAuth {
     return token != null;
@@ -33,6 +38,12 @@ class Auth with ChangeNotifier {
   }
   ClinicData get getClinicData{
     return clinicData;
+  }
+  List<DoctorAppointment> get allAppointment{
+    return appointmentForDoctor;
+  }
+  List<PatientAppointment> get allAppointmentOfPatient{
+    return appointmentForPatient;
   }
   String get userId {
     return _userId;
@@ -79,9 +90,25 @@ class Auth with ChangeNotifier {
     }
     return data['message'];
   }
-Future<void>  getUserData()async{
-  var userData;
-  print('_userType_userType$_userType');
+  Future<String> signUp({String email, String password}) async {
+    _userType = 'patient';
+    _signInAndUpModel =
+        SignInAndUp(email: email.trim(), password: password.trim());
+    print(_signInAndUpModel.toJson());
+    var data = await _netWork.postData(
+      url: 'patient/signup',
+      headers: {'Content-Type': 'application/json'},
+      data: {'email': email.trim(), 'password': password.trim()},
+    );
+//    _userId = data['createdPatient']['id'];
+//    print('data[createdPatient][id] ${data['createdPatient']['id']}');
+//    print('data $data');
+    print(data['message']);
+    return data['message'];
+  }
+  Future<void>  getUserData()async{
+    var userData;
+    print('_userType_userType$_userType');
     if(_userType=='doctor'){
       userData = await _netWork
           .getData(url: 'doctor/5ec8a319fa6d9b35d08f0058', headers: {
@@ -115,29 +142,71 @@ Future<void>  getUserData()async{
       print(dataForClinic);
       if(dataForClinic['clinic'] !=null){
         clinicData = ClinicData.fromJson(dataForClinic['clinic']);
-      print(clinicData);
+        print(clinicData);
       }
       return ;
     }
 
   }
-  Future<String> signUp({String email, String password}) async {
-    _userType = 'patient';
-    _signInAndUpModel =
-        SignInAndUp(email: email.trim(), password: password.trim());
-    print(_signInAndUpModel.toJson());
-    var data = await _netWork.postData(
-      url: 'patient/signup',
-      headers: {'Content-Type': 'application/json'},
-      data: {'email': email.trim(), 'password': password.trim()},
-    );
-//    _userId = data['createdPatient']['id'];
-//    print('data[createdPatient][id] ${data['createdPatient']['id']}');
-//    print('data $data');
-    print(data['message']);
-    return data['message'];
-  }
+  Future<void>  getUserAppointment()async{
+    var appointmentData;
+    print('_userType_userType$_userType');
+    if(_userType=='doctor'){
+      appointmentData = await _netWork
+          .getData(url: 'appoint/', headers: {
+        'Authorization': 'Bearer $_token',
+      });
+      if(appointmentData['appoint'] !=null){
+        List<DoctorAppointment> allAppointment=[];
+        var userData = await _netWork
+            .getData(url: 'patient/5ec8a00afa6d9b35d08f0055', headers: {
+          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImEyQGEuY29tIiwiX2lkIjoiNWVjOGEwMGFmYTZkOWIzNWQwOGYwMDU1Iiwicm9sZSI6MiwiaWF0IjoxNTkwMjA2OTE2fQ.70AORnaarGm_o90xD4frGOXWRP_PMHJCWxhmNRL48Qw',
+        });
+        for(int i=0; i<appointmentData['appoint'].length; i++){
+          print(appointmentData['appoint'][i]['patientID']);
+          allAppointment.add(DoctorAppointment.fromJson(appointmentData['appoint'][i],userData['patient']));
+        }
+        appointmentForDoctor =allAppointment;
+        notifyListeners();
+      }
+    }else{
+      appointmentData = await _netWork
+          .getData(url: 'appoint/', headers: {
+        'Authorization': 'Bearer $_token',
+      });
+    }
+    print(appointmentData);
 
+
+
+
+//    print(appoitmentData['patient']);
+//    if (appoitmentData['patient'] != null && _userType =='patient') {
+//      rgisterData=RegisterData.fromJson(appoitmentData['patient'],'patient');
+//      print(rgisterData.gender);
+//      print(rgisterData.birthDate);
+//      print(rgisterData.patientImage);
+//      return;
+//    }
+//
+//    if(appoitmentData['doctor'] != null && _userType =='doctor'){
+//      rgisterData=RegisterData.fromJson(appoitmentData['doctor'],'doctor');
+//      print(rgisterData.gender);
+//      print(rgisterData.birthDate);
+//      print('rgisterData.doctorImage${rgisterData.doctorImage}');
+//      var dataForClinic =await _netWork
+//          .getData(url: 'clinic/5ed6899e7966c600175a388b', headers: {
+//        'Authorization': 'Bearer $_token',
+//      });
+//      print(dataForClinic);
+//      if(dataForClinic['clinic'] !=null){
+//        clinicData = ClinicData.fromJson(dataForClinic['clinic']);
+//        print(clinicData);
+//      }
+      return ;
+   // }
+
+  }
   Future<String> registerUserDataAndEditing({Map<String, dynamic> listOfData}) async {
     String birthDate =
         '${listOfData['day']}/${listOfData['month']}/${listOfData['year']}';
@@ -217,6 +286,8 @@ Future<void>  getUserData()async{
       return data['message'];
   }
   Future<String> registerClinicDataAndEditing({Map<String, dynamic> listOfClinicData,bool isEditing=false}) async {
+    print('clinicDataclinicDataclinicData$clinicData');
+
     String government = '';
     for (int i = 0; i < governorateList.length; i++) {
       if (listOfClinicData['cliniclocation'].contains(governorateList[i])) {
@@ -227,14 +298,14 @@ Future<void>  getUserData()async{
     Map<String,dynamic> _clinicData={
     'clinicName': listOfClinicData['Clinic Name'],
     'waitingTime': listOfClinicData['watingTime'],
-    'workingDays': listOfClinicData[''],
-    'openingTime': listOfClinicData['startTime'],
-    'clossingTime': listOfClinicData['endTime'],
-    'number': [listOfClinicData['number']],
-    'government': government,
-    'address': listOfClinicData['cliniclocation'],
-    'fees': listOfClinicData['fees'],
-    'doctorID': _userId,
+//    'workingDays': listOfClinicData['workingDays'],
+//    'openingTime': listOfClinicData['startTime'],
+//    'clossingTime': listOfClinicData['endTime'],
+//    'number': [listOfClinicData['number']],
+//    'government': government,
+//    'address': listOfClinicData['cliniclocation'],
+//    'fees': listOfClinicData['fees'],
+//    'doctorID': _userId,
     };
     if(isEditing){
       data = await _netWork.updateData(

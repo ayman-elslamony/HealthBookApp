@@ -101,7 +101,7 @@ class _PersonalInfoCardState extends State<PersonalInfoCard> {
                   padding: const EdgeInsets.only(bottom: 8.0,left: 15,right: 15,top: 6.0),
                   child: Column(
                       children: <Widget>[
-                        _data(title: 'Email:', content: widget.email),
+                        widget.email==''?SizedBox():_data(title: 'Email:', content: widget.email),
                         _data(
                             title: 'Phone Number:', content: widget.phoneNumber),
                         _data(title: 'Address:', content: widget.address),

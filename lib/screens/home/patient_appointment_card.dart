@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_simple_rating_bar/flutter_simple_rating_bar.dart';
+import 'package:healthbook/models/doctor_appointment.dart';
+import 'package:healthbook/models/patient_appointment.dart';
 //import 'package:flutter_sms/flutter_sms.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class PatientAppointmentCard extends StatelessWidget {
+  PatientAppointment patientAppointment;
+
+  PatientAppointmentCard({this.patientAppointment});
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -24,8 +30,9 @@ class PatientAppointmentCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Container(
-                      child: CircleAvatar(
-                        backgroundImage: AssetImage('assets/user.png'),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                        child: FadeInImage.assetNetwork(placeholder: 'assets/user.png', image: patientAppointment.registerData.doctorImage,fit: BoxFit.fill,),
                       ),
                       width: 45,
                       height: 50,
@@ -33,11 +40,11 @@ class PatientAppointmentCard extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Text('Dr. Ayman',
+                        Text('Dr. ${patientAppointment.registerData.firstName} ${patientAppointment.registerData.lastName}',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: Theme.of(context).textTheme.display1),
-                        Text('Dentist',
+                        Text('${patientAppointment.registerData.speciality}',
                             style: Theme.of(context)
                                 .textTheme
                                 .display2
@@ -46,7 +53,7 @@ class PatientAppointmentCard extends StatelessWidget {
                                     fontWeight: FontWeight.bold,
                                     fontSize: 15)),
                         Text(
-                          'appointement at 4:20 PM',
+                          'appointement at ${patientAppointment.appointStart} PM',
                           style: Theme.of(context)
                               .textTheme
                               .body1
@@ -58,7 +65,7 @@ class PatientAppointmentCard extends StatelessWidget {
                           children: <Widget>[
                             Icon(Icons.location_on),
                             Text(
-                              'Mansoura , shepen',
+                              '${patientAppointment.registerData.address}',
                               style: Theme.of(context)
                                   .textTheme
                                   .body1
@@ -123,7 +130,7 @@ class PatientAppointmentCard extends StatelessWidget {
                   children: <Widget>[
                     InkWell(
                       onTap: (){
-                        launch("tel://21213123123");
+                        launch("tel:${patientAppointment.registerData.number}");
                         Navigator.of(context).pop();
                       },
                       child: Container(

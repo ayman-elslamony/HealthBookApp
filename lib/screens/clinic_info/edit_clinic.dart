@@ -7,13 +7,15 @@ import 'package:healthbook/providers/auth_controller.dart';
 import 'package:healthbook/screens/specific_search/map.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:toast/toast.dart';
 
 class EditClinic extends StatefulWidget {
   @override
   _EditClinicState createState() => _EditClinicState();
 }
-Auth _auth;
+
 class _EditClinicState extends State<EditClinic> {
+  Auth _auth;
   Map<String, dynamic> _clinicData = {
     'Clinic Name': '',
     'cliniclocation': '',
@@ -26,6 +28,7 @@ class _EditClinicState extends State<EditClinic> {
     'number': '',
     'workingDays': []
   };
+  bool isLoading =false;
   final FocusNode _hourNode = FocusNode();
   final FocusNode _minNode = FocusNode();
   final FocusNode _phoneNumberNode = FocusNode();
@@ -174,8 +177,8 @@ class _EditClinicState extends State<EditClinic> {
   List<String> end =_auth.getClinicData.clossingTime.split(':');
     var timeNow = DateTime.now();
     timeNow = timeNow.toLocal();
-    dateTimeInHour = DateTime(timeNow.year, timeNow.month, timeNow.day,start.length!=1?0: int.parse(start[0]),start.length!=2?0 :int.parse(start[1]), timeNow.second, timeNow.millisecond, timeNow.microsecond);
-    dateTimeInMinutes = DateTime(timeNow.year, timeNow.month, timeNow.day,end.length!=1?0: int.parse(end[0]),end.length!=2?0 :int.parse(end[1]),timeNow.second, timeNow.millisecond, timeNow.microsecond);
+    dateTimeInHour = DateTime(timeNow.year, timeNow.month, timeNow.day,start.length!=2?0: int.parse(start[0]),start.length!=2?0 :int.parse(start[1]), timeNow.second, timeNow.millisecond, timeNow.microsecond);
+    dateTimeInMinutes = DateTime(timeNow.year, timeNow.month, timeNow.day,end.length!=2?0: int.parse(end[0]),end.length!=2?0 :int.parse(end[1]),timeNow.second, timeNow.millisecond, timeNow.microsecond);
     print(dateTimeInHour);
   //TimeOfDay.fromDateTime(dateTime);DateTime.parse(_auth.getClinicData.openingTime);
 // print( );
@@ -228,10 +231,55 @@ class _EditClinicState extends State<EditClinic> {
           color: Colors.white,
         ),
         actions: <Widget>[
-          Padding(
+          isLoading?CircularProgressIndicator(backgroundColor: Colors.blue,):Padding(
             padding: const EdgeInsets.all(8.0),
             child: RaisedButton(
-              onPressed: () {},
+              onPressed: () async{
+                if (_clinicData['Clinic Name'] == '' ||
+                    _clinicData['cliniclocation'] == '' ||
+                    _clinicData['fees'] == '') {
+                  Toast.show("Please complete clinic Data", context,
+                      duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+                }else {
+                  double hour = _watingTimeHour == ''
+                      ? 0.0
+                      : (double.parse(_watingTimeHour) * 60.0);
+                  double min =
+                  _wattingTimeMin == '' ? 0.0 : double.parse(_wattingTimeMin);
+                  double result = hour + min;
+                  _clinicData['watingTime'] = result.toString();
+                  _sortedWorkingDays = List<String>.generate(7, (i) => '');
+                  _sort();
+                  _clinicData['workingDays'] = _sortedWorkingDays;
+                  if(_wattingTimeMin ==null || _watingTimeHour ==null){
+                    Toast.show("Please Add wating time", context,
+                        duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+                    return;
+                  }
+                  if(_clinicData['workingDays'] ==null){
+
+                      Toast.show("Please Add working days", context,
+                          duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+                      return;
+                  }
+                  setState(() {
+                    isLoading =true;
+                  });
+                   var x =await Provider.of<Auth>(context,listen: false).registerClinicDataAndEditing(isEditing: true,listOfClinicData: _clinicData);
+                  print('xxxx$x');
+                  if(x==' NOT allowed!'){
+                    Toast.show("Please try again later", context,
+                        duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+                  }else{
+                    Toast.show("Scuessfully Editing", context,
+                        duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+                    Navigator.of(context).pop();
+                  }
+                   setState(() {
+                    isLoading =false;
+                  });
+                }
+              },
               color: Colors.blue,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(10))),

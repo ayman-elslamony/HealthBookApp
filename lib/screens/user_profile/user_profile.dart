@@ -1,7 +1,6 @@
-import 'dart:io';
-
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
+import 'package:healthbook/models/register_user_data.dart';
 import 'package:healthbook/providers/auth_controller.dart';
 
 //import 'package:flutter_sms/flutter_sms.dart';
@@ -13,7 +12,6 @@ import 'package:url_launcher/url_launcher.dart';
 
 class UserProfile extends StatefulWidget {
   static const routeName = 'UserProfile';
-
   @override
   _UserProfileState createState() => _UserProfileState();
 }

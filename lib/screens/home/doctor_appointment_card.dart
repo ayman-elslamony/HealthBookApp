@@ -1,10 +1,32 @@
+import 'package:age/age.dart';
 import 'package:flutter/material.dart';
+import 'package:healthbook/models/doctor_appointment.dart';
 import 'package:healthbook/screens/user_profile/patient_health_record.dart';
+import 'package:healthbook/screens/user_profile/show_profile.dart';
 import '../user_profile/user_profile.dart';
 
-class DoctorAppointmentCard extends StatelessWidget {
+class DoctorAppointmentCard extends StatefulWidget {
   Function cancelButton;
-  DoctorAppointmentCard({this.cancelButton});
+  DoctorAppointment doctorAppointment;
+  DoctorAppointmentCard({this.cancelButton,this.doctorAppointment});
+
+  @override
+  _DoctorAppointmentCardState createState() => _DoctorAppointmentCardState();
+}
+
+class _DoctorAppointmentCardState extends State<DoctorAppointmentCard> {
+  AgeDuration birthDate;
+  List<String> mybirth=[];
+  @override
+  void initState() {
+    DateTime today = DateTime.now();
+    mybirth=widget.doctorAppointment.registerData.birthDate.split('/');
+    print(mybirth);
+    DateTime birthday = DateTime(mybirth.length!=3?2020:int.parse(mybirth[2]),mybirth.length!=3?1:int.parse(mybirth[1]),mybirth.length!=3?1: int.parse(mybirth[0]));
+    birthDate = Age.dateDifference(
+        fromDate: birthday, toDate: today, includeToDate: false);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +44,11 @@ class DoctorAppointmentCard extends StatelessWidget {
             children: <Widget>[
               InkWell(
                 onTap: (){
-                  Navigator.of(context).pushNamed( UserProfile.routeName);
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (_)=>ShowUserProfile(
+                    type: 'patient',
+                    userData: widget.doctorAppointment.registerData,
+                  )));
                 },
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -30,12 +56,13 @@ class DoctorAppointmentCard extends StatelessWidget {
                     Column(
                       children: <Widget>[
                         Container(
-                        child: CircleAvatar(
-                        backgroundImage: AssetImage('assets/user.png'),
-        ),
-        width: 45,
-        height: 50,
-        ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.all(Radius.circular(20)),
+                            child: FadeInImage.assetNetwork(placeholder: 'assets/user.png', image: widget.doctorAppointment.registerData.patientImage,fit: BoxFit.fill,),
+                          ),
+                          width: 45,
+                          height: 50,
+                        ),
                       ],
                     )
                     ,Column(
@@ -43,14 +70,14 @@ class DoctorAppointmentCard extends StatelessWidget {
                       children: <Widget>[
                         Padding(
                           padding: const EdgeInsets.only(left: 4.0),
-                          child: Text('omar',
+                          child: Text('${widget.doctorAppointment.registerData.firstName} ${widget.doctorAppointment.registerData.lastName}',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: Theme.of(context).textTheme.display1.copyWith(fontSize: 18)),
                         ),
-                        Padding(
+                        mybirth.length!=3?SizedBox():Padding(
                           padding: const EdgeInsets.only(left: 8.0),
-                          child: Text('Age: 33 years',
+                          child: Text('Age: ${birthDate.years} years',
                               style: Theme.of(context)
                                   .textTheme
                                   .display2
@@ -73,7 +100,7 @@ class DoctorAppointmentCard extends StatelessWidget {
                         ),
                         Padding(
                           padding: const EdgeInsets.only(left: 8.0),
-                          child: Text('Appointement time : 3:30 PM',
+                          child: Text('Appointement time : ${widget.doctorAppointment.appointStart}',
                               style: Theme.of(context)
                                   .textTheme
                                   .display2
@@ -86,7 +113,7 @@ class DoctorAppointmentCard extends StatelessWidget {
                           children: <Widget>[
                             Icon(Icons.location_on,color: Colors.blue,),
                             Text(
-                              'Mansoura , shepen',
+                              widget.doctorAppointment.registerData.address,
                               style: Theme.of(context)
                                   .textTheme
                                   .body1
@@ -102,7 +129,7 @@ class DoctorAppointmentCard extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.only(top: 4.0),
                         child: Text(
-                        '14-Mar-2020',
+                          widget.doctorAppointment.appointDate,
                         textAlign: TextAlign.end,
                         style:
                         Theme.of(context).textTheme.display3.copyWith(
@@ -145,7 +172,7 @@ class DoctorAppointmentCard extends StatelessWidget {
                         )),
                   ),
                   InkWell(
-                    onTap: cancelButton,
+                    onTap: widget.cancelButton,
                     child: Container(
                         height:  38,
                         width: 75,
