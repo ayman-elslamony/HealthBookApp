@@ -8,19 +8,17 @@ import 'package:path/path.dart';
 import 'package:healthbook/list_of_infomation/list_of_information.dart';
 import 'package:healthbook/models/clinic_data.dart';
 import 'package:healthbook/models/register_user_data.dart';
-import 'package:healthbook/models/sign_in_and_up.dart';
 import 'package:healthbook/services/network.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart';
 
 class Auth with ChangeNotifier {
   NetWork _netWork = NetWork();
-  SignInAndUp _signInAndUpModel;
   static String _token;
   static String _userId;
   String _email;
   String _userType = 'patient';
-  static RegisterData rgisterData;
+  RegisterData rgisterData;
   static List<DoctorAppointment> appointmentForDoctor=[];
   static List<PatientAppointment> appointmentForPatient=[];
   static ClinicData clinicData;
@@ -58,47 +56,46 @@ class Auth with ChangeNotifier {
   }
 
   Future<String> signIn(
-      {String email, String password}) async {
-    print(email);
-    print(password);
-    _signInAndUpModel =
-        SignInAndUp(email: email.trim(), password: password.trim());
-//    FormData formData = FormData.fromMap(_signInAndUpModel.toJson());
-//    print(formData);
+      {String email, String password,bool isCommingFromSignUp =false}) async {
+//    print(email);
+//    print(password);
     var data = await _netWork.postData(
       url: '$_userType/login',
-      data: _signInAndUpModel.toJson(),
+      headers: {'Content-Type': 'application/json'
+      },
+      data: {'email':email,'password':password},
     );
-    print(data);
-
     if (data['message'] == 'Auth success') {
       _token = data['token'];
-      print(_token);
+      _userId=data['_id'];
       _email = email;
+//      print(_token);
+//      print(_userId);
       final prefs = await SharedPreferences.getInstance();
-      print(_userId);
       if(!prefs.containsKey('dataToSignIn')){
         final dataToSignIn = json.encode({
           'email': email,
           'password': password,
           'userType': _userType,
-          'userId': _userId,
         });
         prefs.setString('dataToSignIn', dataToSignIn);
       }
-      await getUserData();
+      if(isCommingFromSignUp == false){
+        await getUserData();
+      }
     }
     return data['message'];
   }
-  Future<String> signUp({String email, String password}) async {
+  Future<String> signUp({String email, String password,String nationalID}) async {
     _userType = 'patient';
-    _signInAndUpModel =
-        SignInAndUp(email: email.trim(), password: password.trim());
-    print(_signInAndUpModel.toJson());
     var data = await _netWork.postData(
       url: 'patient/signup',
       headers: {'Content-Type': 'application/json'},
-      data: {'email': email.trim(), 'password': password.trim()},
+      data: {
+        'email': email,
+        'password':password,
+        'nationalID':nationalID,
+      },
     );
 //    _userId = data['createdPatient']['id'];
 //    print('data[createdPatient][id] ${data['createdPatient']['id']}');
@@ -111,22 +108,25 @@ class Auth with ChangeNotifier {
     print('_userType_userType$_userType');
     if(_userType=='doctor'){
       userData = await _netWork
-          .getData(url: 'doctor/5ec8a319fa6d9b35d08f0058', headers: {
+          .getData(url: 'doctor/$_userId', headers: {
         'Authorization': 'Bearer $_token',
       });
     }else{
       userData = await _netWork
-          .getData(url: 'patient/5ec8a00afa6d9b35d08f0055', headers: {
+          .getData(url: 'patient/$_userId', headers: {
         'Authorization': 'Bearer $_token',
       });
     }
-    print(userData);
+//    print(userData);
     print(userData['patient']);
     if (userData['patient'] != null && _userType =='patient') {
+      print('A');
       rgisterData=RegisterData.fromJson(userData['patient'],'patient');
-      print(rgisterData.gender);
-      print(rgisterData.birthDate);
-      print(rgisterData.patientImage);
+      print('B');
+      print(rgisterData);
+//      print(rgisterData.firstName);
+//      print(rgisterData.birthDate);
+      print('rgisterData.numberrgisterData.number${rgisterData.number}');
       return;
     }
 
@@ -139,7 +139,7 @@ class Auth with ChangeNotifier {
           .getData(url: 'clinic/5ed6899e7966c600175a388b', headers: {
         'Authorization': 'Bearer $_token',
       });
-      print(dataForClinic);
+      print('dataForClinicdataForClinicdataForClinic$dataForClinic');
       if(dataForClinic['clinic'] !=null){
         clinicData = ClinicData.fromJson(dataForClinic['clinic']);
         print(clinicData);
@@ -153,10 +153,11 @@ class Auth with ChangeNotifier {
     print('_userType_userType$_userType');
     if(_userType=='doctor'){
       appointmentData = await _netWork
-          .getData(url: 'appoint/', headers: {
+          .getData(url: 'appoint/appoint-doctor/$_userId', headers: {
         'Authorization': 'Bearer $_token',
       });
-      if(appointmentData['appoint'] !=null){
+      print(appointmentData);
+      if(appointmentData.length !=0){
         List<DoctorAppointment> allAppointment=[];
         var userData = await _netWork
             .getData(url: 'patient/5ec8a00afa6d9b35d08f0055', headers: {
@@ -171,11 +172,11 @@ class Auth with ChangeNotifier {
       }
     }else{
       appointmentData = await _netWork
-          .getData(url: 'appoint/', headers: {
+          .getData(url: 'appoint/appoint-patient/$_userId', headers: {
         'Authorization': 'Bearer $_token',
       });
     }
-    print(appointmentData);
+    print('appointmentDataappointmentData$appointmentData');
 
 
 
@@ -208,6 +209,7 @@ class Auth with ChangeNotifier {
 
   }
   Future<String> registerUserDataAndEditing({Map<String, dynamic> listOfData}) async {
+    print(listOfData);
     String birthDate =
         '${listOfData['day']}/${listOfData['month']}/${listOfData['year']}';
     String government = '';
@@ -220,30 +222,30 @@ class Auth with ChangeNotifier {
 //       'lat': listOfData['lat'],
 //       'long': listOfData['long'],
     String fileName;
-    if (listOfData['UrlImg'] != null &&
+    if (!listOfData['UrlImg'].contains('https:')&&listOfData['UrlImg'] != null &&
         listOfData['UrlImg'].path != null &&
         listOfData['UrlImg'].path.isNotEmpty) {
       fileName = listOfData['UrlImg'].path.split('/').last;
       print("File Name : $fileName");
       print("File Size : ${listOfData['UrlImg'].lengthSync()}");
     }
+    print(listOfData['Phone number'].runtimeType);
     FormData formData;
-    if(listOfData['National ID'] == ''){
       if(_userType =='patient'){
         formData = FormData.fromMap({
-          'number': listOfData['Phone number'],
+          'number': [listOfData['Phone number']],
           'address': listOfData['Location'],
           'status': listOfData['materialStatus'],
           'lastName': listOfData['Last name'],
           'firstName': listOfData['First name'],
           'middleName': listOfData['Middle name'],
           'birthDate': birthDate,
-          'patientImage': listOfData['UrlImg']!=null?await MultipartFile.fromFile(listOfData['UrlImg'].path, filename:fileName):listOfData['UrlImg'],
+          'patientImage': listOfData['UrlImg']!=null &&!listOfData['UrlImg'].contains('https:')?await MultipartFile.fromFile(listOfData['UrlImg'].path, filename:fileName):listOfData['UrlImg'],
           'job': listOfData['Job'],
           'gender': listOfData['gender'],
           'government': government,
         });
-      }else{
+      }else {
         formData = FormData.fromMap({
           'number': listOfData['Phone number'],
           'address': listOfData['Location'],
@@ -252,38 +254,39 @@ class Auth with ChangeNotifier {
           'firstName': listOfData['First name'],
           'middleName': listOfData['Middle name'],
           'birthDate': birthDate,
-          'bio':listOfData['aboutYouOrBio'],
-          'doctorImage': listOfData['UrlImg']!=null?await MultipartFile.fromFile(listOfData['UrlImg'].path, filename:fileName):null,
+          'bio': listOfData['aboutYouOrBio'],
+          'doctorImage': listOfData['UrlImg'] != null &&!listOfData['UrlImg'].contains('https:')? await MultipartFile
+              .fromFile(listOfData['UrlImg'].path, filename: fileName) : null,
           'job': listOfData['Job'],
           'gender': listOfData['gender'],
           'government': government,
-        'speciality':listOfData['speciatly'],
+          'speciality': listOfData['speciatly'],
         });
       }
-    }else{
-      formData = FormData.fromMap({
-        'number': listOfData['Phone number'],
-        'address': listOfData['Location'],
-        'status': listOfData['materialStatus'],
-        'lastName': listOfData['Last name'],
-        'firstName': listOfData['First name'],
-        'middleName': listOfData['Middle name'],
-        'birthDate': birthDate,
-        'patientImage': listOfData['UrlImg']!=null?await MultipartFile.fromFile(listOfData['UrlImg'].path, filename:fileName):listOfData['UrlImg'],
-        'job': listOfData['Job'],
-        'gender': listOfData['gender'],
-        'government': government,
-        'nationalID': listOfData['National ID'],
-      });
-    }
-      var data = await _netWork.updateData(
-          url: 'patient/5ec8a00afa6d9b35d08f0055',
+
+    var data;
+    if(_userType =='patient') {
+      data = await _netWork.updateData(
+          url: 'patient/$_userId',
           formData: formData,
           headers: {
             'Authorization': 'Bearer $_token',
           });
+    }else{
+      data = await _netWork.updateData(
+          url: 'doctor/$_userId',
+          formData: formData,
+          headers: {
+            'Authorization': 'Bearer $_token',
+          });
+      }
       print('data $data');
-      return data['message'];
+    if(data !=null){
+      rgisterData=RegisterData.fromJson(data,'patient');
+      return 'success';
+    }else{
+      return 'failed';
+    }
   }
   Future<String> registerClinicDataAndEditing({Map<String, dynamic> listOfClinicData,bool isEditing=false}) async {
     print('clinicDataclinicDataclinicData$clinicData');
@@ -341,8 +344,6 @@ class Auth with ChangeNotifier {
     print('${dataToSignIn['password']}');
     print('${dataToSignIn['email']}');
     print('${dataToSignIn['userType']}');
-    print(dataToSignIn['userId']);
-    _userId = dataToSignIn['userId'];
     _userType =dataToSignIn['userType'];
     await signIn(
         password: dataToSignIn['password'],
@@ -354,7 +355,6 @@ class Auth with ChangeNotifier {
   Future<void> logout() async {
     _token = null;
     _userId =null;
-    _signInAndUpModel =null;
     final prefs = await SharedPreferences.getInstance();
     prefs.clear();
     notifyListeners();

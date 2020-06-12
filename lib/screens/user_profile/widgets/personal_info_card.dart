@@ -35,14 +35,22 @@ class _PersonalInfoCardState extends State<PersonalInfoCard> {
             style: TextStyle(
                 fontWeight: FontWeight.bold, fontSize: 18, color: Colors.blue),
           ),
-          Padding(
-            padding: const EdgeInsets.only(left: 5.0),
-            child: Text(
-              content,
-              style: TextStyle(
-                  fontWeight: FontWeight.normal,
-                  fontSize: 18,
-                  color: Colors.black),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 5.0),
+              child: Column(
+               // mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    content,
+                    style: TextStyle(
+                        fontWeight: FontWeight.normal,
+                        fontSize: 18,
+                        color: Colors.black),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -102,12 +110,12 @@ class _PersonalInfoCardState extends State<PersonalInfoCard> {
                   child: Column(
                       children: <Widget>[
                         widget.email==''?SizedBox():_data(title: 'Email:', content: widget.email),
-                        _data(
+                       widget.phoneNumber==''?SizedBox(): _data(
                             title: 'Phone Number:', content: widget.phoneNumber),
-                        _data(title: 'Address:', content: widget.address),
-                        _data(title: 'Gender:', content: widget.gender),
-                        _data(title: 'Governorate:', content: widget.governorate),
-                        _data(
+                        widget.address==''?SizedBox():_data(title: 'Address:', content: widget.address),
+                        widget.gender==''?SizedBox():_data(title: 'Gender:', content: widget.gender),
+                        widget.governorate==''?SizedBox():_data(title: 'Governorate:', content: widget.governorate),
+                        widget.maritalStatus==''?SizedBox():_data(
                             title: 'Marital Status:',
                             content: widget.maritalStatus),
                         _data(title: 'Language:', content: widget.language),

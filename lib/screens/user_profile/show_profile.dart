@@ -21,7 +21,12 @@ class ShowUserProfile extends StatefulWidget {
 }
 
 class _ShowUserProfileState extends State<ShowUserProfile> {
-
+  Auth _auth ;
+  @override
+  void initState() {
+    _auth =Provider.of<Auth>(context, listen: false);
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,9 +52,10 @@ class _ShowUserProfileState extends State<ShowUserProfile> {
                     child: ClipRRect(
                       //backgroundColor: Colors.white,
                       //backgroundImage:
+                      borderRadius: BorderRadius.all(Radius.circular(100)),
                         child:  widget.type == 'patient'?
-                        FadeInImage.assetNetwork(placeholder: 'assets/user.png',image: widget.userData.patientImage)
-                            :FadeInImage.assetNetwork(placeholder: 'assets/user.png',image: widget.userData.doctorImage)
+                        FadeInImage.assetNetwork(fit: BoxFit.fill,placeholder: 'assets/user.png',image: widget.userData.patientImage)
+                            :FadeInImage.assetNetwork(fit: BoxFit.fill,placeholder: 'assets/user.png',image: widget.userData.doctorImage)
                     ),
                   ),
                 ),
@@ -122,8 +128,8 @@ class _ShowUserProfileState extends State<ShowUserProfile> {
                       /// patient name
                       Text(
                         widget.type == 'doctor'
-                            ? 'Specialty: ${widget.userData.speciality}'
-                            : "Job: ${widget.userData.job}",
+                            ? widget.userData.speciality==''?'':'Specialty: ${widget.userData.speciality}'
+                            : widget.userData.job==''?'':"Job: ${widget.userData.job}",
                         style: TextStyle(
                             color: Colors.red,
                             fontSize: 18,
@@ -174,7 +180,7 @@ class _ShowUserProfileState extends State<ShowUserProfile> {
             ),
             PersonalInfoCard(
               address: widget.userData.address,
-              email: widget.userData.email??'',
+              email: _auth.email,
               gender: widget.userData.gender,
               governorate: widget.userData.government,
               language: 'Arabic and English',
@@ -192,10 +198,12 @@ class _ShowUserProfileState extends State<ShowUserProfile> {
               startTime: widget.clinicData.openingTime,
               endTime: widget.clinicData.clossingTime,
               watingTime: widget.clinicData.waitingTime,
-              workingDays: [widget.clinicData.workingDays],
+              workingDays: widget.clinicData.workingDays,
             )
                 : SizedBox()
           ],
         ));
   }
+
+
 }

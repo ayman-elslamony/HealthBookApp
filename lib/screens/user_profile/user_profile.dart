@@ -166,9 +166,10 @@ class _UserProfileState extends State<UserProfile> {
                     child: ClipRRect(
                       //backgroundColor: Colors.white,
                       //backgroundImage:
+                      borderRadius: BorderRadius.all(Radius.circular(100)),
                          child:  _auth.getUserType == 'patient'?
-                    FadeInImage.assetNetwork(placeholder: 'assets/user.png',image: _auth.userData.patientImage)
-                :FadeInImage.assetNetwork(placeholder: 'assets/user.png',image: _auth.userData.doctorImage)
+                    FadeInImage.assetNetwork(fit: BoxFit.fill,placeholder: 'assets/user.png',image: _auth.userData.patientImage)
+                :FadeInImage.assetNetwork(fit: BoxFit.fill,placeholder: 'assets/user.png',image: _auth.userData.doctorImage)
                     ),
                   ),
                 ),
@@ -239,10 +240,10 @@ class _UserProfileState extends State<UserProfile> {
                               fontWeight: FontWeight.bold)),
 
                       /// patient name
-                      Text(
+                     Text(
                         _auth.getUserType == 'doctor'
-                            ? 'Specialty: ${_auth.userData.speciality}'
-                            : "Job: ${_auth.userData.job}",
+                            ? _auth.userData.speciality==''?'':'Specialty: ${_auth.userData.speciality}'
+                            : _auth.userData.job==''?'':"Job: ${_auth.userData.job}",
                         style: TextStyle(
                             color: Colors.red,
                             fontSize: 18,
@@ -257,7 +258,7 @@ class _UserProfileState extends State<UserProfile> {
                         color: Colors.grey,
                         height: 4,
                       ),
-                      _auth.userData.aboutYou == null
+                      _auth.userData.aboutYou == ''
                           ? SizedBox()
                           : Padding(
                               padding: const EdgeInsets.all(8.0),
@@ -304,14 +305,16 @@ class _UserProfileState extends State<UserProfile> {
 //            _isDoctor? SizedBox(): UserVitals(),
 //            _isDoctor? SizedBox():UserLabResult(),
     _auth.getUserType == 'doctor'?
-                 ClinicInfoCard(
+    _auth.getClinicData==null?SizedBox():ClinicInfoCard(
+                   name: _auth.getClinicData.clinicName,
                     address:  _auth.getClinicData.address,
                     governorate: _auth.getClinicData.government,
                     fees: _auth.getClinicData.fees,
+                   number: _auth.getClinicData.number,
                    startTime: _auth.getClinicData.openingTime,
                    endTime: _auth.getClinicData.clossingTime,
                     watingTime: _auth.getClinicData.waitingTime,
-                    workingDays: [_auth.getClinicData.workingDays],
+                    workingDays: _auth.getClinicData.workingDays,
                   )
                 : SizedBox()
           ],

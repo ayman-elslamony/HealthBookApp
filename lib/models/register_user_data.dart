@@ -6,8 +6,7 @@ class RegisterData{
   String lastName;
   String birthDate;
   String gender;
-  String nationalID;
-  String email;
+
   String job;
   String status;
   String number;
@@ -20,39 +19,36 @@ class RegisterData{
 
   RegisterData({this.speciality,this.doctorImage,
     this.firstName, this.middleName, this.lastName, this.birthDate,
-    this.gender, this.nationalID, this.email, this.job, this.status,
+    this.gender, this.job, this.status,
     this.number, this.address, this.government, this.patientImage,
     this.aboutYou
 });
   RegisterData.fromJson(Map<String, dynamic> json,String userType){
-     nationalID= json['nationalID'];
-     firstName= json['firstName'];
-     middleName= json['middleName'];
-     lastName= json['lastName'];
-     birthDate= json['birthDate'];
-     gender= json['gender'];
-     email= json['email'];
-     job= json['job'];
-     status= json['status'];
-     number= json['number'][0];
-     address= json['address'];
-     government= json['government'];
-
-     print('Auth().getUserType${Auth().getUserType}');
+    print(json['firstName']);
+    // nationalID= json['nationalID'];
+     firstName= json['firstName']??'';
+     middleName= json['middleName']??'';
+     lastName= json['lastName']??'';
+     birthDate= json['birthDate']??'';
+     gender= json['gender']??'';
+     job= json['job']??'';
+     status= json['status']??'';
+   number= json['number'] ==null ?'':json['number'][0];
+     address= json['address']??'';
+     government= json['government']??'';
+     print('bvdbcfnnbfnbf nf nfn');
      if(userType == 'doctor'){
        speciality =json['speciality']??'';
        doctorImage = json['doctorImage']??'';
-       aboutYou =json['bio'];
+       aboutYou =json['bio']??'';
      }else{
-       patientImage= json['patientImage'];
-       aboutYou= json['aboutYou'];
+       patientImage= json['patientImage']??'';
+       aboutYou= json['aboutYou']??'';
      }
-     print(firstName);print(gender);print(address);print(birthDate);print(middleName);
   }
 
   Map<String, dynamic> toJson(String userType) {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['email'] = this.email;
     data['number'] = [this.number];
     data['address'] = this.address;
     data['status'] = this.status;
@@ -63,7 +59,6 @@ class RegisterData{
     data['job'] = this.job;
     data['gender'] = this.gender;
     data['government'] = this.government;
-    data['nationalID'] = this.nationalID;
     if( userType == 'doctor'){
       data['speciality']=this.speciality??'';
       data['doctorImage']=this.doctorImage;

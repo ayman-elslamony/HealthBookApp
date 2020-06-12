@@ -161,18 +161,22 @@ class _EditClinicState extends State<EditClinic> {
   void initState() {
     super.initState();
     _auth =Provider.of<Auth>(context, listen: false);
-    _clinicLocationTextEditingController.text=_auth.getClinicData.address;
-  _clinicNameTextEditingController.text=_auth.getClinicData.clinicName;
-  _clinicNumberTextEditingController.text=_auth.getClinicData.number;
-   double time= double.parse(_auth.getClinicData.waitingTime);
-  if(time >59){
-    final int hour = time ~/ 60;
-    final double minutes = time % 60;
-    _hourTextEditingController.text=hour.toString();
-  _minuteTextEditingController.text=minutes.toString();
-  }else{
-    _minuteTextEditingController.text=_auth.getClinicData.waitingTime;
+    _clinicLocationTextEditingController.text=_auth.getClinicData.address??'';
+  _clinicNameTextEditingController.text=_auth.getClinicData.clinicName??'';
+  _clinicNumberTextEditingController.text=_auth.getClinicData.number??'';
+
+  if(_auth.getClinicData.waitingTime!=null){
+    double time= double.parse(_auth.getClinicData.waitingTime);
+    if(time >59){
+      final int hour = time ~/ 60;
+      final double minutes = time % 60;
+      _hourTextEditingController.text=hour.toString();
+      _minuteTextEditingController.text=minutes.toString();
+    }else{
+      _minuteTextEditingController.text=_auth.getClinicData.waitingTime;
+    }
   }
+
     List<String> start =_auth.getClinicData.openingTime.split(':');
   List<String> end =_auth.getClinicData.clossingTime.split(':');
     var timeNow = DateTime.now();
@@ -183,38 +187,40 @@ class _EditClinicState extends State<EditClinic> {
   //TimeOfDay.fromDateTime(dateTime);DateTime.parse(_auth.getClinicData.openingTime);
 // print( );
 
-  _feesTextEditingController.text=_auth.getClinicData.fees;
-  _clinicData['Clinic Name']=_auth.getClinicData.clinicName;
-  _clinicData['cliniclocation']=_auth.getClinicData.address;
-  _clinicData['watingTime']=_auth.getClinicData.waitingTime;
-  _clinicData['startTime']=_auth.getClinicData.openingTime;
-  _clinicData['endTime']=_auth.getClinicData.clossingTime;
-  _clinicData['fees']=_auth.getClinicData.fees;
-  _clinicData['number']=_auth.getClinicData.number;
-  _clinicData['workingDays']=_auth.getClinicData.workingDays;
+  _feesTextEditingController.text=_auth.getClinicData.fees??'';
+  _clinicData['Clinic Name']=_auth.getClinicData.clinicName??'';
+  _clinicData['cliniclocation']=_auth.getClinicData.address??'';
+  _clinicData['watingTime']=_auth.getClinicData.waitingTime??'';
+  _clinicData['startTime']=_auth.getClinicData.openingTime??'';
+  _clinicData['endTime']=_auth.getClinicData.clossingTime??'';
+  _clinicData['fees']=_auth.getClinicData.fees??'';
+  _clinicData['number']=_auth.getClinicData.number??'';
+  _clinicData['workingDays']=_auth.getClinicData.workingDays??'';
 
   }
+  _sort() {
+    for (int i = 0; i < _selectedWorkingDays.length; i++) {
+      int getIndex = workingDays.indexOf(_selectedWorkingDays[i]);
+      if (!_sortedWorkingDays.contains(_selectedWorkingDays[i])) {
+        _sortedWorkingDays.insert(getIndex, _selectedWorkingDays[i]);
+      }
+    }
+  }
+
+  getDays(int index) {
+    setState(() {
+      _clicked[index] = !_clicked[index];
+    });
+    if (_clicked[index] == true) {
+      _selectedWorkingDays.add(workingDays[index]);
+    } else {
+      _selectedWorkingDays.remove(workingDays[index]);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    _sort() {
-      for (int i = 0; i < _selectedWorkingDays.length; i++) {
-        int getIndex = workingDays.indexOf(_selectedWorkingDays[i]);
-        if (!_sortedWorkingDays.contains(_selectedWorkingDays[i])) {
-          _sortedWorkingDays.insert(getIndex, _selectedWorkingDays[i]);
-        }
-      }
-    }
 
-    getDays(int index) {
-      setState(() {
-        _clicked[index] = !_clicked[index];
-      });
-      if (_clicked[index] == true) {
-        _selectedWorkingDays.add(workingDays[index]);
-      } else {
-        _selectedWorkingDays.remove(workingDays[index]);
-      }
-    }
 
     return Scaffold(
       appBar: AppBar(

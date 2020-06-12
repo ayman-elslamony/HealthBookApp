@@ -1,7 +1,7 @@
 class ClinicData {
   String clinicName;
   String waitingTime;
-  String workingDays;
+  List workingDays;
   String openingTime;
   String clossingTime;
   String number;
@@ -23,16 +23,25 @@ class ClinicData {
         this.doctorID});
 
   ClinicData.fromJson(Map<String, dynamic> json) {
-    clinicName = json['clinicName'];
-    waitingTime = json['waitingTime'];
-    workingDays = json['workingDays'][0];
-    openingTime = json['openingTime'];
-    clossingTime = json['clossingTime'];
-    number = json['number'][0];
-    government = json['government'];
-    address = json['address'];
-    fees = json['fees'];
-    doctorID = json['doctorID'];
+    print('json[workingDays].runtimeType${json['workingDays'].runtimeType}');
+
+    json.values.forEach((x){
+      print('$x + ${x.runtimeType}');
+    });
+    clinicName = json['clinicName']??'';
+    waitingTime = json['waitingTime']??'';
+    openingTime = json['openingTime']??'';
+    clossingTime = json['clossingTime']??'';
+    number = json['number'].length==0?'':json['number'][0];
+    government = json['government']??'';
+    address = json['address']??'';
+    fees = json['fees']??'';
+    doctorID = json['doctorID']??'';
+    var x =  json['workingDays'];
+    print(x.runtimeType);
+    workingDays = json['workingDays'].toList()??[];
+    print('ffffffffffffffffffffff');
+
   }
 
   Map<String, dynamic> toJson() {

@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
 
 class ClinicInfoCard extends StatefulWidget {
+
+  final String name;
   final String address;
   final String governorate;
   final String watingTime;
   final String fees;
-  final List<String> workingDays;
+  final List workingDays;
   final String startTime;
   final String endTime;
+  final String number;
 
 
   ClinicInfoCard(
       {this.address,
+        this.number,
+        this.name,
         this.startTime,
         this.endTime,
       this.governorate,
@@ -118,22 +123,23 @@ class _ClinicInfoCardState extends State<ClinicInfoCard> {
                         bottom: 8.0, left: 15, right: 15, top: 6.0),
                     child: Column(
                       children: <Widget>[
-                        _data(
+                        widget.name==''?SizedBox():_data(
                             title: 'Clinic Name:',
-                            content: 'Name'),
-                        _data(
+                            content: widget.name),
+                        widget.number==''?SizedBox():_data(
+                            title: 'Clinic Number:',
+                            content: widget.number),
+                        widget.startTime=='' &&widget.endTime==''?SizedBox():_data(
                             title: 'Working Time:',
                             content: 'From ${widget.startTime} To ${widget.endTime}'),
-                        _data(
+                        widget.workingDays.length==0?SizedBox():_data(
                             title: 'Working Days:', content: _getWorkingDays()),
-                        _data(
+                        widget.watingTime==''?SizedBox():_data(
                             title: 'Wating Time:',
                             content: '${widget.watingTime} min'),
-                        _data(title: 'Address:', content: widget.address),
-
-                        // _data(title: 'Governorate:', content: widget.governorate),
-
-                        _data(title: 'Fees:', content: '${widget.fees} EGP'),
+                        widget.address==''?SizedBox():_data(title: 'Address:', content: widget.address),
+                        widget.governorate==''?SizedBox():_data(title: 'Governorate:', content: widget.governorate),
+                        widget.fees==''?SizedBox():_data(title: 'Fees:', content: '${widget.fees} EGP'),
                       ],
                     ),
                   )

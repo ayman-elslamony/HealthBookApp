@@ -29,6 +29,7 @@ class _LoginState extends State<Login> {
   int _selectedRadio = 1;
   Map<String, String> _loginData = {
     'email': '',
+    'National ID': '',
     'password': '',
   };
 
@@ -70,35 +71,31 @@ class _LoginState extends State<Login> {
               await Provider.of<Auth>(context, listen: false).signUp(
             email: _loginData['email'],
             password: _loginData['password'],
+                nationalID: _loginData['National ID'],
           );
           print(message);
           if (message == 'Patient account created') {
             //when success
-            setState(() {
-              _loadingUser = false;
-            });
             message = await Provider.of<Auth>(context, listen: false).signIn(
               email: _loginData['email'],
               password: _loginData['password'],
+              isCommingFromSignUp: true,
             );
             if (message == 'Auth success') {
-             Toast.show('Successfully Sign Up', context,duration: Toast.LENGTH_SHORT, gravity:  Toast.BOTTOM);
+             Toast.show('Successfully Sign Up', context,duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
               setState(() {
                 _loadingUser = false;
               });
                 Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>RegisterUserData()));
              return;
             } else {
-              Toast.show('Please Try To SignIn', context,duration: Toast.LENGTH_SHORT, gravity:  Toast.BOTTOM);
+              Toast.show('Please Try To SignIn', context,duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
               setState(() {
                 _goToSignUp =false;
                 _loadingUser = false;
               });
               return;
             }
-//            Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>RegisterUserData()));
-            //TODO:dvbdbn
-            return;
           } else if (message == 'Mail exists') {
             _showErrorDialog('Email Already Exists Try Another Email');
             setState(() {
@@ -121,7 +118,7 @@ class _LoginState extends State<Login> {
                   password: _loginData['password'],
                  );
             if (message == 'Auth success') {
-              Toast.show('Successfully Sign In', context,duration: Toast.LENGTH_SHORT, gravity:  Toast.BOTTOM);
+              Toast.show('Successfully Sign In', context,duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
               Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>HomeScreen()));
               setState(() {
                 _loadingUser = false;
@@ -133,7 +130,7 @@ class _LoginState extends State<Login> {
                     _loadingUser = false;
                   });
             }else {
-              Toast.show('Please Try Again', context,duration: Toast.LENGTH_SHORT, gravity:  Toast.BOTTOM);
+              Toast.show('Please Try Again', context,duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
               setState(() {
                 _loadingUser = false;
               });
@@ -148,7 +145,7 @@ class _LoginState extends State<Login> {
             );
             print(message);
             if (message == 'Auth success') {
-                Toast.show('Successfully Sign In', context,duration: Toast.LENGTH_SHORT, gravity:  Toast.BOTTOM);
+                Toast.show('Successfully Sign In', context,duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
                 Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>HomeScreen()));
               setState(() {
                 _loadingUser = false;
@@ -159,7 +156,7 @@ class _LoginState extends State<Login> {
                 _loadingUser = false;
               });
             }else {
-              Toast.show('Please Try Again', context,duration: Toast.LENGTH_SHORT, gravity:  Toast.BOTTOM);
+              Toast.show('Please Try Again', context,duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
               setState(() {
                 _loadingUser = false;
               });
@@ -206,11 +203,6 @@ class _LoginState extends State<Login> {
       Provider.of<Auth>(context, listen: false).setUserType ='doctor';
     }
     print(Provider.of<Auth>(context, listen: false).getUserType);
-  }
-@override
-  void initState() {
-
-    super.initState();
   }
   @override
   Widget build(BuildContext context) {
@@ -285,6 +277,64 @@ class _LoginState extends State<Login> {
                     padding: EdgeInsets.all(8.0),
                     child: Column(
                       children: <Widget>[
+                        _goToSignUp
+                            ?TextFormField(
+                          autofocus: false,
+                          textInputAction: TextInputAction.next,
+                          decoration: InputDecoration(
+                            prefixIcon: Icon(Icons.new_releases),
+                            filled: true,
+                            fillColor: Colors.white,
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius:
+                              BorderRadius.all(Radius.circular(10.0)),
+                              borderSide: BorderSide(
+                                color: Colors.blue,
+                              ),
+                            ),
+                            disabledBorder: OutlineInputBorder(
+                              borderRadius:
+                              BorderRadius.all(Radius.circular(10.0)),
+                              borderSide: BorderSide(color: Colors.blue),
+                            ),
+                            errorBorder: OutlineInputBorder(
+                              borderRadius:
+                              BorderRadius.all(Radius.circular(10.0)),
+                              borderSide: BorderSide(color: Colors.blue),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius:
+                              BorderRadius.all(Radius.circular(10.0)),
+                              borderSide: BorderSide(color: Colors.blue),
+                            ),
+                            focusedErrorBorder: OutlineInputBorder(
+                              borderRadius:
+                              BorderRadius.all(Radius.circular(10.0)),
+                              borderSide: BorderSide(color: Colors.blue),
+                            ),
+                            labelText: 'National ID',
+                          ),
+                          keyboardType: TextInputType.emailAddress,
+// ignore: missing_return
+                      validator: (String val) {
+                        if (val.trim().isEmpty || val.trim().length != 14) {
+                          return 'Please enter National ID';
+                        }
+                        if (val.trim().length != 14) {
+                          return 'Invalid National ID';
+                        }
+                      },
+                          onSaved: (value) {
+                            _loginData['National ID'] = value.trim();
+                          },
+                          onFieldSubmitted: (_) {
+                            FocusScope.of(context).requestFocus(_emailNode);
+                          },
+                        ):SizedBox(),
+                        _goToSignUp
+                            ?SizedBox(
+                          height: 13.0,
+                        ):SizedBox(),
                         TextFormField(
                           autofocus: false,
                           textInputAction: TextInputAction.next,
@@ -411,15 +461,15 @@ class _LoginState extends State<Login> {
                           onChanged: (value) {
                             _loginData['password'] = value.trim();
                           },
-                          onFieldSubmitted: _goToSignUp
-                              ? (_) {
-                                  _passwordNode.unfocus();
-                                  FocusScope.of(context)
-                                      .requestFocus(_confirmPassNode);
-                                }
-                              : (_) {
-                                  _passwordNode.unfocus();
-                                },
+                          onFieldSubmitted:(val){
+                            if(_goToSignUp){
+                              _passwordNode.unfocus();
+                              FocusScope.of(context)
+                                  .requestFocus(_confirmPassNode);
+                            }else{
+                              _passwordNode.unfocus();
+                            }
+                          },
                         ),
                         SizedBox(
                           height: 10.0,
