@@ -105,7 +105,7 @@ packages:
       name: device_preview
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.4.5"
+    version: "0.4.7"
   dio:
     dependency: "direct main"
     description:
@@ -183,7 +183,7 @@ packages:
       name: freezed_annotation
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.7.1"
+    version: "0.11.0"
   geocoder:
     dependency: "direct main"
     description:

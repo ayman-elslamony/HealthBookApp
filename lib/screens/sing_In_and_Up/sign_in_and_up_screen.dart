@@ -1,5 +1,6 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
+import 'package:healthbook/core/ui_components/info_widget.dart';
 import 'package:healthbook/screens/register_user_data/register_user_data.dart';
 import 'package:provider/provider.dart';
 import 'package:toast/toast.dart';
@@ -207,280 +208,296 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Scaffold(
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 15),
-          child: ListView(
-            children: <Widget>[
-              Container(
-                height: 100,
-                child: Center(
-                  child: Column(
-                    children: <Widget>[
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            'Welcome to',
-                          ),
-                          ColorizeAnimatedTextKit(
-                              totalRepeatCount: 9,
-                              pause: Duration(milliseconds: 1000),
-                              isRepeatingAnimation: true,
-                              speed: Duration(seconds: 1),
-                              text: [' Health Book '],
-                              textStyle: TextStyle(
-                                  fontSize: 28.0, fontFamily: "Horizon"),
-                              colors: [
-                                Colors.grey,
-                                Colors.blue,
-                                Colors.black,
-                                Colors.blue,
-                                Colors.grey,
-                                Colors.blue,
-                              ],
-                              textAlign: TextAlign.start,
-                              alignment: AlignmentDirectional
-                                  .topStart // or Alignment.topLeft
-                              ),
-                          Text('system'),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 3,
-                      ),
-                      TypewriterAnimatedTextKit(
-                          totalRepeatCount: 9,
-                          pause: Duration(milliseconds: 1000),
-                          speed: Duration(seconds: 1),
-                          isRepeatingAnimation: true,
-                          textAlign: TextAlign.center,
-                          alignment: AlignmentDirectional.topCenter,
-                          text: ['Health Book'],
-                          textStyle: Theme.of(context).textTheme.body2),
-                    ],
-                  ),
-                ),
-              ),
+      child: InfoWidget(
+        builder: (context , infoWidget){
+          return Scaffold(
+            body: Padding(
+              padding: EdgeInsets.only(left:infoWidget.screenWidth*0.02 ,right: infoWidget.screenWidth*0.02, top: infoWidget.screenHeight*0.04),
+              child: ListView(
+                children: <Widget>[
               SizedBox(
-                height: _goToSignUp
-                    ? MediaQuery.of(context).size.height / 16
-                    : MediaQuery.of(context).size.height / 8,
-              ),
-              Center(
-                child: Form(
-                  key: _formKey,
-                  child: Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Column(
-                      children: <Widget>[
-                        _goToSignUp
-                            ?TextFormField(
-                          autofocus: false,
-                          textInputAction: TextInputAction.next,
-                          decoration: InputDecoration(
-                            prefixIcon: Icon(Icons.new_releases),
-                            filled: true,
-                            fillColor: Colors.white,
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius:
-                              BorderRadius.all(Radius.circular(10.0)),
-                              borderSide: BorderSide(
-                                color: Colors.blue,
+                  width: infoWidget.screenWidth,
+                  height: infoWidget.screenHeight*0.2
+                  ,child: Center(child: Hero(tag: 'splash',child: Image.asset('assets/Log_in.png',fit: BoxFit.fill,width: infoWidget.orientation ==Orientation.landscape?infoWidget.localWidth*0.35:infoWidget.localWidth*0.45)))),
+//                  Container(
+//                    height: infoWidget.screenHeight*0.4,
+//                    child: Center(
+//                      child: Column(
+//                        children: <Widget>[
+//                          Row(
+//                            mainAxisAlignment: MainAxisAlignment.center,
+//                            crossAxisAlignment: CrossAxisAlignment.center,
+//                            children: <Widget>[
+//                              Text(
+//                                'Welcome to',
+//                                style: Theme.of(context).textTheme.body1.copyWith(
+//                                  fontSize: infoWidget.screenWidth*0.045
+//                                ),
+//                              ),
+//                              ColorizeAnimatedTextKit(
+//                                  totalRepeatCount: 9,
+//                                  pause: Duration(milliseconds: 1000),
+//                                  isRepeatingAnimation: true,
+//                                  speed: Duration(seconds: 1),
+//                                  text: [' Health Book '],
+//                                  textStyle: TextStyle(
+//                                      fontSize: 28.0, fontFamily: "Horizon"),
+//                                  colors: [
+//                                    Colors.grey,
+//                                    Colors.blue,
+//                                    Colors.black,
+//                                    Colors.blue,
+//                                    Colors.grey,
+//                                    Colors.blue,
+//                                  ],
+//                                  textAlign: TextAlign.start,
+//                                  alignment: AlignmentDirectional
+//                                      .topStart // or Alignment.topLeft
+//                              ),
+//                              Text('system',style: Theme.of(context).textTheme.body1.copyWith(
+//                                  fontSize: infoWidget.screenWidth*0.045
+//                              ),),
+//                            ],
+//                          ),
+//                          SizedBox(
+//                            height: infoWidget.screenHeight*0.011,
+//                          ),
+//                          TypewriterAnimatedTextKit(
+//                              totalRepeatCount: 9,
+//                              pause: Duration(milliseconds: 1000),
+//                              speed: Duration(seconds: 1),
+//                              isRepeatingAnimation: true,
+//                              textAlign: TextAlign.center,
+//                              alignment: AlignmentDirectional.topCenter,
+//                              text: ['Health Book'],
+//                              textStyle: Theme.of(context).textTheme.body2),
+//                        ],
+//                      ),
+//                    ),
+//                  ),
+
+                  Center(
+                    child: Form(
+                      key: _formKey,
+                      child: Padding(
+                        padding: EdgeInsets.all(infoWidget.screenWidth*0.02),
+                        child: Column(
+                          children: <Widget>[
+                            _goToSignUp
+                                ?SizedBox(
+                              height: infoWidget.orientation ==Orientation.portrait?infoWidget.screenHeight*0.08:infoWidget.screenHeight*0.14,
+                                  child: TextFormField(
+                              autofocus: false,
+                              textInputAction: TextInputAction.next,
+                              decoration: InputDecoration(
+                                  prefixIcon: Icon(Icons.new_releases),
+                                  filled: true,
+                                  fillColor: Colors.white,
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius:
+                                    BorderRadius.all(Radius.circular(10.0)),
+                                    borderSide: BorderSide(
+                                      color: Colors.blue,
+                                    ),
+                                  ),
+                                  disabledBorder: OutlineInputBorder(
+                                    borderRadius:
+                                    BorderRadius.all(Radius.circular(10.0)),
+                                    borderSide: BorderSide(color: Colors.blue),
+                                  ),
+                                  errorBorder: OutlineInputBorder(
+                                    borderRadius:
+                                    BorderRadius.all(Radius.circular(10.0)),
+                                    borderSide: BorderSide(color: Colors.blue),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius:
+                                    BorderRadius.all(Radius.circular(10.0)),
+                                    borderSide: BorderSide(color: Colors.blue),
+                                  ),
+                                  focusedErrorBorder: OutlineInputBorder(
+                                    borderRadius:
+                                    BorderRadius.all(Radius.circular(10.0)),
+                                    borderSide: BorderSide(color: Colors.blue),
+                                  ),
+                                  labelText: 'National ID',
                               ),
-                            ),
-                            disabledBorder: OutlineInputBorder(
-                              borderRadius:
-                              BorderRadius.all(Radius.circular(10.0)),
-                              borderSide: BorderSide(color: Colors.blue),
-                            ),
-                            errorBorder: OutlineInputBorder(
-                              borderRadius:
-                              BorderRadius.all(Radius.circular(10.0)),
-                              borderSide: BorderSide(color: Colors.blue),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius:
-                              BorderRadius.all(Radius.circular(10.0)),
-                              borderSide: BorderSide(color: Colors.blue),
-                            ),
-                            focusedErrorBorder: OutlineInputBorder(
-                              borderRadius:
-                              BorderRadius.all(Radius.circular(10.0)),
-                              borderSide: BorderSide(color: Colors.blue),
-                            ),
-                            labelText: 'National ID',
-                          ),
-                          keyboardType: TextInputType.emailAddress,
+                              keyboardType: TextInputType.emailAddress,
 // ignore: missing_return
-                      validator: (String val) {
-                        if (val.trim().isEmpty || val.trim().length != 14) {
-                          return 'Please enter National ID';
-                        }
-                        if (val.trim().length != 14) {
-                          return 'Invalid National ID';
-                        }
-                      },
-                          onSaved: (value) {
-                            _loginData['National ID'] = value.trim();
-                          },
-                          onFieldSubmitted: (_) {
-                            FocusScope.of(context).requestFocus(_emailNode);
-                          },
-                        ):SizedBox(),
-                        _goToSignUp
-                            ?SizedBox(
-                          height: 13.0,
-                        ):SizedBox(),
-                        TextFormField(
-                          autofocus: false,
-                          textInputAction: TextInputAction.next,
-                          focusNode: _emailNode,
-                          decoration: InputDecoration(
-                            prefixIcon: Icon(Icons.email),
-                            filled: true,
-                            fillColor: Colors.white,
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10.0)),
-                              borderSide: BorderSide(
-                                color: Colors.blue,
-                              ),
+                              validator: (String val) {
+                                  if (val.trim().isEmpty || val.trim().length != 14) {
+                                    return 'Please enter National ID';
+                                  }
+                                  if (val.trim().length != 14) {
+                                    return 'Invalid National ID';
+                                  }
+                              },
+                              onSaved: (value) {
+                                  _loginData['National ID'] = value.trim();
+                              },
+                              onFieldSubmitted: (_) {
+                                  FocusScope.of(context).requestFocus(_emailNode);
+                              },
                             ),
-                            disabledBorder: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10.0)),
-                              borderSide: BorderSide(color: Colors.blue),
-                            ),
-                            errorBorder: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10.0)),
-                              borderSide: BorderSide(color: Colors.blue),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10.0)),
-                              borderSide: BorderSide(color: Colors.blue),
-                            ),
-                            focusedErrorBorder: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10.0)),
-                              borderSide: BorderSide(color: Colors.blue),
-                            ),
-                            labelText: 'E-Mail',
-                          ),
-                          keyboardType: TextInputType.emailAddress,
+                                ):SizedBox(),
+                            _goToSignUp
+                                ?SizedBox(
+                              height: infoWidget.screenHeight*0.02,
+                            ):SizedBox(),
+                            SizedBox(
+                              height: infoWidget.orientation ==Orientation.portrait?infoWidget.screenHeight*0.08:infoWidget.screenHeight*0.14,
+                              child: TextFormField(
+                                autofocus: false,
+                                textInputAction: TextInputAction.next,
+                                focusNode: _emailNode,
+                                decoration: InputDecoration(
+                                  prefixIcon: Icon(Icons.email),
+                                  filled: true,
+                                  fillColor: Colors.white,
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius:
+                                    BorderRadius.all(Radius.circular(10.0)),
+                                    borderSide: BorderSide(
+                                      color: Colors.blue,
+                                    ),
+                                  ),
+                                  disabledBorder: OutlineInputBorder(
+                                    borderRadius:
+                                    BorderRadius.all(Radius.circular(10.0)),
+                                    borderSide: BorderSide(color: Colors.blue),
+                                  ),
+                                  errorBorder: OutlineInputBorder(
+                                    borderRadius:
+                                    BorderRadius.all(Radius.circular(10.0)),
+                                    borderSide: BorderSide(color: Colors.blue),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius:
+                                    BorderRadius.all(Radius.circular(10.0)),
+                                    borderSide: BorderSide(color: Colors.blue),
+                                  ),
+                                  focusedErrorBorder: OutlineInputBorder(
+                                    borderRadius:
+                                    BorderRadius.all(Radius.circular(10.0)),
+                                    borderSide: BorderSide(color: Colors.blue),
+                                  ),
+                                  labelText: 'E-Mail',
+                                ),
+                                keyboardType: TextInputType.emailAddress,
 // ignore: missing_return
-                          validator: (value) {
-                            print(value);
-                            if (value.trim().isEmpty) {
-                              return "Please enter your email";
-                            }
-                            if (!(value.contains("@"))) {
-                              return "Invalid email";
-                            }
-                          },
-                          onSaved: (value) {
-                            _loginData['email'] = value.trim();
-                            _emailNode.unfocus();
-                          },
-                          onFieldSubmitted: (_) {
-                            _emailNode.unfocus();
-                            FocusScope.of(context).requestFocus(_passwordNode);
-                          },
-                        ),
-                        SizedBox(
-                          height: 13.0,
-                        ),
-                        TextFormField(
-                          autofocus: false,
-                          textInputAction: _goToSignUp
-                              ? TextInputAction.next
-                              : TextInputAction.done,
-                          focusNode: _passwordNode,
-                          obscureText: _securePassword,
-                          decoration: InputDecoration(
-                              prefixIcon: Icon(Icons.lock_open),
-                              suffixIcon: InkWell(
-                                child: Icon(_securePassword == false
-                                    ? Icons.visibility
-                                    : Icons.visibility_off),
-                                onTap: () {
-                                  setState(() {
-                                    _securePassword = !_securePassword;
-                                  });
+                                validator: (value) {
+                                  print(value);
+                                  if (value.trim().isEmpty) {
+                                    return "Please enter your email";
+                                  }
+                                  if (!(value.contains("@"))) {
+                                    return "Invalid email";
+                                  }
+                                },
+                                onSaved: (value) {
+                                  _loginData['email'] = value.trim();
+                                  _emailNode.unfocus();
+                                },
+                                onFieldSubmitted: (_) {
+                                  _emailNode.unfocus();
+                                  FocusScope.of(context).requestFocus(_passwordNode);
                                 },
                               ),
-                              filled: true,
-                              fillColor: Colors.white,
-                              disabledBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0)),
-                                borderSide: BorderSide(color: Colors.blue),
-                              ),
-                              errorBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0)),
-                                borderSide: BorderSide(color: Colors.blue),
-                              ),
-                              focusedErrorBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0)),
-                                borderSide: BorderSide(color: Colors.blue),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0)),
-                                borderSide: BorderSide(
-                                  color: Colors.blue,
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0)),
-                                borderSide: BorderSide(color: Colors.blue),
-                              ),
-                              labelText: 'Password'),
+                            ),
+                            SizedBox(
+                              height: infoWidget.screenHeight*0.02,
+                            ),
+                            SizedBox(
+                              height: infoWidget.orientation ==Orientation.portrait?infoWidget.screenHeight*0.08:infoWidget.screenHeight*0.14,
+                              child: TextFormField(
+                                autofocus: false,
+                                textInputAction: _goToSignUp
+                                    ? TextInputAction.next
+                                    : TextInputAction.done,
+                                focusNode: _passwordNode,
+                                obscureText: _securePassword,
+                                decoration: InputDecoration(
+                                    prefixIcon: Icon(Icons.lock_open),
+                                    suffixIcon: InkWell(
+                                      child: Icon(_securePassword == false
+                                          ? Icons.visibility
+                                          : Icons.visibility_off),
+                                      onTap: () {
+                                        setState(() {
+                                          _securePassword = !_securePassword;
+                                        });
+                                      },
+                                    ),
+                                    filled: true,
+                                    fillColor: Colors.white,
+                                    disabledBorder: OutlineInputBorder(
+                                      borderRadius:
+                                      BorderRadius.all(Radius.circular(10.0)),
+                                      borderSide: BorderSide(color: Colors.blue),
+                                    ),
+                                    errorBorder: OutlineInputBorder(
+                                      borderRadius:
+                                      BorderRadius.all(Radius.circular(10.0)),
+                                      borderSide: BorderSide(color: Colors.blue),
+                                    ),
+                                    focusedErrorBorder: OutlineInputBorder(
+                                      borderRadius:
+                                      BorderRadius.all(Radius.circular(10.0)),
+                                      borderSide: BorderSide(color: Colors.blue),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius:
+                                      BorderRadius.all(Radius.circular(10.0)),
+                                      borderSide: BorderSide(
+                                        color: Colors.blue,
+                                      ),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius:
+                                      BorderRadius.all(Radius.circular(10.0)),
+                                      borderSide: BorderSide(color: Colors.blue),
+                                    ),
+                                    labelText: 'Password'),
 
 // ignore: missing_return
-                          validator: (value) {
-                            if (value.trim().isEmpty) {
-                              return 'Please enter your password';
-                            }
-                            if (value.trim().isEmpty ||
-                                value.trim().length < 1) {
-                              return 'Password is too short!';
-                            }
-                          },
-                          onSaved: (_) {
-                            _passwordNode.unfocus();
-                          },
-                          onChanged: (value) {
-                            _loginData['password'] = value.trim();
-                          },
-                          onFieldSubmitted:(val){
-                            if(_goToSignUp){
-                              _passwordNode.unfocus();
-                              FocusScope.of(context)
-                                  .requestFocus(_confirmPassNode);
-                            }else{
-                              _passwordNode.unfocus();
-                            }
-                          },
-                        ),
-                        SizedBox(
-                          height: 10.0,
-                        ),
-                        _goToSignUp
-                            ? TextFormField(
-                                autofocus: false,
-                                textInputAction: TextInputAction.done,
-                                focusNode: _confirmPassNode,
-                                obscureText: true,
-                                decoration: InputDecoration(
+                                validator: (value) {
+                                  if (value.trim().isEmpty) {
+                                    return 'Please enter your password';
+                                  }
+                                  if (value.trim().isEmpty ||
+                                      value.trim().length < 1) {
+                                    return 'Password is too short!';
+                                  }
+                                },
+                                onSaved: (_) {
+                                  _passwordNode.unfocus();
+                                },
+                                onChanged: (value) {
+                                  _loginData['password'] = value.trim();
+                                },
+                                onFieldSubmitted:(val){
+                                  if(_goToSignUp){
+                                    _passwordNode.unfocus();
+                                    FocusScope.of(context)
+                                        .requestFocus(_confirmPassNode);
+                                  }else{
+                                    _passwordNode.unfocus();
+                                  }
+                                },
+                              ),
+                            ),
+                            SizedBox(
+                              height: infoWidget.screenHeight*0.02,
+                            ),
+                            _goToSignUp
+                                ? SizedBox(
+                              height: infoWidget.orientation ==Orientation.portrait?infoWidget.screenHeight*0.08:infoWidget.screenHeight*0.14,
+                                  child: TextFormField(
+                              autofocus: false,
+                              textInputAction: TextInputAction.done,
+                              focusNode: _confirmPassNode,
+                              obscureText: true,
+                              decoration: InputDecoration(
                                     prefixIcon: Icon(Icons.lock_open),
                                     filled: true,
                                     fillColor: Colors.white,
@@ -488,19 +505,19 @@ class _LoginState extends State<Login> {
                                       borderRadius: BorderRadius.all(
                                           Radius.circular(10.0)),
                                       borderSide:
-                                          BorderSide(color: Colors.blue),
+                                      BorderSide(color: Colors.blue),
                                     ),
                                     focusedErrorBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.all(
                                           Radius.circular(10.0)),
                                       borderSide:
-                                          BorderSide(color: Colors.blue),
+                                      BorderSide(color: Colors.blue),
                                     ),
                                     errorBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.all(
                                           Radius.circular(10.0)),
                                       borderSide:
-                                          BorderSide(color: Colors.blue),
+                                      BorderSide(color: Colors.blue),
                                     ),
                                     focusedBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.all(
@@ -513,149 +530,153 @@ class _LoginState extends State<Login> {
                                       borderRadius: BorderRadius.all(
                                           Radius.circular(10.0)),
                                       borderSide:
-                                          BorderSide(color: Colors.blue),
+                                      BorderSide(color: Colors.blue),
                                     ),
                                     labelText: 'Confirm Password'),
 
 // ignore: missing_return
-                                validator: (value) {
+                              validator: (value) {
                                   if (value.trim().isEmpty) {
                                     return 'Please enter your password';
                                   }
                                   if (value.trim() != _loginData['password']) {
                                     return 'Password not identical!';
                                   }
-                                },
-                                onSaved: (_) {
+                              },
+                              onSaved: (_) {
                                   _confirmPassNode.unfocus();
-                                },
-                                onFieldSubmitted: (_) {
+                              },
+                              onFieldSubmitted: (_) {
                                   _confirmPassNode.unfocus();
-                                },
-                              )
-                            : SizedBox(),
-                        _goToSignUp
-                            ? SizedBox():SizedBox(
-                          height: 50,
-                          width: double.infinity,
-                          child: Row(
-                            children: <Widget>[
-                              Expanded(
-                                child: RadioListTile(
-                                  title: Text('Patient',style: TextStyle(color: _selectedRadio==1?Colors.blue:Colors.black,fontWeight: _selectedRadio==1?FontWeight.bold:FontWeight.normal),),
-                                  value: 1,
-                                  groupValue: _selectedRadio,
-                                  onChanged: onChangedRadio,
-                                  activeColor: Colors.blue,
-                                ),
-                              ),
-                              Expanded(
-                                child: RadioListTile(
-                                    title: Text('Doctor',style: TextStyle(color: _selectedRadio==2?Colors.blue:Colors.black,fontWeight: _selectedRadio==2?FontWeight.bold:FontWeight.normal),),
-                                    value: 2,
-                                    activeColor: Colors.blue,
-                                    groupValue: _selectedRadio,
-                                    onChanged: onChangedRadio),
-                              ),
-                            ],
-                          ),
-                        ),
-                        _goToSignUp
-                            ? SizedBox()
-                            : Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 10),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: <Widget>[
-                                    InkWell(
-                                      child: Text(
-                                        'ForgetPassword?',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .display1
-                                            .copyWith(
-                                              color: Colors.grey.shade500,
-                                              fontSize: 15,
-                                            ),
-                                      ),
-                                      onTap: () {
-                                        Navigator.of(context)
-                                            .pushNamed(SendSms.routeName);
-                                      },
+                              },
+                            ),
+                                )
+                                : SizedBox(),
+//                            _goToSignUp
+//                                ? SizedBox()
+//                                : Padding(
+//                              padding:
+//                               EdgeInsets.symmetric(vertical: infoWidget.screenHeight*0.01),
+//                              child: Row(
+//                                mainAxisAlignment: MainAxisAlignment.end,
+//                                children: <Widget>[
+//                                  InkWell(
+//                                    child: Text(
+//                                      'ForgetPassword?',
+//                                      style: Theme.of(context)
+//                                          .textTheme
+//                                          .display1
+//                                          .copyWith(
+//                                        color: Colors.grey.shade500,
+//                                        fontSize: 15,
+//                                      ),
+//                                    ),
+//                                    onTap: () {
+//                                      Navigator.of(context)
+//                                          .pushNamed(SendSms.routeName);
+//                                    },
+//                                  ),
+//                                ],
+//                              ),
+//                            ),
+                            _goToSignUp
+                                ? SizedBox():SizedBox(
+                              height: infoWidget.screenHeight*0.065,
+                              width: double.infinity,
+                              child: Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    child: RadioListTile(
+                                      title: Text('Patient',style: TextStyle(color: _selectedRadio==1?Colors.blue:Colors.black,fontWeight: _selectedRadio==1?FontWeight.bold:FontWeight.normal,fontSize: infoWidget.orientation==Orientation.portrait? infoWidget.screenWidth*0.04:infoWidget.screenWidth*0.032,),),
+                                      value: 1,
+                                      groupValue: _selectedRadio,
+                                      onChanged: onChangedRadio,
+                                      activeColor: Colors.blue,
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                  Expanded(
+                                    child: RadioListTile(
+                                        title: Text('Doctor',style: TextStyle(color: _selectedRadio==2?Colors.blue:Colors.black,fontWeight: _selectedRadio==2?FontWeight.bold:FontWeight.normal,fontSize: infoWidget.orientation==Orientation.portrait? infoWidget.screenWidth*0.04:infoWidget.screenWidth*0.032,),),
+                                        value: 2,
+                                        activeColor: Colors.blue,
+                                        groupValue: _selectedRadio,
+                                        onChanged: onChangedRadio),
+                                  ),
+                                ],
                               ),
-                        SizedBox(
-                          height: 50,
-                        ),
-                        _loadingUser == true
-                            ? CircularProgressIndicator(
-                                backgroundColor: Colors.blue,
-                              )
-                            : RaisedButton(
-                                child:
-                                    Text(_goToSignUp ? 'SIGN UP' : 'SIGN IN'),
-                                onPressed: _submit
+                            ),
+
+                            SizedBox(
+                              height: infoWidget.orientation==Orientation.portrait?infoWidget.screenHeight*0.099:infoWidget.screenHeight*0.2,
+                            ),
+                            _loadingUser == true
+                                ? CircularProgressIndicator(
+                              backgroundColor: Colors.blue,
+                            )
+                                : RaisedButton(
+                              child:
+                              Text(_goToSignUp ? 'SIGN UP' : 'SIGN IN',style: TextStyle(fontSize: infoWidget.orientation==Orientation.portrait?infoWidget.screenWidth*0.044:infoWidget.screenWidth*0.035),),
+                              onPressed: _submit
 //                                    (){
 //                                  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>RegisterUserData()));
 //                                }
-                                ,
-                                //_submit,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30),
-                                ),
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 30.0, vertical: 8.0),
-                                color: Theme.of(context).primaryColor,
-                                textColor: Theme.of(context)
-                                    .primaryTextTheme
-                                    .button
-                                    .color,
+                              ,
+                              //_submit,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
                               ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Text(
-                              _goToSignUp
-                                  ? 'Already have acount '
-                                  : 'Not Regiter? ',
-                              style:
-                                  Theme.of(context).textTheme.display1.copyWith(
-                                        color: Colors.grey.shade500,
-                                        fontSize: 15.5,
-                                      ),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 30.0, vertical: 8.0),
+                              color: Theme.of(context).primaryColor,
+                              textColor: Theme.of(context)
+                                  .primaryTextTheme
+                                  .button
+                                  .color,
                             ),
-                            InkWell(
-                              onTap: () {
-                                setState(() {
-                                  _goToSignUp = !_goToSignUp;
-                                });
-                                _formKey.currentState.reset();
-                              },
-                              child: Text(
-                                _goToSignUp ? 'Sign In' : 'create new account',
-                                style:
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Text(
+                                  _goToSignUp
+                                      ? 'Already have acount '
+                                      : 'Not Regiter? ',
+                                  style:
+                                  Theme.of(context).textTheme.display1.copyWith(
+                                    color: Colors.grey.shade500,
+                                    fontSize: infoWidget.orientation==Orientation.portrait?infoWidget.screenWidth*0.044:infoWidget.screenWidth*0.030,
+                                  ),
+                                ),
+                                InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      _goToSignUp = !_goToSignUp;
+                                    });
+                                    _formKey.currentState.reset();
+                                  },
+                                  child: Text(
+                                    _goToSignUp ? 'Sign In' : 'create new account',
+                                    style:
                                     Theme.of(context).textTheme.body2.copyWith(
-                                          decoration: TextDecoration.underline,
-                                          fontSize: 18,
-                                        ),
-                              ),
+                                      decoration: TextDecoration.underline,
+                                        fontSize: infoWidget.orientation==Orientation.portrait?infoWidget.screenWidth*0.044:infoWidget.screenWidth*0.030
+                                    ),
+                                  ),
+                                )
+                              ],
                             )
                           ],
-                        )
-                      ],
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                ],
               ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }

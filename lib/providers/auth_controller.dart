@@ -14,11 +14,26 @@ import 'package:flutter/foundation.dart';
 
 class Auth with ChangeNotifier {
   NetWork _netWork = NetWork();
-  static String _token;
-  static String _userId;
+  String _token;
+  String _userId;
   String _email;
   String _userType = 'patient';
   RegisterData rgisterData;
+//  =RegisterData(
+//    address: '5415212',
+//    aboutYou: 'dfdnfgvm cvneryuhtej dvbdcbf',
+//    birthDate: '12/12-2012',
+//    doctorImage: '',
+//    firstName: 'Ayman',
+//    gender: 'male',
+//    government: 'mansoura',
+//    job: 'programmer',
+//    lastName: 'elskamony',
+//    middleName: 'kamel',
+//    number: '01145523795',
+//    status: 'single',
+//     patientImage: '',
+//  );
   static List<DoctorAppointment> appointmentForDoctor=[];
   static List<PatientAppointment> appointmentForPatient=[];
   static ClinicData clinicData;
