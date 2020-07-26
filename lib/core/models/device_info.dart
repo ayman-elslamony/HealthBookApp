@@ -9,12 +9,19 @@ class DeviceInfo {
   final double screenHeight;
   final double localWidth;
   final double localHeight;
-
+  final TextStyle title;
+  final TextStyle subTitle;
+  final double defaultVerticalPadding;
+  final double defaultHorizontalPadding;
   DeviceInfo(
       {this.orientation,
       this.deviceType,
       this.screenWidth,
       this.screenHeight,
       this.localWidth,
+        this.title,
+        this.subTitle,
+        this.defaultVerticalPadding,
+        this.defaultHorizontalPadding,
       this.localHeight});
 }

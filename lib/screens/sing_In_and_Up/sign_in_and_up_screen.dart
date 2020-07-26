@@ -210,6 +210,7 @@ class _LoginState extends State<Login> {
     return SafeArea(
       child: InfoWidget(
         builder: (context , infoWidget){
+          print(infoWidget.orientation);
           return Scaffold(
             body: Padding(
               padding: EdgeInsets.only(left:infoWidget.screenWidth*0.02 ,right: infoWidget.screenWidth*0.02, top: infoWidget.screenHeight*0.04),
@@ -288,9 +289,15 @@ class _LoginState extends State<Login> {
                               height: infoWidget.orientation ==Orientation.portrait?infoWidget.screenHeight*0.08:infoWidget.screenHeight*0.14,
                                   child: TextFormField(
                               autofocus: false,
+                              style: TextStyle(
+                                  fontSize: infoWidget.orientation ==Orientation.portrait?infoWidget.screenWidth*0.04:infoWidget.screenWidth*0.035
+                              ),
                               textInputAction: TextInputAction.next,
                               decoration: InputDecoration(
                                   prefixIcon: Icon(Icons.new_releases),
+//                                  labelStyle: TextStyle(
+//
+//                                  ),
                                   filled: true,
                                   fillColor: Colors.white,
                                   focusedBorder: OutlineInputBorder(
@@ -350,6 +357,9 @@ class _LoginState extends State<Login> {
                                 autofocus: false,
                                 textInputAction: TextInputAction.next,
                                 focusNode: _emailNode,
+                                style: TextStyle(
+                                    fontSize: infoWidget.orientation ==Orientation.portrait?infoWidget.screenWidth*0.04:infoWidget.screenWidth*0.035
+                                ),
                                 decoration: InputDecoration(
                                   prefixIcon: Icon(Icons.email),
                                   filled: true,
@@ -411,6 +421,9 @@ class _LoginState extends State<Login> {
                               height: infoWidget.orientation ==Orientation.portrait?infoWidget.screenHeight*0.08:infoWidget.screenHeight*0.14,
                               child: TextFormField(
                                 autofocus: false,
+                                style: TextStyle(
+                                    fontSize: infoWidget.orientation ==Orientation.portrait?infoWidget.screenWidth*0.04:infoWidget.screenWidth*0.035
+                                ),
                                 textInputAction: _goToSignUp
                                     ? TextInputAction.next
                                     : TextInputAction.done,
@@ -494,6 +507,9 @@ class _LoginState extends State<Login> {
                               height: infoWidget.orientation ==Orientation.portrait?infoWidget.screenHeight*0.08:infoWidget.screenHeight*0.14,
                                   child: TextFormField(
                               autofocus: false,
+                                    style: TextStyle(
+                                        fontSize: infoWidget.orientation ==Orientation.portrait?infoWidget.screenWidth*0.04:infoWidget.screenWidth*0.035
+                                    ),
                               textInputAction: TextInputAction.done,
                               focusNode: _confirmPassNode,
                               obscureText: true,

@@ -17,11 +17,11 @@ import 'screens/user_profile/patient_health_record.dart';
 import 'screens/user_profile/user_profile.dart';
 
 
-void main() =>  runApp(DevicePreview(
-  builder: (context) => MyApp(),
-));
-//void main() =>  runApp(MyApp(),
-//);
+//void main() =>  runApp(DevicePreview(
+//  builder: (context) => MyApp(),
+//));
+void main() =>  runApp(MyApp(),
+);
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
       ],
       child: Consumer<Auth>(
         builder: (ctx, auth, child) => MaterialApp(
-         //builder:  DevicePreview.appBuilder,
+          builder:  DevicePreview.appBuilder,
           debugShowCheckedModeBanner: false,
           title: 'Health Book',
           theme: ThemeData(

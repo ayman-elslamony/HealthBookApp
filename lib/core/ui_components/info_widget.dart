@@ -19,6 +19,10 @@ class InfoWidget extends StatelessWidget {
           screenHeight: mediaQueryData.size.height,
           localHeight: constrains.maxHeight,
           localWidth: constrains.maxWidth,
+          title: TextStyle(fontSize: mediaQueryData.size.width*0.06,color: Colors.black),
+          subTitle: TextStyle(fontSize: mediaQueryData.size.width*0.03,color: Colors.black45),
+          defaultVerticalPadding:  mediaQueryData.size.width*0.009,
+          defaultHorizontalPadding: mediaQueryData.size.height*0.01
         );
         return builder(context, deviceInfo);
       },

@@ -1,4 +1,6 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:healthbook/core/models/device_info.dart';
+import 'package:healthbook/core/ui_components/info_widget.dart';
 import 'package:healthbook/providers/auth_controller.dart';
 import 'package:healthbook/screens/user_profile/show_profile.dart';
 
@@ -163,131 +165,158 @@ bool isLoading=true;
       );
     }
 
-    return Scaffold(
-      key: _scaffoldState,
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return InfoWidget(
+      builder: (context,infoWidget){
+        DeviceInfo x =infoWidget;
+        print(infoWidget.orientation);
+        return Scaffold(
+          key: _scaffoldState,
+          body: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(left: 10.0, top: 10.0),
-                child: Text(
-                    _auth.getUserType != 'doctor'
-                        ? 'Welcome ${_auth.userData.firstName} ${_auth.userData.lastName} !'
-                        : 'Welcome Dr. ${_auth.userData.firstName} ${_auth.userData.lastName} ',
-                    style: Theme.of(context).textTheme.display1),
-              ),
-            ],
-          ),
-          AppointmentsDateCard(),
-          isLoading?Expanded(child: Center(child: CircularProgressIndicator(backgroundColor: Colors.blue,),)):Consumer<Auth>(builder: (context, appointements, _) {
-            if (_auth.getUserType == 'doctor'?
-            appointements.allAppointment.length==0 :appointements.allAppointmentOfPatient.length==0) {
-              return Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+              SizedBox(height: infoWidget.orientation ==Orientation.portrait?infoWidget.screenHeight*0.015:infoWidget.screenHeight*0.03,),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Column(
                     children: <Widget>[
-                      FittedBox(
-                        child: Text(
-                          'You don\'t have any appointement for this week',
-                          textAlign: TextAlign.center,
-                          maxLines: 2,
-                          style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 5.0,
-                      ),
-                      InkWell(
-                        onTap: () {},
-                        child: Container(
-                          height: 30,
-                          width: 210,
-                          decoration: BoxDecoration(
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.blue,
-                                  blurRadius: 40.0,
-                                  // has the effect of softening the shadow
-                                  spreadRadius: 1.0,
-                                  // has the effect of extending the shadow
-                                  offset: Offset(
-                                    0.0, // horizontal, move right 10
-                                    10.0, // vertical, move down 10
-                                  ),
-                                )
-                              ],
-                              color: Colors.blue,
-                              borderRadius: BorderRadius.circular(6.0)),
-                          child: Center(
-                            child: Text(
-                              'Check Out Other Days',
-                              textAlign: TextAlign.center,
-                              maxLines: 2,
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 5.0,
-                      ),
                       Text(
-                        'Stay Healty 💙',
-                        textAlign: TextAlign.center,
-                        maxLines: 2,
-                        style: TextStyle(
-                            color: Colors.blue,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold),
-                      ),
+                          _auth.getUserType != 'doctor'
+                              ? 'Welcome ${_auth.userData.firstName} ${_auth.userData.lastName} !'
+                              : 'Welcome Dr. ${_auth.userData.firstName} ${_auth.userData.lastName} ',
+                          style: Theme.of(context).textTheme.display1.copyWith(
+                              fontSize: infoWidget.orientation ==Orientation.portrait?infoWidget.screenWidth*0.04:infoWidget.screenWidth*0.035
+                          )),
                     ],
                   ),
-                ),
-              );
-            } else {
-              print(appointements.allAppointment.length);
-              return Expanded(
-                  child: ListView.builder(
-                          itemBuilder: (ctx, index) =>
-                              _auth.getUserType != 'doctor'
-                                  ?
-                              InkWell(
-                                      onTap: () {
-                                        Navigator.of(context)
-                                            .push(MaterialPageRoute(builder: (_)=>ShowUserProfile(
-                                          type: 'doctor',
-                                          userData: appointements.allAppointmentOfPatient[index].registerData,
-                                          clinicData: appointements.allAppointmentOfPatient[index].clinicData,
-                                        )));
-                                      },
-                                      child:
-                                          //see app as patient
-                                      PatientAppointmentCard(patientAppointment: appointements.allAppointmentOfPatient[index])
-                              ): DoctorAppointmentCard(
-                                      cancelButton: _cancelButton,
-                                //see app as doctor
-                                doctorAppointment: appointements.allAppointment[index],
+                ],
+              ),
+              AppointmentsDateCard(),
+              isLoading?Expanded(child: Center(child: CircularProgressIndicator(backgroundColor: Colors.blue,),)):Consumer<Auth>(builder: (context, appointements, _) {
+                if (_auth.getUserType == 'doctor'?
+                appointements.allAppointment.length==0 :appointements.allAppointmentOfPatient.length==0) {
+                  return Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Column(
+                                children: <Widget>[
+                                  Text(
+                                    'You don\'t have any appointement for this week',
+                                    textAlign: TextAlign.center,
+                                    maxLines: 2,
+                                    style: TextStyle(
+                                        fontSize: infoWidget.orientation ==Orientation.portrait?infoWidget.screenWidth*0.04:infoWidget.screenWidth*0.035,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: infoWidget.orientation ==Orientation.portrait?infoWidget.screenHeight*0.02:infoWidget.screenHeight*0.03,
+                          ),
+                          InkWell(
+                            onTap: () {},
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Container(
+                                  decoration: BoxDecoration(
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.blue,
+                                          blurRadius: 40.0,
+                                          // has the effect of softening the shadow
+                                          spreadRadius: 1.0,
+                                          // has the effect of extending the shadow
+                                          offset: Offset(
+                                            0.0, // horizontal, move right 10
+                                            10.0, // vertical, move down 10
+                                          ),
+                                        )
+                                      ],
+                                      color: Colors.blue,
+                                      borderRadius: BorderRadius.circular(6.0)),
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(horizontal: infoWidget.screenHeight*0.06,vertical: infoWidget.screenHeight*0.015),
+                                    child: Center(
+                                      child: Column(
+                                        children: <Widget>[
+                                          Text(
+                                            'Check Out Other Days',
+                                            textAlign: TextAlign.center,
+                                            maxLines: 2,
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: infoWidget.orientation ==Orientation.portrait?infoWidget.screenWidth*0.048:infoWidget.screenWidth*0.035,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                          itemCount:
-                  _auth.getUserType == 'doctor'?
-                    appointements.allAppointment.length :appointements.allAppointmentOfPatient.length,
-                        )
-                     );
-            }
-          })
-        ],
-      ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            height: infoWidget.orientation ==Orientation.portrait?infoWidget.screenHeight*0.02:infoWidget.screenHeight*0.03,
+                          ),
+                          Text(
+                            'Stay Healty 💙',
+                            textAlign: TextAlign.center,
+                            maxLines: 2,
+                            style: TextStyle(
+                                color: Colors.blue,
+                                fontSize: infoWidget.orientation ==Orientation.portrait?infoWidget.screenWidth*0.048:infoWidget.screenWidth*0.035,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                } else {
+                  print(appointements.allAppointment.length);
+                  return Expanded(
+                      child: ListView.builder(
+                        itemBuilder: (ctx, index) =>
+                        _auth.getUserType != 'doctor'
+                            ?
+                        InkWell(
+                            onTap: () {
+                              Navigator.of(context)
+                                  .push(MaterialPageRoute(builder: (_)=>ShowUserProfile(
+                                type: 'doctor',
+                                userData: appointements.allAppointmentOfPatient[index].registerData,
+                                clinicData: appointements.allAppointmentOfPatient[index].clinicData,
+                              )));
+                            },
+                            child:
+                            //see app as patient
+                            PatientAppointmentCard(patientAppointment: appointements.allAppointmentOfPatient[index])
+                        ): DoctorAppointmentCard(
+                          cancelButton: _cancelButton,
+                          //see app as doctor
+                          doctorAppointment: appointements.allAppointment[index],
+                        ),
+                        itemCount:
+                        _auth.getUserType == 'doctor'?
+                        appointements.allAppointment.length :appointements.allAppointmentOfPatient.length,
+                      )
+                  );
+                }
+              })
+            ],
+          ),
+        );
+      },
     );
   }
 }

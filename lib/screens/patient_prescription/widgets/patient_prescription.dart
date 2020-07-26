@@ -583,50 +583,7 @@ class _PatientPrescriptionState extends State<PatientPrescription>
                     )
                   ],
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 16, bottom: 8.0),
-                  child: Row(
-                    children: <Widget>[
-                      Text(
-                        'Diagnose: ',
-                        style: TextStyle(color: Colors.blue, fontSize: 18),
-                      ),
-                      Expanded(
-                        //width: 80,
-                        child: TextFormField(
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.all(8.0),
-                            filled: true,
-                            fillColor: Colors.white,
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10.0)),
-                              borderSide: BorderSide(
-                                color: Colors.blue,
-                              ),
-                            ),
-                            disabledBorder: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10.0)),
-                              borderSide: BorderSide(
-                                color: Colors.blue,
-                              ),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10.0)),
-                              borderSide: BorderSide(color: Colors.blue),
-                            ),
-                          ),
-                          maxLines: 3,
-                          onChanged: (val) {
-                            _diagnose = val;
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+
 //              Container(
 //                  color: Colors.black54,
 //                  width: MediaQuery.of(context).size.width,
@@ -691,10 +648,11 @@ class _PatientPrescriptionState extends State<PatientPrescription>
 //                      ],
 //                    ),
 //                  )),
+              SizedBox(height: 20,),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Text('Problem:',
+                    Text('Diagnose:',
                         style: TextStyle(
                             color: Colors.blue,
                             fontSize: 18,
@@ -855,7 +813,50 @@ class _PatientPrescriptionState extends State<PatientPrescription>
                     ),
                   ],
                 ),
-
+                Padding(
+                  padding: const EdgeInsets.only(top: 16, bottom: 8.0),
+                  child: Row(
+                    children: <Widget>[
+                      Text(
+                        'Diagnose description: ',
+                        style: TextStyle(color: Colors.blue, fontSize: 18),
+                      ),
+                      Expanded(
+                        //width: 80,
+                        child: TextFormField(
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.all(8.0),
+                            filled: true,
+                            fillColor: Colors.white,
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius:
+                              BorderRadius.all(Radius.circular(10.0)),
+                              borderSide: BorderSide(
+                                color: Colors.blue,
+                              ),
+                            ),
+                            disabledBorder: OutlineInputBorder(
+                              borderRadius:
+                              BorderRadius.all(Radius.circular(10.0)),
+                              borderSide: BorderSide(
+                                color: Colors.blue,
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius:
+                              BorderRadius.all(Radius.circular(10.0)),
+                              borderSide: BorderSide(color: Colors.blue),
+                            ),
+                          ),
+                          maxLines: 3,
+                          onChanged: (val) {
+                            _diagnose = val;
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[

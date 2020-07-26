@@ -164,34 +164,90 @@ class Auth with ChangeNotifier {
 
   }
   Future<void>  getUserAppointment()async{
-    var appointmentData;
-    print('_userType_userType$_userType');
+//    var appointmentData;
+//    print('_userType_userType$_userType');
     if(_userType=='doctor'){
-      appointmentData = await _netWork
-          .getData(url: 'appoint/appoint-doctor/$_userId', headers: {
-        'Authorization': 'Bearer $_token',
-      });
-      print(appointmentData);
-      if(appointmentData.length !=0){
-        List<DoctorAppointment> allAppointment=[];
-        var userData = await _netWork
-            .getData(url: 'patient/5ec8a00afa6d9b35d08f0055', headers: {
-          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImEyQGEuY29tIiwiX2lkIjoiNWVjOGEwMGFmYTZkOWIzNWQwOGYwMDU1Iiwicm9sZSI6MiwiaWF0IjoxNTkwMjA2OTE2fQ.70AORnaarGm_o90xD4frGOXWRP_PMHJCWxhmNRL48Qw',
-        });
-        for(int i=0; i<appointmentData['appoint'].length; i++){
-          print(appointmentData['appoint'][i]['patientID']);
-          allAppointment.add(DoctorAppointment.fromJson(appointmentData['appoint'][i],userData['patient']));
-        }
-        appointmentForDoctor =allAppointment;
+//      appointmentData = await _netWork
+//          .getData(url: 'appoint/appoint-doctor/$_userId', headers: {
+//        'Authorization': 'Bearer $_token',
+//      });
+//      print(appointmentData);
+//      if(appointmentData.length !=0){
+//        List<DoctorAppointment> allAppointment=[];
+//        var userData = await _netWork
+//            .getData(url: 'patient/5ec8a00afa6d9b35d08f0055', headers: {
+//          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImEyQGEuY29tIiwiX2lkIjoiNWVjOGEwMGFmYTZkOWIzNWQwOGYwMDU1Iiwicm9sZSI6MiwiaWF0IjoxNTkwMjA2OTE2fQ.70AORnaarGm_o90xD4frGOXWRP_PMHJCWxhmNRL48Qw',
+//        });
+//        for(int i=0; i<appointmentData['appoint'].length; i++){
+//          print(appointmentData['appoint'][i]['patientID']);
+//          allAppointment.add(DoctorAppointment.fromJson(appointmentData['appoint'][i],userData['patient']));
+//        }
+//        appointmentForDoctor =allAppointment;
+      appointmentForDoctor.add(DoctorAppointment(
+        registerData: RegisterData(
+            firstName: 'Ayman',
+            middleName: 'Kamel',
+            lastName: 'Elslamony',
+            number: '01145523795',
+            status: 'not',
+            job: 'Doctor',
+            government: 'Mansoura',
+            gender: 'Male',
+            birthDate: '12/5/2020',
+            aboutYou: 'iam doctor',
+            address: 'man man man ',
+            speciality: 'doc',
+            patientImage: 'https://www.talkwalker.com/images/2020/blog-headers/image-analysis.png'
+        ),
+        appointDate: '2/3/2020',
+        appointStart: '12:30',
+        appointEnd: '1',
+        appointmentId: '798956',
+        appointStatus: 'not',
+      ));
         notifyListeners();
-      }
+//      }
     }else{
-      appointmentData = await _netWork
-          .getData(url: 'appoint/appoint-patient/$_userId', headers: {
-        'Authorization': 'Bearer $_token',
-      });
+//      appointmentData = await _netWork
+//          .getData(url: 'appoint/appoint-patient/$_userId', headers: {
+//        'Authorization': 'Bearer $_token',
+//      });
+      appointmentForPatient.add(PatientAppointment(
+        appointDate: '2/3/2020',
+        appointStart: '12:30',
+        appointEnd: '1',
+        appointmentId: '798956',
+        appointStatus: 'not',
+        registerData: RegisterData(
+         firstName: 'Ayman',
+         middleName: 'Kamel',
+         lastName: 'Elslamony',
+         number: '01145523795',
+         status: 'not',
+         job: 'Doctor',
+         government: 'Mansoura',
+         gender: 'Male',
+         birthDate: '12/5/2020',
+         aboutYou: 'iam doctor',
+         address: 'man man man ',
+         speciality: 'doc',
+         doctorImage: 'https://www.talkwalker.com/images/2020/blog-headers/image-analysis.png'
+        ),
+        clinicData: ClinicData(
+          address: 'clinic address',
+          government: 'clinic Mansorra',
+          number: '20252103584',
+          clinicName: 'clinic',
+          doctorID: '2316513',
+          fees: '20',
+          openingTime: '12:10',
+          clossingTime: '15:1',
+          waitingTime: '15',
+workingDays: ['sat','mon','thur'],
+        )
+      ));
     }
-    print('appointmentDataappointmentData$appointmentData');
+   // print('appointmentDataappointmentData$appointmentData');
 
 
 
