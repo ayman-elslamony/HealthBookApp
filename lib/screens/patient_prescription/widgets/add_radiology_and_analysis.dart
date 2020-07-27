@@ -6,8 +6,8 @@ import 'package:toast/toast.dart';
 
 import 'ShowImage.dart';
 class AddRadiologyAndAnalysis extends StatefulWidget {
-  String type;
-  Function function;
+  final String type;
+  final Function function;
 
   AddRadiologyAndAnalysis({this.type, this.function});
 
@@ -19,27 +19,20 @@ class _AddRadiologyAndAnalysisState extends State<AddRadiologyAndAnalysis> {
   File _imageFile;
   String name;
   String description;
-  String imgUrl;
+  final ImagePicker _picker = ImagePicker();
   Future<void> _getImage(BuildContext context, ImageSource source) async {
-    await ImagePicker.pickImage(source: source, maxWidth: 400.0)
-        .then((File image) async {
-     try{
-//       StorageReference storageReference = FirebaseStorage.instance
-//           .ref()
-//           .child('profiles/${basename(image.path)}}');
-//       StorageUploadTask uploadTask = storageReference.putFile(image);
-//       await uploadTask.onComplete;
-//       storageReference.getDownloadURL().then((fileURL) {
-//         setState(() {
-//           _imageFile = image;
-//           imgUrl = fileURL;
-//           widget.function(name,description,imgUrl);
-//         });
-//       });
-       Navigator.pop(context);
-     }catch(e){
-       Toast.show("Please Try Again", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-     }
+
+    await _picker
+        .getImage(source: source, maxWidth: 400.0)
+        .then((PickedFile image) {
+      if (image != null) {
+        File x = File(image.path);
+        setState(() {
+           _imageFile = x;
+           widget.function(name,description,_imageFile);
+         });
+      }
+      Navigator.pop(context);
     });
   }
   void _openImagePicker(BuildContext context) {
@@ -185,7 +178,7 @@ class _AddRadiologyAndAnalysisState extends State<AddRadiologyAndAnalysis> {
                   onChanged: (val){
                     setState(() {
                       description = val;
-                      widget.function(name,description,imgUrl);
+                      widget.function(name,description,_imageFile);
                     });
                   },
                 ),
@@ -203,7 +196,7 @@ class _AddRadiologyAndAnalysisState extends State<AddRadiologyAndAnalysis> {
                     child: InkWell(
                       onTap: (){
                         Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>
-                            ShowImage(ImageURL: imgUrl,)));
+                            ShowImage(imageURL: _imageFile,)));
                       },
                       child: ClipRRect(
                           borderRadius: BorderRadius.circular(15),

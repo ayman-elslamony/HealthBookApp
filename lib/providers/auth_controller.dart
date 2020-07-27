@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:healthbook/models/appointment.dart';
 import 'package:healthbook/models/doctor_appointment.dart';
@@ -293,25 +294,30 @@ workingDays: ['sat','mon','thur'],
 //       'lat': listOfData['lat'],
 //       'long': listOfData['long'],
     String fileName;
-    if (!listOfData['UrlImg'].contains('https:')&&listOfData['UrlImg'] != null &&
-        listOfData['UrlImg'].path != null &&
-        listOfData['UrlImg'].path.isNotEmpty) {
-      fileName = listOfData['UrlImg'].path.split('/').last;
-      print("File Name : $fileName");
-      print("File Size : ${listOfData['UrlImg'].lengthSync()}");
+    print(listOfData['UrlImg']);
+    print(listOfData['Phone number']);
+    if(listOfData['UrlImg'].runtimeType != File){
+      if (listOfData['UrlImg'] != null &&
+          listOfData['UrlImg'].path != null &&
+          listOfData['UrlImg'].path.isNotEmpty) {
+        fileName = listOfData['UrlImg'].path.split('/').last;
+        print("File Name : $fileName");
+        print("File Size : ${listOfData['UrlImg'].lengthSync()}");
+      }
     }
+
     print(listOfData['Phone number'].runtimeType);
     FormData formData;
       if(_userType =='patient'){
         formData = FormData.fromMap({
-          'number': [listOfData['Phone number']],
+          'number': listOfData['Phone number'],
           'address': listOfData['Location'],
           'status': listOfData['materialStatus'],
           'lastName': listOfData['Last name'],
           'firstName': listOfData['First name'],
           'middleName': listOfData['Middle name'],
           'birthDate': birthDate,
-          'patientImage': listOfData['UrlImg']!=null &&!listOfData['UrlImg'].contains('https:')?await MultipartFile.fromFile(listOfData['UrlImg'].path, filename:fileName):listOfData['UrlImg'],
+          'patientImage': listOfData['UrlImg']!=null &&listOfData['UrlImg'].runtimeType != File?await MultipartFile.fromFile(listOfData['UrlImg'].path, filename:fileName):listOfData['UrlImg'],
           'job': listOfData['Job'],
           'gender': listOfData['gender'],
           'government': government,

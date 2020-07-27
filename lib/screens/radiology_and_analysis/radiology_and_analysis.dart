@@ -21,7 +21,7 @@ class _RadiologyAndAnalysisState extends State<RadiologyAndAnalysis> {
             Navigator.of(context).pop();
           },
         ),
-        title: Text('Drugs',style: TextStyle(color: Colors.white),),
+        title: Text('Radiology and Analysis',style: TextStyle(color: Colors.white),),
         centerTitle: true,
       ),
       body: ListView(

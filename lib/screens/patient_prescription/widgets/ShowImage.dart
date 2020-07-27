@@ -1,10 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 
 class ShowImage extends StatelessWidget {
-  String ImageURL;
+  final File imageURL;
 
-  ShowImage({this.ImageURL});
+  ShowImage({this.imageURL});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +18,7 @@ class ShowImage extends StatelessWidget {
         width: MediaQuery.of(context).size.width,
         child: Hero(
             tag: 'image'
-            ,child: Image.network(ImageURL,fit: BoxFit.fill,)),
+            ,child: Image.file(imageURL,fit: BoxFit.fill,)),
       ),
     );
   }

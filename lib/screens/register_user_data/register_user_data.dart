@@ -1607,60 +1607,70 @@ class _RegisterUserDataState extends State<RegisterUserData> {
         setState(() {
           _isLoading = true;
         });
-        String isScuess = await Provider.of<Auth>(context, listen: false)
-            .registerUserDataAndEditing(listOfData: _accountData);
-        print('isScuessisScuess$isScuess');
-        if (isScuess == 'success') {
-          if (widget.isEditingEnable) {
-            await _auth.getUserData();
-            setState(() {
-              _isLoading = false;
-            });
-            Toast.show("Successfully Editing", context,
-                duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
-            Navigator.of(context).pushNamed(HomeScreen.routeName);
-          } else {
-            await showDialog(
-              context: context,
-              builder: (ctx) => AlertDialog(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(25.0))),
-                contentPadding: EdgeInsets.only(top: 10.0),
-                title: Text("Profile Created"),
-                content: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      "Welcome ${_accountData['First name']}",
+        try{
+          String isScuess = await Provider.of<Auth>(context, listen: false)
+              .registerUserDataAndEditing(listOfData: _accountData);
+          print('isScuessisScuess$isScuess');
+          if (isScuess == 'success') {
+            if (widget.isEditingEnable) {
+              await _auth.getUserData();
+              setState(() {
+                _isLoading = false;
+              });
+              Toast.show("Successfully Editing", context,
+                  duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+              Navigator.of(context).pushNamed(HomeScreen.routeName);
+            } else {
+              await showDialog(
+                context: context,
+                builder: (ctx) => AlertDialog(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(25.0))),
+                  contentPadding: EdgeInsets.only(top: 10.0),
+                  title: Text("Profile Created"),
+                  content: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        "Welcome ${_accountData['First name']}",
+                      ),
+                    ],
+                  ),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text("Ok"),
+                      onPressed: () {
+                        Navigator.of(context).pushNamed(HomeScreen.routeName);
+                      },
+                    ),
+                    FlatButton(
+                      child: Text("Cancel"),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        setState(() => complete = true);
+                      },
                     ),
                   ],
                 ),
-                actions: <Widget>[
-                  FlatButton(
-                    child: Text("Ok"),
-                    onPressed: () {
-                      Navigator.of(context).pushNamed(HomeScreen.routeName);
-                    },
-                  ),
-                  FlatButton(
-                    child: Text("Cancel"),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      setState(() => complete = true);
-                    },
-                  ),
-                ],
-              ),
-            );
+              );
+            }
+          } else {
+            setState(() {
+              _isLoading = false;
+            });
+            Toast.show("Please try again", context,
+                duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
           }
-        } else {
+        }catch(e){
+          print(e);
           setState(() {
             _isLoading = false;
           });
           Toast.show("Please try again", context,
               duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
         }
+
       }
     }
 

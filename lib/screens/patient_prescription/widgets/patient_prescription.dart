@@ -17,7 +17,7 @@ class PatientPrescription extends StatefulWidget {
 class RadiologyAndAnalysisResult {
   String name;
   String description;
-  String imgUrl;
+  File imgUrl;
 
   RadiologyAndAnalysisResult({this.name, this.description, this.imgUrl});
 }
@@ -30,7 +30,6 @@ class _PatientPrescriptionState extends State<PatientPrescription>
   bool _showAnalysis = false;
   bool _showVitals = false;
   bool _showLavResult = false;
-
 
   Map<String, String> _vitalAndLabResultMap = {
     'BloodPressure': '',
@@ -45,15 +44,13 @@ class _PatientPrescriptionState extends State<PatientPrescription>
   List<RadiologyAndAnalysisResult> _analysisList = [];
   String _name = '';
   String _description = '';
-  String _URL =
-      'https://lh3.googleusercontent.com/proxy/L_7HnbwuGpU3Nxvk46kVOh4xKclOc7J0HPJAkVhEueXH8Cl4IHBNczC2gLungfWnIYYom8RNnxidfaUp';
+  File _imageFile;
 
   String _diagnose = '';
-  String _selectedProblem =
-      ' Selected Problem ';
-  List<String> _listOfProblems = ['A', 'B', 'C', 'D', 'Add Problem'];
+  String _selectedProblem = ' Selected Diagnose ';
+  List<String> _listOfProblems = ['A', 'B', 'C', 'D', 'Add Diagnose'];
   int _counterImgRadiology = 0;
-  int _activeTabIndex=0;
+  int _activeTabIndex = 0;
   List<Widget> _allMedicine = List<Widget>();
   List<String> _listMedicineName = List<String>();
   List<String> _listMedicineDosage = List<String>();
@@ -160,6 +157,12 @@ class _PatientPrescriptionState extends State<PatientPrescription>
                       color: Colors.blue,
                     ),
                   ),
+                  focusedErrorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                    borderSide: BorderSide(
+                      color: Colors.blue,
+                    ),
+                  ),
                   disabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(10.0)),
                     borderSide: BorderSide(
@@ -214,6 +217,12 @@ class _PatientPrescriptionState extends State<PatientPrescription>
                             color: Colors.blue,
                           ),
                         ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                          borderSide: BorderSide(
+                            color: Colors.blue,
+                          ),
+                        ),
                         disabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(10.0)),
                           borderSide: BorderSide(
@@ -258,91 +267,94 @@ class _PatientPrescriptionState extends State<PatientPrescription>
       });
     }
   }
+
   void _setActiveTabIndex() {
-   setState(() {
-     _activeTabIndex = _tabController.index;
-   });
+    setState(() {
+      _activeTabIndex = _tabController.index;
+    });
   }
+
   @override
   void initState() {
     _tabController = new TabController(length: 2, vsync: this);
     _tabController.addListener(_setActiveTabIndex);
-
-
     super.initState();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    _radiologyData(String name, String description, String url) {
-      print(name);
-      print(description);
-      print(url);
-      setState(() {
-        _name = name;
-        _description = description;
-        _URL = url;
-      });
-    }
+  _radiologyData(String name, String description, File url) {
+    print(name);
+    print(description);
+    print(url);
+    setState(() {
+      _name = name;
+      _description = description;
+      _imageFile = url;
+    });
+  }
 
-    _analysisData(String name, String description, String url) {
-      print(name);
-      print(description);
-      print(url);
-      setState(() {
-        _name = name;
-        _description = description;
-        _URL = url;
-      });
-    }
+  _analysisData(String name, String description, File url) {
+    print(name);
+    print(description);
+    print(url);
+    setState(() {
+      _name = name;
+      _description = description;
+      _imageFile = url;
+    });
+  }
 
-    _addRadiologyAndAnalysisResult({String type}) {
-      showDialog(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(25.0))),
-          contentPadding: EdgeInsets.only(top: 10.0),
-          title: Text(
-            'Add $type',
-            textAlign: TextAlign.center,
-          ),
-          content: AddRadiologyAndAnalysis(
-            type: type,
-            function: type == 'Radiology' ? _radiologyData : _analysisData,
-          ),
-          actions: <Widget>[
-            FlatButton(
-              child: Text('OK'),
-              onPressed: () {
-                setState(() {
-                  if (type == 'Radiology') {
-                    _radiologyList.add(RadiologyAndAnalysisResult(
-                        name: _name, description: _description, imgUrl: _URL));
-                  } else {
-                    _analysisList.add(RadiologyAndAnalysisResult(
-                        name: _name, description: _description, imgUrl: _URL));
-                  }
-                });
-                Navigator.of(ctx).pop();
-              },
-            ),
-            FlatButton(
-              child: Text('Cancel'),
-              onPressed: () {
-                Navigator.of(ctx).pop();
-              },
-            )
-          ],
+  _addRadiologyAndAnalysisResult({String type}) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(25.0))),
+        contentPadding: EdgeInsets.only(top: 10.0),
+        title: Text(
+          'Add $type',
+          textAlign: TextAlign.center,
         ),
-      );
-    }
+        content: AddRadiologyAndAnalysis(
+          type: type,
+          function: type == 'Radiology' ? _radiologyData : _analysisData,
+        ),
+        actions: <Widget>[
+          FlatButton(
+            child: Text('OK'),
+            onPressed: () {
+              setState(() {
+                if (type == 'Radiology') {
+                  _radiologyList.add(RadiologyAndAnalysisResult(
+                      name: _name,
+                      description: _description,
+                      imgUrl: _imageFile));
+                } else {
+                  _analysisList.add(RadiologyAndAnalysisResult(
+                      name: _name,
+                      description: _description,
+                      imgUrl: _imageFile));
+                }
+              });
+              Navigator.of(ctx).pop();
+            },
+          ),
+          FlatButton(
+            child: Text('Cancel'),
+            onPressed: () {
+              Navigator.of(ctx).pop();
+            },
+          )
+        ],
+      ),
+    );
+  }
 
-    Widget _radiologyAndAnalysisContent({String type, int index}) {
-      String uniqueKey = '$type _ $index';
-      RadiologyAndAnalysisResult item =
-          type == 'Radiology' ? _radiologyList[index] : _analysisList[index];
-      return Dismissible(
+  Widget _radiologyAndAnalysisContent({String type, int index}) {
+    String uniqueKey = '$type _ $index';
+    RadiologyAndAnalysisResult item =
+        type == 'Radiology' ? _radiologyList[index] : _analysisList[index];
+    return SizedBox(
+      child: Dismissible(
           background: Container(
             color: Colors.red,
             child: Center(
@@ -389,87 +401,123 @@ class _PatientPrescriptionState extends State<PatientPrescription>
           },
           child: Padding(
             padding: const EdgeInsets.only(bottom: 8.0),
-            child: Container(
-              //height: 100,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.blue),
-              ),
-              child: Column(
-                children: <Widget>[
-                  InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => ShowImage(
-                                ImageURL: type == 'Radiology'
-                                    ? _radiologyList[index].imgUrl
-                                    : _analysisList[index].imgUrl,
-                              )));
-                    },
-                    child: Container(
-                      height: 100,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(10),
-                              topRight: Radius.circular(10)),
-                          border: Border.all(color: Colors.blue),
-                          image: DecorationImage(
-                              image: NetworkImage(
-                                type == 'Radiology'
-                                    ? _radiologyList[index].imgUrl
-                                    : _analysisList[index].imgUrl,
+            child: Center(
+              child: Container(
+                //height: 100,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Colors.blue),
+                ),
+                child: Column(
+                  children: <Widget>[
+                    type == 'Radiology'
+                        ? _radiologyList[index].imgUrl == null
+                            ? SizedBox()
+                            : InkWell(
+                                onTap: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => ShowImage(
+                                            imageURL: type == 'Radiology'
+                                                ? _radiologyList[index].imgUrl
+                                                : _analysisList[index].imgUrl,
+                                          )));
+                                },
+                                child: Container(
+                                  height: 150,
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(10),
+                                          topRight: Radius.circular(10)),
+                                      border: Border.all(color: Colors.blue),
+                                      image: DecorationImage(
+                                          image: FileImage(
+                                            type == 'Radiology'
+                                                ? _radiologyList[index].imgUrl
+                                                : _analysisList[index].imgUrl,
+                                          ),
+                                          fit: BoxFit.fill)),
+                                ),
+                              )
+                        : _analysisList[index].imgUrl == null
+                            ? SizedBox()
+                            : InkWell(
+                                onTap: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => ShowImage(
+                                            imageURL: type == 'Radiology'
+                                                ? _radiologyList[index].imgUrl
+                                                : _analysisList[index].imgUrl,
+                                          )));
+                                },
+                                child: Container(
+                                  height: 150,
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(10),
+                                          topRight: Radius.circular(10)),
+                                      border: Border.all(color: Colors.blue),
+                                      image: DecorationImage(
+                                          image: FileImage(
+                                            type == 'Radiology'
+                                                ? _radiologyList[index].imgUrl
+                                                : _analysisList[index].imgUrl,
+                                          ),
+                                          fit: BoxFit.fill)),
+                                ),
                               ),
-                              fit: BoxFit.fill)),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: <Widget>[
-                          Text(
-                            '$type Name:',
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          AutoSizeText(
-                            type == 'Radiology'
-                                ? _radiologyList[index].name
-                                : _analysisList[index].name,
-                            presetFontSizes: [16, 14, 12],
-                          ),
-                        ],
+                    _radiologyList[index].name==null?SizedBox():Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: <Widget>[
+                            Text(
+                              '$type Name:',
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            AutoSizeText(
+                              type == 'Radiology'
+                                  ? _radiologyList[index].name
+                                  : _analysisList[index].name,
+                              presetFontSizes: [16, 14, 12],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        bottom: 8.0, right: 8.0, left: 8.0),
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: <Widget>[
-                          Text(
-                            'Description of $type: ',
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          AutoSizeText(
-                            type == 'Radiology'
-                                ? _radiologyList[index].description
-                                : _analysisList[index].description,
-                            presetFontSizes: [16, 14, 12],
-                          ),
-                        ],
+                    _radiologyList[index].description ==null?SizedBox():Padding(
+                      padding:
+                          const EdgeInsets.only(bottom: 8.0, right: 8.0, left: 8.0),
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: <Widget>[
+                            Text(
+                              'Description of $type: ',
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            AutoSizeText(
+                              type == 'Radiology'
+                                  ? _radiologyList[index].description
+                                  : _analysisList[index].description,
+                              presetFontSizes: [16, 14, 12],
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  )
-                ],
+                    )
+                  ],
+                ),
               ),
             ),
-          ));
-    }
+          )),
+    );
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -479,19 +527,23 @@ class _PatientPrescriptionState extends State<PatientPrescription>
             }),
         centerTitle: true,
         actions: <Widget>[
-          _activeTabIndex == 0? Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: RaisedButton(
-              onPressed: () {},
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)),
-              color: Colors.blue,
-              child: Text(
-                'Save',
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-          ):SizedBox(width: 0.1,)
+          _activeTabIndex == 0
+              ? Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: RaisedButton(
+                    onPressed: () {},
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                    color: Colors.blue,
+                    child: Text(
+                      'Save',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                )
+              : SizedBox(
+                  width: 0.1,
+                )
         ],
         bottom: TabBar(
           unselectedLabelColor: Colors.black,
@@ -509,7 +561,6 @@ class _PatientPrescriptionState extends State<PatientPrescription>
           indicatorSize: TabBarIndicatorSize.tab,
         ),
         bottomOpacity: 1,
-
       ),
       body: TabBarView(
         controller: _tabController,
@@ -648,7 +699,9 @@ class _PatientPrescriptionState extends State<PatientPrescription>
 //                      ],
 //                    ),
 //                  )),
-              SizedBox(height: 20,),
+                SizedBox(
+                  height: 20,
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
@@ -672,7 +725,7 @@ class _PatientPrescriptionState extends State<PatientPrescription>
                             Padding(
                                 padding: const EdgeInsets.only(left: 8.0),
                                 child: AutoSizeText(_selectedProblem,
-                                   presetFontSizes: [16,14,12],
+                                    presetFontSizes: [16, 14, 12],
                                     overflow: TextOverflow.ellipsis,
                                     textAlign: TextAlign.justify,
                                     maxLines: 1,
@@ -682,7 +735,7 @@ class _PatientPrescriptionState extends State<PatientPrescription>
                               height: 40,
                               width: 35,
                               child: PopupMenuButton(
-                                tooltip: 'Select Problem',
+                                tooltip: 'Select Diagnose',
                                 itemBuilder: (ctx) => _listOfProblems
                                     .map((String val) => PopupMenuItem<String>(
                                           value: val,
@@ -690,7 +743,7 @@ class _PatientPrescriptionState extends State<PatientPrescription>
                                         ))
                                     .toList(),
                                 onSelected: (val) async {
-                                  if (val == 'Add Problem') {
+                                  if (val == 'Add Diagnose') {
                                     await showDialog(
                                       context: context,
                                       builder: (ctx) => AlertDialog(
@@ -830,21 +883,21 @@ class _PatientPrescriptionState extends State<PatientPrescription>
                             fillColor: Colors.white,
                             focusedBorder: OutlineInputBorder(
                               borderRadius:
-                              BorderRadius.all(Radius.circular(10.0)),
+                                  BorderRadius.all(Radius.circular(10.0)),
                               borderSide: BorderSide(
                                 color: Colors.blue,
                               ),
                             ),
                             disabledBorder: OutlineInputBorder(
                               borderRadius:
-                              BorderRadius.all(Radius.circular(10.0)),
+                                  BorderRadius.all(Radius.circular(10.0)),
                               borderSide: BorderSide(
                                 color: Colors.blue,
                               ),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius:
-                              BorderRadius.all(Radius.circular(10.0)),
+                                  BorderRadius.all(Radius.circular(10.0)),
                               borderSide: BorderSide(color: Colors.blue),
                             ),
                           ),
@@ -886,6 +939,8 @@ class _PatientPrescriptionState extends State<PatientPrescription>
                         child: Form(
                           key: _formKey,
                           child: ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
                             itemBuilder: (context, index) {
                               final Widget item = _allMedicine[index];
                               return Dismissible(
@@ -995,18 +1050,19 @@ class _PatientPrescriptionState extends State<PatientPrescription>
                                     bottom: 8.0, left: 15, right: 15, top: 6.0),
                                 child: Column(
                                   children: <Widget>[
-                                    SizedBox(
-                                        height: 170.0 * _radiologyList.length,
-                                        child: _radiologyList.length == 0
-                                            ? SizedBox()
-                                            : ListView.builder(
-                                                itemBuilder: (context, index) =>
-                                                    _radiologyAndAnalysisContent(
-                                                        type: 'Radiology',
-                                                        index: index),
-                                                itemCount:
-                                                    _radiologyList.length,
-                                              )),
+                                    _radiologyList.length == 0
+                                        ? SizedBox()
+                                        : ListView.builder(
+                                            shrinkWrap: true,
+                                            physics:
+                                                NeverScrollableScrollPhysics(),
+                                            itemBuilder: (context, index) =>
+                                                _radiologyAndAnalysisContent(
+                                                    type: 'Radiology',
+                                                    index: index),
+                                            itemCount:
+                                                _radiologyList.length,
+                                          ),
                                     Padding(
                                       padding:
                                           const EdgeInsets.only(bottom: 8.0),
@@ -1089,17 +1145,18 @@ class _PatientPrescriptionState extends State<PatientPrescription>
                                     bottom: 8.0, left: 15, right: 15, top: 6.0),
                                 child: Column(
                                   children: <Widget>[
-                                    SizedBox(
-                                        height: 170.0 * _analysisList.length,
-                                        child: _analysisList.length == 0
-                                            ? SizedBox()
-                                            : ListView.builder(
-                                                itemBuilder: (context, index) =>
-                                                    _radiologyAndAnalysisContent(
-                                                        type: 'Analysis',
-                                                        index: index),
-                                                itemCount: _analysisList.length,
-                                              )),
+                                    _analysisList.length == 0
+                                        ? SizedBox()
+                                        : ListView.builder(
+                                            shrinkWrap: true,
+                                            physics:
+                                                NeverScrollableScrollPhysics(),
+                                            itemBuilder: (context, index) =>
+                                                _radiologyAndAnalysisContent(
+                                                    type: 'Analysis',
+                                                    index: index),
+                                            itemCount: _analysisList.length,
+                                          ),
                                     Padding(
                                       padding:
                                           const EdgeInsets.only(bottom: 8.0),
@@ -1123,171 +1180,6 @@ class _PatientPrescriptionState extends State<PatientPrescription>
                                   ],
                                 ),
                               )
-                            : SizedBox(),
-                      ],
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Material(
-                    color: Color(0xfffafbff),
-                    shadowColor: Colors.blueAccent,
-                    elevation: 8.0,
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                    type: MaterialType.card,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        InkWell(
-                            onTap: () {
-                              setState(() {
-                                _showVitals = !_showVitals;
-                              });
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  SizedBox(),
-                                  Text("Vitals Result",
-                                      style: TextStyle(
-                                        color: Colors.blue,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                      )),
-                                  Icon(
-                                    _showVitals
-                                        ? Icons.keyboard_arrow_up
-                                        : Icons.keyboard_arrow_down,
-                                    size: 25,
-                                  ),
-                                ],
-                              ),
-                            )),
-                        _showVitals
-                            ? Padding(
-                                padding: const EdgeInsets.only(bottom: 8.0),
-                                child: Divider(
-                                  color: Colors.grey,
-                                  height: 4,
-                                ),
-                              )
-                            : SizedBox(),
-                        _showVitals
-                            ? Padding(
-                                padding: const EdgeInsets.only(
-                                    bottom: 8.0, left: 15, right: 15, top: 6.0),
-                                child: Container(
-                                    height: 280,
-                                    //width: double.infinity,
-                                    child: GridView(
-                                      gridDelegate:
-                                          SliverGridDelegateWithFixedCrossAxisCount(
-                                              crossAxisCount: 2,
-                                              mainAxisSpacing: 8,
-                                              childAspectRatio: 1.4,
-                                              crossAxisSpacing: 8),
-                                      children: <Widget>[
-                                        _cardWithTextForm(
-                                            typeName: 'BloodPressure',
-                                            measureType: 'mmHg',
-                                            hintText: '120/56'),
-                                        _cardWithTextForm(
-                                            typeName: 'PlusRate',
-                                            measureType: 'bpm',
-                                            hintText: '55'),
-                                        _cardWithTextForm(
-                                            typeName: 'OxygenSaturation',
-                                            measureType: '%',
-                                            hintText: '80'),
-                                        _cardWithTextForm(
-                                            typeName: 'RespiratoryRate',
-                                            measureType: 'br/min',
-                                            hintText: '60'),
-                                      ],
-                                    )))
-                            : SizedBox(),
-                      ],
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding:
-                      const EdgeInsets.only(bottom: 8.0, right: 8.0, left: 8.0),
-                  child: Material(
-                    color: Color(0xfffafbff),
-                    shadowColor: Colors.blueAccent,
-                    elevation: 8.0,
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                    type: MaterialType.card,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        InkWell(
-                            onTap: () {
-                              setState(() {
-                                _showLavResult = !_showLavResult;
-                              });
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  SizedBox(),
-                                  Text("Lab Result",
-                                      style: TextStyle(
-                                        color: Colors.blue,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                      )),
-                                  Icon(
-                                    _showLavResult
-                                        ? Icons.keyboard_arrow_up
-                                        : Icons.keyboard_arrow_down,
-                                    size: 25,
-                                  ),
-                                ],
-                              ),
-                            )),
-                        _showLavResult
-                            ? Padding(
-                                padding: const EdgeInsets.only(bottom: 8.0),
-                                child: Divider(
-                                  color: Colors.grey,
-                                  height: 4,
-                                ),
-                              )
-                            : SizedBox(),
-                        _showLavResult
-                            ? Padding(
-                                padding: const EdgeInsets.only(
-                                    bottom: 8.0, left: 15, right: 15, top: 6.0),
-                                child: Container(
-                                    height: 135,
-                                    //width: double.infinity,
-                                    child: GridView(
-                                      gridDelegate:
-                                          SliverGridDelegateWithFixedCrossAxisCount(
-                                              crossAxisCount: 2,
-                                              mainAxisSpacing: 8,
-                                              childAspectRatio: 1.4,
-                                              crossAxisSpacing: 8),
-                                      children: <Widget>[
-                                        _cardWithTextForm(
-                                            typeName: 'WBC',
-                                            measureType: 'K/mm3',
-                                            hintText: '10.1'),
-                                        _cardWithTextForm(
-                                            typeName: 'HGB',
-                                            measureType: 'Gm/dl',
-                                            hintText: '11'),
-                                      ],
-                                    )))
                             : SizedBox(),
                       ],
                     ),

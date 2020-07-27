@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 //import 'package:flutter_sms/flutter_sms.dart';
 import 'package:healthbook/screens/patient_prescription/widgets/patient_prescription.dart';
 import 'package:healthbook/screens/user_profile/widgets/user_history.dart';
-import 'package:healthbook/screens/user_profile/widgets/user_lab_result.dart';
-import 'package:healthbook/screens/user_profile/widgets/user_vitals.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'user_profile.dart';
@@ -209,9 +207,6 @@ class PatientHealthRecord extends StatelessWidget {
             ),
             SizedBox(height: 20.0,),
             UserHistory(),
-            UserVitals(),
-            UserLabResult(),
-
           ],
         ),
     ),
