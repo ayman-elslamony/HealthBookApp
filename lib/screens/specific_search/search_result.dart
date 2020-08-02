@@ -171,12 +171,12 @@ class _SearchResultState extends State<SearchResult> {
                                           children: <Widget>[
                                             Expanded(
                                               child: Text('Speciality: '//${patientAppointment.registerData.speciality}',
-                                                  ,style: infoWidget.subTitle),
+                                                  ,style: infoWidget.subTitle.copyWith(fontWeight: FontWeight.w500)),
                                             ),
                                             Text(
                                                 'Avilable',
                                                 style:
-                                                infoWidget.subTitle
+                                                infoWidget.subTitle.copyWith(fontWeight: FontWeight.w500)
                                             ),
                                           ],),
                                       ),
@@ -189,7 +189,7 @@ class _SearchResultState extends State<SearchResult> {
                                               child: Text(
                                                 'Location: '//${patientAppointment.registerData.address}',
                                                 ,style:
-                                                infoWidget.subTitle,
+                                                infoWidget.subTitle.copyWith(fontWeight: FontWeight.w500),
                                                 maxLines: 2,
                                                 overflow: TextOverflow.ellipsis,
                                               ),
@@ -204,13 +204,13 @@ class _SearchResultState extends State<SearchResult> {
                                             Expanded(
                                               child:  Text(
                                                 'Appointement at '//${patientAppointment.appointStart} PM',
-                                               , style: infoWidget.subTitle,
+                                               , style: infoWidget.subTitle.copyWith(fontWeight: FontWeight.w500),
                                                 maxLines: 1,
                                                 overflow: TextOverflow.ellipsis,
                                               ),
                                             ),
                                             Text('19 min left',
-                                                style: infoWidget.subTitle),
+                                                style: infoWidget.subTitle.copyWith(fontWeight: FontWeight.w500)),
                                           ],),
                                       )
                                     ],

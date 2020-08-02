@@ -28,7 +28,7 @@ class _AppointmentsDateCardState extends State<AppointmentsDateCard> {
      children: <Widget>[
        Material(
          shadowColor: Colors.blueAccent,
-         elevation: 5.0,
+         elevation: 2.0,
          borderRadius: BorderRadius.all(Radius.circular(10)),
          type: MaterialType.card,
          child: Padding(
@@ -79,7 +79,7 @@ class _AppointmentsDateCardState extends State<AppointmentsDateCard> {
        Padding(
          padding:  EdgeInsets.only(right: infoWidget.defaultHorizontalPadding),
          child: Text(
-             _auth.getUserType=='patient'?'${appointements.allAppointment.length ==0?'No':appointements.allAppointment.length} Patient':"${appointements.allAppointment.length ==0?'No':appointements.allAppointment.length} Appointement",
+             _auth.getUserType=='doctor'?'${appointements.allAppointment.length ==0?'No':appointements.allAppointment.length} Patient':"${appointements.allAppointment.length ==0?'No':appointements.allAppointment.length} Appointement",
              maxLines: 1,
              textAlign: TextAlign.justify,
              overflow: TextOverflow.ellipsis,

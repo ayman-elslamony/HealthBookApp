@@ -9,12 +9,28 @@ class ShowImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(leading: BackButton(
-        color: Colors.white,
-        onPressed: (){
-          Navigator.of(context).pop();
-        },
-      ),),
+      appBar: AppBar(
+        leading: IconButton(
+            icon: Icon(
+              Icons.arrow_back_ios,
+              size:
+              MediaQuery
+                  .of(context)
+                  .orientation == Orientation.portrait
+                  ? MediaQuery
+                  .of(context)
+                  .size
+                  .width * 0.05
+                  : MediaQuery
+                  .of(context)
+                  .size
+                  .width * 0.035,
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+              //TODO: make pop
+            }),
+       ),
       body: Container(
           child: PhotoView(
             imageProvider: isImgUrlAsset?AssetImage(imgUrl):NetworkImage(imgUrl),

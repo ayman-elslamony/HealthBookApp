@@ -39,7 +39,7 @@ class _PersonalInfoCardState extends State<PersonalInfoCard> {
         children: <Widget>[
           Text(
             title + " ",
-            style: widget.subTitle.copyWith(color: Colors.blue,fontWeight: FontWeight.w400)
+            style: widget.subTitle.copyWith(color: Colors.black,fontWeight: FontWeight.w600)
           ),
           Expanded(
             child: Padding(
@@ -50,7 +50,7 @@ class _PersonalInfoCardState extends State<PersonalInfoCard> {
                 children: <Widget>[
                   Text(
                     content,
-                    style: widget.subTitle.copyWith(color: Colors.black,fontWeight: FontWeight.w600),
+                    style: widget.subTitle.copyWith(color: Color(0xff484848),fontWeight: FontWeight.w500),
                   ),
                 ],
               ),
@@ -67,7 +67,7 @@ class _PersonalInfoCardState extends State<PersonalInfoCard> {
       padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
       child: Material(
         shadowColor: Colors.blueAccent,
-        elevation: 3.0,
+        elevation: 0.5,
         borderRadius: BorderRadius.all(Radius.circular(10)),
         type: MaterialType.card,
         child: Column(
@@ -88,12 +88,12 @@ class _PersonalInfoCardState extends State<PersonalInfoCard> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         Text("Personal Information",
-                            style: widget.title.copyWith( color: Colors.red)),
+                            style: widget.title.copyWith( color: Colors.blue,fontWeight: FontWeight.w500)),
                         Icon(
                           _showPersonalInfo
                               ? Icons.keyboard_arrow_up
                               : Icons.keyboard_arrow_down,
-                          size: widget.orientation==Orientation.portrait?widget.width*0.073:widget.width*0.053,
+                          size: widget.orientation==Orientation.portrait?widget.width*0.065:widget.width*0.049,
                         ),
                       ],
                     ),

@@ -1,24 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'package:flappy_search_bar/flappy_search_bar.dart';
 import 'package:healthbook/core/models/device_info.dart';
 import 'package:healthbook/core/ui_components/info_widget.dart';
-import 'package:healthbook/screens/drug/drugs.dart';
+import 'package:healthbook/screens/drugs_radiology_analysis/drugs_radiology_analysis.dart';
 import 'package:healthbook/screens/specific_search/specific_search_screen.dart';
 import '../list_of_infomation/list_of_information.dart';
-import 'package:autocomplete_textfield/autocomplete_textfield.dart';
-import 'package:toast/toast.dart';
-
-import './chat_screen.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_controller.dart';
-
-import './booking_for_doctor/booking_screen.dart';
 import 'clinic_info/clinic_info.dart';
-import 'forget_password/forget_password.dart';
-import 'forget_password/send_sms_screen.dart';
 import 'home/home_for_doctor_and_patient.dart';
-import 'radiology_and_analysis/radiology_and_analysis.dart';
 import 'register_user_data/register_user_data.dart';
 import 'sing_In_and_Up/sign_in_and_up_screen.dart';
 import 'user_profile/user_profile.dart';
@@ -97,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
         dense: true,
         title: Text(
           name,
-          style: infoWidget.title.copyWith(color: Colors.blue),
+          style: infoWidget.titleButton.copyWith(color: Colors.blue),
         ),
         leading: isIcon
             ? Icon(
@@ -122,43 +112,6 @@ class _HomeScreenState extends State<HomeScreen> {
           appBar: AppBar(
             centerTitle: true,
             title: Text(type[_page], style: infoWidget.titleButton,),
-//            Container(
-//                height: 45,
-//                child: TextFormField(
-//                  autofocus: false,
-//                  controller: _textEditingController,
-//                  decoration: InputDecoration(
-//                    contentPadding: EdgeInsets.all(0.0),
-//                    prefixIcon: Icon(
-//                      Icons.search,
-//                    ),
-//                    filled: true,
-//                    fillColor: Colors.white,
-//                    focusedBorder: OutlineInputBorder(
-//                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
-//                      borderSide: BorderSide(
-//                        color: Colors.blue,
-//                      ),
-//                    ),
-//                    disabledBorder: OutlineInputBorder(
-//                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
-//                      borderSide: BorderSide(
-//                        color: Colors.blue,
-//                      ),
-//                    ),
-//                    enabledBorder: OutlineInputBorder(
-//                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
-//                      borderSide: BorderSide(color: Colors.blue),
-//                    ),
-//                    hintStyle: TextStyle(fontSize: 14),
-//                    hintText: _searchList[_page],
-//                  ),
-//                  onChanged: (String val) {
-//                    setState(() {
-//                      _autoSuggestion(val);
-//                    });
-//                  },
-//                )),
             actions: <Widget>[
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -266,7 +219,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       onTap: () {
                         Navigator.of(context)
                             .push(
-                            MaterialPageRoute(builder: (context) => Drug()));
+                            MaterialPageRoute(builder: (context) => DrugAndRadiologyAndAnalysis()));
                       }),
                   _auth.getUserType == 'doctor' ? SizedBox() : _drawerListTile(
                       name: "Radiology And Analysis",
@@ -275,7 +228,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       infoWidget: infoWidget,
                       onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => RadiologyAndAnalysis()));
+                            builder: (context) => DrugAndRadiologyAndAnalysis(isDrugs: false,)));
                       }),
 //              _drawerListTile(
 //                  name: "Setting",

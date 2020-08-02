@@ -30,126 +30,6 @@ class _UserProfileState extends State<UserProfile> {
 
   @override
   Widget build(BuildContext context) {
-    _cancelButton() {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(25.0))),
-          contentPadding: EdgeInsets.only(top: 10.0),
-          title: ColorizeAnimatedTextKit(
-              totalRepeatCount: 9,
-              pause: Duration(milliseconds: 1000),
-              isRepeatingAnimation: true,
-              speed: Duration(seconds: 1),
-              text: [' please tell the patient '],
-              textAlign: TextAlign.center,
-              textStyle: TextStyle(fontSize: 23.0, fontFamily: "Horizon"),
-              colors: [
-                Colors.blue,
-                Colors.green,
-                Colors.blue,
-              ],
-              alignment: AlignmentDirectional.topStart // or Alignment.topLeft
-              ),
-          content: Padding(
-            padding: const EdgeInsets.only(top: 10),
-            child: Container(
-              height: 50,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  InkWell(
-                    onTap: () {
-                      launch("tel://21213123123");
-                      Navigator.of(context).pop();
-                    },
-                    child: Container(
-                        height: 38,
-                        width: 75,
-                        decoration: BoxDecoration(
-                            color: Colors.green,
-                            borderRadius: BorderRadius.circular(10)),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            Icon(
-                              Icons.call,
-                              color: Colors.white,
-                            ),
-                            Text(
-                              'Call ',
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 18),
-                            ),
-                          ],
-                        )),
-                  ),
-                  InkWell(
-                    onTap: () {
-//                      sendSMS(message: 'Hello Patient', recipients: ['+201145523795'])
-//                          .catchError((onError) {
-//                        print(onError);
-//                      });
-                      Navigator.of(context).pop();
-                    },
-                    child: Container(
-                        height: 38,
-                        width: 126,
-                        decoration: BoxDecoration(
-                            color: Colors.blue,
-                            borderRadius: BorderRadius.circular(10)),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            Icon(
-                              Icons.mail,
-                              color: Colors.white,
-                            ),
-                            Text(
-                              'Message ',
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 18),
-                            ),
-                          ],
-                        )),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          actions: <Widget>[
-            FlatButton(
-              child: Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            FlatButton(
-              child: Text('Ok'),
-              onPressed: () {
-                final snackBar = SnackBar(
-                  content: Text(
-                    'SuccessFully deleted',
-                    style: TextStyle(color: Colors.white, fontSize: 15),
-                  ),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5)),
-                  duration: Duration(seconds: 5),
-                  backgroundColor: Colors.blue,
-                  action: SnackBarAction(
-                    label: 'Undo',
-                    onPressed: () {},
-                  ),
-                );
-                _userProfileState.currentState.showSnackBar(snackBar);
-                Navigator.of(context).pop();
-              },
-            )
-          ],
-        ),
-      );
-    }
 
     return Scaffold(
         key: _userProfileState,
@@ -171,15 +51,22 @@ class _UserProfileState extends State<UserProfile> {
                     ),
                     child: Center(
                       child: SizedBox(
-                        width: 130,
+                        width: 160,
                         height: 130,
-                        child: ClipRRect(
-                          //backgroundColor: Colors.white,
-                          //backgroundImage:
-                            borderRadius: BorderRadius.all(Radius.circular(100)),
-                            child:  _auth.getUserType == 'patient'?
-                            FadeInImage.assetNetwork(fit: BoxFit.fill,placeholder: 'assets/user.png',image: _auth.userData.patientImage)
-                                :FadeInImage.assetNetwork(fit: BoxFit.fill,placeholder: 'assets/user.png',image: _auth.userData.doctorImage)
+                        child: Container(
+                          decoration:
+                          BoxDecoration(
+                            border: Border.all(color: Colors.blue),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: ClipRRect(
+                            //backgroundColor: Colors.white,
+                            //backgroundImage:
+                              borderRadius: BorderRadius.all(Radius.circular(15)),
+                              child:  _auth.getUserType == 'patient'?
+                              FadeInImage.assetNetwork(fit: BoxFit.fill,placeholder: 'assets/user.png',image: _auth.userData.patientImage)
+                                  :FadeInImage.assetNetwork(fit: BoxFit.fill,placeholder: 'assets/user.png',image: _auth.userData.doctorImage)
+                          ),
                         ),
                       ),
                     ),
@@ -204,14 +91,14 @@ class _UserProfileState extends State<UserProfile> {
                               _auth.getUserType == 'doctor'
                                   ? 'Dr. ${_auth.userData.firstName} ${_auth.userData.middleName} ${_auth.userData.lastName}'
                                   : '${_auth.userData.firstName} ${_auth.userData.middleName} ${_auth.userData.lastName}',
-                              style: infoWidget.title.copyWith(color: Colors.blue,fontWeight: FontWeight.w500)),
+                              style: infoWidget.titleButton.copyWith(color: Colors.blue,fontWeight: FontWeight.w500)),
 
                           /// patient name
                           Text(
                             _auth.getUserType == 'doctor'
                                 ? _auth.userData.speciality==''?'':'Specialty: ${_auth.userData.speciality}'
                                 : _auth.userData.job==''?'':"Job: ${_auth.userData.job}",
-                            style: infoWidget.titleButton.copyWith(color: Colors.red,fontWeight: FontWeight.w500)
+                            style: infoWidget.titleButton.copyWith(color: Colors.blue,fontWeight: FontWeight.w500)
                           ),
 
                           /// patient job

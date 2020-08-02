@@ -100,7 +100,7 @@ Widget _createBookingTime({int index,TextStyle textStyle}){
           padding: EdgeInsets.only(top: infoWidget.defaultVerticalPadding*1.5),
           child: Material(
             shadowColor: Colors.blueAccent,
-            elevation: 5.0,
+            elevation: 0.1,
             borderRadius: BorderRadius.all(Radius.circular(10)),
             type: MaterialType.card,
             child: Column(

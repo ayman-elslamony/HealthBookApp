@@ -19,7 +19,7 @@ class _SpecialtyAndGovernrateCardState extends State<SpecialtyAndGovernrateCard>
       padding: const EdgeInsets.only(top: 10),
       child: Material(
         shadowColor: Colors.blueAccent,
-        elevation: 5.0,
+        elevation: 2.0,
         borderRadius: BorderRadius.all(Radius.circular(10)),
         type: MaterialType.card,
         child: Padding(

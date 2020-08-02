@@ -168,20 +168,7 @@ class _SpecificSearchState extends State<SpecificSearch> {
                 SizedBox(
                   height: infoWidget.screenHeight * 0.10,
                 ),
-                FittedBox(
-                  child: Container(
-                    width: infoWidget.screenWidth * 0.71,
-                    child: Text(
-                      'Search By All Options or choice one or two of Them',
-                      maxLines: 2,
-                      textAlign: TextAlign.center,
-                      overflow: TextOverflow.ellipsis,
-                      style: infoWidget.title.copyWith(
-                        color: Colors.blue,
-                      ),
-                    ),
-                  ),
-                ),
+
                 SizedBox(
                   height: infoWidget.screenHeight*0.03,
                 ),

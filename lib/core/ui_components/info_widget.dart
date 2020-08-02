@@ -29,7 +29,7 @@ class InfoWidget extends StatelessWidget {
                 fontWeight: FontWeight.bold),
             subTitle: TextStyle(
                 fontSize: mediaQueryData.orientation==Orientation.portrait?mediaQueryData.size.width * 0.035:mediaQueryData.size.width * 0.024,
-                color: Colors.black,
+                color: Color(0xff484848),
                 fontWeight: FontWeight.bold),
             defaultVerticalPadding: mediaQueryData.orientation==Orientation.portrait?mediaQueryData.size.width * 0.015:mediaQueryData.size.width * 0.009,
             defaultHorizontalPadding: mediaQueryData.orientation==Orientation.portrait?mediaQueryData.size.height * 0.01:mediaQueryData.size.height * 0.02);

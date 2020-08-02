@@ -11,9 +11,13 @@ class Booking extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(
-              title + " ",
-              style: textStyle.copyWith(color: Colors.blue,fontWeight: FontWeight.w400)
+          Column(
+            children: <Widget>[
+              Text(
+                  title + " ",
+                  style: textStyle.copyWith(color: Colors.black,fontWeight: FontWeight.w600)
+              ),
+            ],
           ),
           Expanded(
             child: Padding(
@@ -24,7 +28,7 @@ class Booking extends StatelessWidget {
                 children: <Widget>[
                   Text(
                     content,
-                    style:textStyle.copyWith(color: Colors.black,fontWeight: FontWeight.w600),
+                    style:textStyle.copyWith(color: Color(0xff484848),fontWeight: FontWeight.w600),
                   ),
                 ],
               ),
@@ -195,7 +199,7 @@ class Booking extends StatelessWidget {
                                               'Speciality: '
                                               //${patientAppointment.registerData.speciality}',
                                               ,
-                                              style: infoWidget.subTitle),
+                                              style: infoWidget.subTitle.copyWith(fontWeight: FontWeight.w500)),
                                         ),
                                       ],
                                     ),
@@ -213,7 +217,7 @@ class Booking extends StatelessWidget {
                                             'Location: '
                                             //${patientAppointment.registerData.address}',
                                             ,
-                                            style: infoWidget.subTitle,
+                                            style: infoWidget.subTitle.copyWith(fontWeight: FontWeight.w500),
                                             maxLines: 2,
                                             overflow: TextOverflow.ellipsis,
                                           ),
@@ -235,7 +239,7 @@ class Booking extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 10, vertical: 5),
-                      child: Text('Bio', style: infoWidget.title),
+                      child: Text('Bio', style: infoWidget.title.copyWith(fontWeight: FontWeight.w500)),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(
@@ -244,7 +248,7 @@ class Booking extends StatelessWidget {
                         'dvdvd  rhth y juykj uku tr ewfew grhg 6u6 dwed r4grg 66h fe',
                         maxLines: 4,
                         textAlign: TextAlign.justify,
-                        style: infoWidget.subTitle
+                        style: infoWidget.subTitle.copyWith(fontWeight: FontWeight.w500)
 
                       ),
                     ),
@@ -255,7 +259,7 @@ class Booking extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 10, vertical: 5),
-                      child: Text('Clinic info', style: infoWidget.title),
+                      child: Text('Clinic info', style: infoWidget.title.copyWith(fontWeight: FontWeight.w500)),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 20.0),

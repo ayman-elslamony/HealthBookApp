@@ -23,7 +23,7 @@ class PatientAppointmentCard extends StatelessWidget {
               horizontal: infoWidget.defaultHorizontalPadding),
           child: Material(
             shadowColor: Colors.blueAccent,
-            elevation: 5.0,
+            elevation: 2.0,
             borderRadius: BorderRadius.all(Radius.circular(10)),
             type: MaterialType.card,
             child: Padding(
@@ -97,12 +97,12 @@ class PatientAppointmentCard extends StatelessWidget {
                                 children: <Widget>[
                                   Expanded(
                                     child: Text('Speciality: ${patientAppointment.registerData.speciality}',
-                                        style: infoWidget.subTitle),
+                                        style: infoWidget.subTitle.copyWith(fontWeight: FontWeight.w500)),
                                   ),
                                   Text(
                                       'Avilable',
                                       style:
-                                      infoWidget.subTitle
+                                      infoWidget.subTitle.copyWith(fontWeight: FontWeight.w500)
                                   ),
                                 ],),
                             ),
@@ -115,7 +115,7 @@ class PatientAppointmentCard extends StatelessWidget {
                                     child: Text(
                                       'Location: ${patientAppointment.registerData.address}',
                                       style:
-                                      infoWidget.subTitle,
+                                      infoWidget.subTitle.copyWith(fontWeight: FontWeight.w500),
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
                                     ),
@@ -130,13 +130,13 @@ class PatientAppointmentCard extends StatelessWidget {
                                   Expanded(
                                     child:  Text(
                                       'Appointement at ${patientAppointment.appointStart} PM',
-                                      style: infoWidget.subTitle,
+                                      style: infoWidget.subTitle.copyWith(fontWeight: FontWeight.w500),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
                                   Text('19 min left',
-                                      style: infoWidget.subTitle),
+                                      style: infoWidget.subTitle.copyWith(fontWeight: FontWeight.w500)),
                                 ],),
                             )
                           ],
