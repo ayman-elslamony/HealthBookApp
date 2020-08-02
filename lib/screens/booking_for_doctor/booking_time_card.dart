@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:healthbook/core/ui_components/info_widget.dart';
 
 class BookingInfoCard extends StatefulWidget {
-  bool showBookingTime;
+  final bool showBookingTime;
 
-  BookingInfoCard({this.showBookingTime});
+  BookingInfoCard({this.showBookingTime=false});
 
   @override
   _BookingInfoCardState createState() => _BookingInfoCardState();
@@ -12,7 +13,7 @@ class BookingInfoCard extends StatefulWidget {
 class _BookingInfoCardState extends State<BookingInfoCard> {
   bool _showBookingInfo = false;
   List<bool> _avilableBookingTime = List.generate(9, (i)=>true);
-Widget _createBookingTime({int index}){
+Widget _createBookingTime({int index,TextStyle textStyle}){
   return InkWell(
     onTap: widget.showBookingTime?null :_avilableBookingTime[index]?(){
        showDialog(
@@ -84,8 +85,7 @@ Widget _createBookingTime({int index}){
       child: Center(
         child: Text(
           '${index+1}:30',
-          style: TextStyle(
-              color: Colors.white, fontSize: 15),
+          style: textStyle.copyWith(color: Colors.white),
         ),
       ),
     ),
@@ -94,70 +94,71 @@ Widget _createBookingTime({int index}){
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 10.0),
-      child: Material(
-        shadowColor: Colors.blueAccent,
-        elevation: 8.0,
-        borderRadius: BorderRadius.all(Radius.circular(10)),
-        type: MaterialType.card,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            InkWell(
-                onTap: () {
-                  setState(() {
-                    _showBookingInfo = !_showBookingInfo;
-                  });
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      SizedBox(),
-                      Text("Tomorrow",
-                          style: TextStyle(
-                            color: Colors.black87,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          )),
-                      Icon(
-                        _showBookingInfo
-                            ? Icons.keyboard_arrow_up
-                            : Icons.keyboard_arrow_down,
-                        size: 25,
+    return InfoWidget(
+      builder: (context,infoWidget){
+        return Padding(
+          padding: EdgeInsets.only(top: infoWidget.defaultVerticalPadding*1.5),
+          child: Material(
+            shadowColor: Colors.blueAccent,
+            elevation: 5.0,
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+            type: MaterialType.card,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                InkWell(
+                    onTap: () {
+                      setState(() {
+                        _showBookingInfo = !_showBookingInfo;
+                      });
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          SizedBox(),
+                          Text("Tomorrow",
+                              style: infoWidget.title),
+                          Icon(
+                            _showBookingInfo
+                                ? Icons.keyboard_arrow_up
+                                : Icons.keyboard_arrow_down,
+                            size: 25,
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                )),
-            _showBookingInfo
-                ? Divider(
-                    color: Colors.grey,
-                    height: 4,
-                  )
-                : SizedBox(),
-            _showBookingInfo
-                ? Padding(
+                    )),
+                _showBookingInfo
+                    ? Divider(
+                  color: Colors.grey,
+                  height: 4,
+                )
+                    : SizedBox(),
+                _showBookingInfo
+                    ? Padding(
                     padding: const EdgeInsets.only(
                         bottom: 8.0, left: 15, right: 15, top: 6.0),
                     child: Container(
-                      height: 165,
                       //width: double.infinity,
                       child: GridView.builder(
+                        shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
                           itemCount: 9,
                           gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 3,
-                                  childAspectRatio: 2.5,
-                                  crossAxisSpacing: 10,
-                                  mainAxisSpacing: 10),
-                          itemBuilder: (ctx, index) => _createBookingTime(index: index)),
+                          SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3,
+                              childAspectRatio: 2.5,
+                              crossAxisSpacing: 10,
+                              mainAxisSpacing: 10),
+                          itemBuilder: (ctx, index) => _createBookingTime(index: index,textStyle: infoWidget.subTitle)),
                     ))
-                : SizedBox(),
-          ],
-        ),
-      ),
+                    : SizedBox(),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
+import 'package:healthbook/core/ui_components/info_widget.dart';
 import 'package:healthbook/models/register_user_data.dart';
 import 'package:healthbook/providers/auth_controller.dart';
 
@@ -152,172 +153,144 @@ class _UserProfileState extends State<UserProfile> {
 
     return Scaffold(
         key: _userProfileState,
-        body: ListView(
-          children: <Widget>[
-            Stack(children: [
-              Container(
-                height: 140,
-                width: double.infinity,
-                color: Colors.blueAccent,
-                child: Center(
-                  child: SizedBox(
-                    width: 130,
-                    height: 130,
-                    child: ClipRRect(
-                      //backgroundColor: Colors.white,
-                      //backgroundImage:
-                      borderRadius: BorderRadius.all(Radius.circular(100)),
-                         child:  _auth.getUserType == 'patient'?
-                    FadeInImage.assetNetwork(fit: BoxFit.fill,placeholder: 'assets/user.png',image: _auth.userData.patientImage)
-                :FadeInImage.assetNetwork(fit: BoxFit.fill,placeholder: 'assets/user.png',image: _auth.userData.doctorImage)
+        body: InfoWidget(
+          builder: (context,infoWidget){
+            return ListView(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0,left: 2.0,right: 2.0),
+                  child: Container(
+                    height: 140,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(15),
+                        topLeft: Radius.circular(15),
+                      ),
+                      color: Colors.blue,
+                    ),
+                    child: Center(
+                      child: SizedBox(
+                        width: 130,
+                        height: 130,
+                        child: ClipRRect(
+                          //backgroundColor: Colors.white,
+                          //backgroundImage:
+                            borderRadius: BorderRadius.all(Radius.circular(100)),
+                            child:  _auth.getUserType == 'patient'?
+                            FadeInImage.assetNetwork(fit: BoxFit.fill,placeholder: 'assets/user.png',image: _auth.userData.patientImage)
+                                :FadeInImage.assetNetwork(fit: BoxFit.fill,placeholder: 'assets/user.png',image: _auth.userData.doctorImage)
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
-//             _isDoctor? Positioned(
-//               child: FlatButton.icon(
-//                 color: Colors.red,
-//                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10))),
-//                   padding: EdgeInsets.all(8.0),
-//                   onPressed: (){
-//                     Navigator.of(context).push(MaterialPageRoute(builder: (context)=>UserSignUp()));
-//                   },
-//                   icon: Icon(
-//                     Icons.mode_edit,
-//                     color: Colors.white,
-//                     size: 18,
-//                   ),
-//                   label: Text(
-//                     'Edit Profile',
-//                     style: TextStyle(color: Colors.white),
-//                   )),
-//               right: 3.0,
-//               top: 1.0,
-//             ):Positioned(
-//                child: FlatButton.icon(
-//                    padding: EdgeInsets.all(0.0),
-//                    onPressed: _cancelButton,
-//                    icon: Icon(
-//                      Icons.delete,
-//                      color: Colors.red,
-//                      size: 18,
-//                    ),
-//                    label: Text(
-//                      'Cancel',
-//                      style: TextStyle(color: Colors.red),
-//                    )),
-//                right: 3.0,
-//                top: 1.0,
-//              ) ,
-//              Navigator.canPop(context)? Positioned(
-//                child: BackButton(color: Colors.white,onPressed: (){Navigator.of(context).pop();},)
-//                ,left: 3.0,
-//                top: 1.0,
-//              ):SizedBox()
-            ]),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Material(
-                shadowColor: Colors.blueAccent,
-                elevation: 8.0,
-                borderRadius: BorderRadius.all(Radius.circular(10)),
-                type: MaterialType.card,
-                child: Container(
-                  padding: EdgeInsets.only(
-                      top: 0.0, left: 10.0, right: 10.0, bottom: 0.0),
-                  child: Column(
-                    children: <Widget>[
-                      SizedBox(
-                        height: 8.0,
-                      ),
-                      Text(
-                          _auth.getUserType == 'doctor'
-                              ? 'Dr. ${_auth.userData.firstName} ${_auth.userData.middleName} ${_auth.userData.lastName}'
-                              : '${_auth.userData.firstName} ${_auth.userData.middleName} ${_auth.userData.lastName}',
-                          style: TextStyle(
-                              color: Colors.blue,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold)),
+                Padding(
+                  padding: const EdgeInsets.only(left: 3.0,right: 3.0),
+                  child: Material(
+                    shadowColor: Colors.blueAccent,
+                    elevation: 1.0,
+                    borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10),bottomRight: Radius.circular(10)),
+                    type: MaterialType.card,
+                    child: Container(
+                      padding: const EdgeInsets.only(
+                          top: 0.0, left: 10.0, right: 10.0, bottom: 0.0),
+                      child: Column(
+                        children: <Widget>[
+                          SizedBox(
+                            height: 8.0,
+                          ),
+                          Text(
+                              _auth.getUserType == 'doctor'
+                                  ? 'Dr. ${_auth.userData.firstName} ${_auth.userData.middleName} ${_auth.userData.lastName}'
+                                  : '${_auth.userData.firstName} ${_auth.userData.middleName} ${_auth.userData.lastName}',
+                              style: infoWidget.title.copyWith(color: Colors.blue,fontWeight: FontWeight.w500)),
 
-                      /// patient name
-                     Text(
-                        _auth.getUserType == 'doctor'
-                            ? _auth.userData.speciality==''?'':'Specialty: ${_auth.userData.speciality}'
-                            : _auth.userData.job==''?'':"Job: ${_auth.userData.job}",
-                        style: TextStyle(
-                            color: Colors.red,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold),
-                      ),
+                          /// patient name
+                          Text(
+                            _auth.getUserType == 'doctor'
+                                ? _auth.userData.speciality==''?'':'Specialty: ${_auth.userData.speciality}'
+                                : _auth.userData.job==''?'':"Job: ${_auth.userData.job}",
+                            style: infoWidget.titleButton.copyWith(color: Colors.red,fontWeight: FontWeight.w500)
+                          ),
 
-                      /// patient job
-                      SizedBox(
-                        height: 5.0,
+                          /// patient job
+                          SizedBox(
+                            height: 5.0,
+                          ),
+                          _auth.userData.aboutYou == ''
+                              ? SizedBox()
+                              :Divider(
+                            color: Colors.grey,
+                            height: 4,
+                          ),
+                          _auth.userData.aboutYou == ''
+                              ? SizedBox()
+                              : Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text(
+                                  _auth.getUserType == 'doctor'
+                                      ? 'Bio'
+                                      : "About",
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.blue),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 10, bottom: 5.0),
+                                  child: Text(_auth.userData.aboutYou,
+                                      textAlign: TextAlign.justify,
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.normal)),
+                                )
+                              ],
+                            ),
+                          )
+                        ],
                       ),
-                      Divider(
-                        color: Colors.grey,
-                        height: 4,
-                      ),
-                      _auth.userData.aboutYou == ''
-                          ? SizedBox()
-                          : Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Text(
-                                    _auth.getUserType == 'doctor'
-                                        ? 'Bio'
-                                        : "About",
-                                    style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.blue),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 10, bottom: 5.0),
-                                    child: Text(_auth.userData.aboutYou,
-                                        textAlign: TextAlign.justify,
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.normal)),
-                                  )
-                                ],
-                              ),
-                            )
-                    ],
+                    ),
                   ),
                 ),
-              ),
-            ),
-            PersonalInfoCard(
-              address: _auth.userData.address,
-              email: _auth.email,
-              gender: _auth.userData.gender,
-              governorate: _auth.userData.government,
-              language: 'Arabic and English',
-              maritalStatus: _auth.userData.status,
-              phoneNumber: _auth.userData.number,
-            ),
+                SizedBox(height: infoWidget.screenHeight*0.02,),
+                PersonalInfoCard(
+                  title: infoWidget.title,
+                   orientation: infoWidget.orientation,
+                  subTitle: infoWidget.titleButton,
+                  width: infoWidget.screenWidth,
+                  address: _auth.userData.address,
+                  email: _auth.email,
+                  gender: _auth.userData.gender,
+                  governorate: _auth.userData.government,
+                  language: 'Arabic and English',
+                  maritalStatus: _auth.userData.status,
+                  phoneNumber: _auth.userData.number,
+                ),
 //           _isDoctor? SizedBox():UserHistory(),
 //            _isDoctor? SizedBox(): UserVitals(),
 //            _isDoctor? SizedBox():UserLabResult(),
-    _auth.getUserType == 'doctor'?
-    _auth.getClinicData==null?SizedBox():ClinicInfoCard(
-                   name: _auth.getClinicData.clinicName,
-                    address:  _auth.getClinicData.address,
-                    governorate: _auth.getClinicData.government,
-                    fees: _auth.getClinicData.fees,
-                   number: _auth.getClinicData.number,
-                   startTime: _auth.getClinicData.openingTime,
-                   endTime: _auth.getClinicData.clossingTime,
-                    watingTime: _auth.getClinicData.waitingTime,
-                    workingDays: _auth.getClinicData.workingDays,
-                  )
-                : SizedBox()
-          ],
+                _auth.getUserType == 'doctor'?
+                _auth.getClinicData==null?SizedBox():ClinicInfoCard(
+                  name: _auth.getClinicData.clinicName,
+                  address:  _auth.getClinicData.address,
+                  governorate: _auth.getClinicData.government,
+                  fees: _auth.getClinicData.fees,
+                  number: _auth.getClinicData.number,
+                  startTime: _auth.getClinicData.openingTime,
+                  endTime: _auth.getClinicData.clossingTime,
+                  watingTime: _auth.getClinicData.waitingTime,
+                  workingDays: _auth.getClinicData.workingDays,
+                )
+                    : SizedBox()
+              ],
+            );
+          },
         ));
   }
 }

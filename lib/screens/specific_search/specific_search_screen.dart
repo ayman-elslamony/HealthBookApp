@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:healthbook/core/ui_components/info_widget.dart';
 import 'package:healthbook/providers/auth_controller.dart';
 import 'package:healthbook/screens/specific_search/map.dart';
 import 'package:healthbook/screens/specific_search/search_result.dart';
@@ -18,31 +19,32 @@ class _SpecificSearchState extends State<SpecificSearch> {
 
   String _location = '';
   TextEditingController _locationTextEditingController =
-  TextEditingController();
+      TextEditingController();
   bool _isEditLocationEnable = false;
   bool _selectUserLocationFromMap = false;
-  FocusNode _governorateFocusNode =FocusNode();
+  FocusNode _governorateFocusNode = FocusNode();
 
   String _specialty;
 
   String _governorate;
-  Auth _auth ;
+  Auth _auth;
+
   @override
   void initState() {
     super.initState();
 
-    _auth =Provider.of<Auth>(context, listen: false);
+    _auth = Provider.of<Auth>(context, listen: false);
   }
+
   Future<void> _getUserLocation() async {
     Position position = await Geolocator()
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    final coordinates =
-    new Coordinates(position.latitude, position.longitude);
+    final coordinates = new Coordinates(position.latitude, position.longitude);
     var addresses =
-    await Geocoder.local.findAddressesFromCoordinates(coordinates);
+        await Geocoder.local.findAddressesFromCoordinates(coordinates);
 //      _accountData['lat'] = position.latitude.toString();
 //      _accountData['long'] = position.longitude.toString();
-    if(addresses.isNotEmpty){
+    if (addresses.isNotEmpty) {
       setState(() {
         _locationTextEditingController.text = addresses.first.addressLine;
         _isEditLocationEnable = true;
@@ -52,12 +54,11 @@ class _SpecificSearchState extends State<SpecificSearch> {
     }
   }
 
-
   void selectLocationFromTheMap(String address, double lat, double long) {
-      setState(() {
-        _locationTextEditingController.text = address;
-      });
-      _location = address;
+    setState(() {
+      _locationTextEditingController.text = address;
+    });
+    _location = address;
 //      _accountData['lat'] = lat.toString();
 //      _accountData['long'] = long.toString();
   }
@@ -101,12 +102,11 @@ class _SpecificSearchState extends State<SpecificSearch> {
                   onTap: () {
                     Navigator.of(context).pushReplacement(MaterialPageRoute(
                         builder: (ctx) => GetUserLocation(
-                          getAddress: selectLocationFromTheMap,
-                        )));
+                              getAddress: selectLocationFromTheMap,
+                            )));
                     setState(() {
                       _isEditLocationEnable = true;
-                      _selectUserLocationFromMap =
-                      !_selectUserLocationFromMap;
+                      _selectUserLocationFromMap = !_selectUserLocationFromMap;
                     });
                   },
                   child: Material(
@@ -142,172 +142,181 @@ class _SpecificSearchState extends State<SpecificSearch> {
 
   _getSpecialtySelected(String x) {
     _specialty = x;
-    print(x);print(_specialty);
-
+    print(x);
+    print(_specialty);
   }
 
   _getGovernorateSelected(String x) {
     _governorate = x;
-    print(x);print(_governorate);
+    print(x);
+    print(_governorate);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20,),
-      child:
-      SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            SizedBox(height: MediaQuery.of(context).size.height*0.10,),
-        FittedBox(
-        child: Container(
-            width: MediaQuery.of(context).size.width*0.71,
-        child: Text(
-         'Search By All Options or choice one or two of Them'
-          ,maxLines: 2,
-          textAlign: TextAlign.center,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            color: Colors.blue,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
+    return InfoWidget(
+      builder: (context, infoWidget) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 20,
           ),
-        ),
-      ),
-    ),SizedBox(height: 10,),
-
-            Container(
-              height: 50,
-              child: TextFormField(
-                textInputAction: TextInputAction.next,
-                decoration: InputDecoration(
-                  labelText: 'Dr /name',
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                    borderSide: BorderSide(
-                      color: Colors.blue,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                SizedBox(
+                  height: infoWidget.screenHeight * 0.10,
+                ),
+                FittedBox(
+                  child: Container(
+                    width: infoWidget.screenWidth * 0.71,
+                    child: Text(
+                      'Search By All Options or choice one or two of Them',
+                      maxLines: 2,
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
+                      style: infoWidget.title.copyWith(
+                        color: Colors.blue,
+                      ),
                     ),
                   ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                    borderSide: BorderSide(color: Colors.blue),
-                  ),
                 ),
-                keyboardType: TextInputType.text,
-// ignore: missing_return
-                validator: (value) {
-                  if (value.isEmpty || value.length < 2) {
-                    return "Invalid Dr Name!";
-                  }
-                },
-                onSaved: (value) {
-                  _drName = value.trim();
-                },
-                onFieldSubmitted: (_) {
-                  print(_specialty);
-                  print(_governorate);
-                  FocusScope.of(context).requestFocus(_governorateFocusNode);
-                },
-              ),
-            ),
-            SizedBox(height: 10,),
-            InkWell(
-                onTap: selectUserLocationType,
-                child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 7.0),
-                  height: 70,
+                SizedBox(
+                  height: infoWidget.screenHeight*0.03,
+                ),
+                Container(
+                  height: infoWidget.orientation==Orientation.portrait?infoWidget.screenHeight*0.075:infoWidget.screenHeight*0.14,
                   child: TextFormField(
-                    style: TextStyle(fontSize: 15),
-                    controller: _locationTextEditingController,
-                    textInputAction: TextInputAction.done,
-                    enabled: _isEditLocationEnable,
+                    style: infoWidget.subTitle,
+                    textInputAction: TextInputAction.next,
                     decoration: InputDecoration(
-                      suffixIcon: InkWell(
-                        onTap: selectUserLocationType,
-                        child: Icon(
-                          Icons.my_location,
-                          size: 20,
-                          color: Colors.blue,
-                        ),
-                      ),
-                      labelText: 'Location',
+                      labelText: 'Dr /name',
                       focusedBorder: OutlineInputBorder(
-                        borderRadius:
-                        BorderRadius.all(Radius.circular(10.0)),
-                        borderSide: BorderSide(
-                          color: Colors.blue,
-                        ),
-                      ),
-                      disabledBorder: OutlineInputBorder(
-                        borderRadius:
-                        BorderRadius.all(Radius.circular(10.0)),
-                        borderSide: BorderSide(
-                          color: Colors.blue,
-                        ),
-                      ),
-                      errorBorder: OutlineInputBorder(
-                        borderRadius:
-                        BorderRadius.all(Radius.circular(10.0)),
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
                         borderSide: BorderSide(
                           color: Colors.blue,
                         ),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderRadius:
-                        BorderRadius.all(Radius.circular(10.0)),
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
                         borderSide: BorderSide(color: Colors.blue),
                       ),
                     ),
                     keyboardType: TextInputType.text,
-                  ),
-                )),
-            SpecialtyAndGovernrateCard(
-              name: 'Specialty',
-              listData: listSpecialty,
-              selected: _getSpecialtySelected,
-            ),
-            SpecialtyAndGovernrateCard(
-              name: 'Governorate',
-              listData: governorateList,
-              selected: _getGovernorateSelected,
-            ),
-            InkWell(
-              onTap: (){
-Navigator.of(context).push(MaterialPageRoute(builder: (context)=>SearchResult()));
-              },
-              child: Container(
-                margin: EdgeInsets.symmetric(vertical: 30),
-                height: 40,
-                width: 110,
-                decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.blue,
-                        blurRadius: 10.0, // has the effect of softening the shadow
-                        spreadRadius: 1.0, // has the effect of extending the shadow
-
-                      )
-                    ]
-                    ,color: Colors.blue
-                    ,borderRadius: BorderRadius.circular(10.0)),
-                child:  Center(
-                  child: Text(
-                    'Search',
-                    textAlign: TextAlign.center,
-                    maxLines: 2,
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18, fontWeight: FontWeight.bold),
+// ignore: missing_return
+                    validator: (value) {
+                      if (value.isEmpty || value.length < 2) {
+                        return "Invalid Dr Name!";
+                      }
+                    },
+                    onSaved: (value) {
+                      _drName = value.trim();
+                    },
+                    onFieldSubmitted: (_) {
+                      print(_specialty);
+                      print(_governorate);
+                      FocusScope.of(context)
+                          .requestFocus(_governorateFocusNode);
+                    },
                   ),
                 ),
-              ),
+                SizedBox(
+                  height: infoWidget.screenHeight*0.03,
+                ),
+                InkWell(
+                    onTap: selectUserLocationType,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(vertical: 7.0),
+                      height: infoWidget.orientation==Orientation.portrait?infoWidget.screenHeight*0.099:infoWidget.screenHeight*0.2,
+                      child: TextFormField(
+                        style: infoWidget.subTitle,
+                        controller: _locationTextEditingController,
+                        textInputAction: TextInputAction.done,
+                        enabled: _isEditLocationEnable,
+                        decoration: InputDecoration(
+                          suffixIcon: InkWell(
+                            onTap: selectUserLocationType,
+                            child: Icon(
+                              Icons.my_location,
+                              size: 20,
+                              color: Colors.blue,
+                            ),
+                          ),
+                          labelText: 'Location',
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10.0)),
+                            borderSide: BorderSide(
+                              color: Colors.blue,
+                            ),
+                          ),
+                          disabledBorder: OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10.0)),
+                            borderSide: BorderSide(
+                              color: Colors.blue,
+                            ),
+                          ),
+                          errorBorder: OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10.0)),
+                            borderSide: BorderSide(
+                              color: Colors.blue,
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10.0)),
+                            borderSide: BorderSide(color: Colors.blue),
+                          ),
+                        ),
+                        keyboardType: TextInputType.text,
+                      ),
+                    )),
+                SpecialtyAndGovernrateCard(
+                  name: 'Specialty',
+                  listData: listSpecialty,
+                  selected: _getSpecialtySelected,
+                ),
+                SpecialtyAndGovernrateCard(
+                  name: 'Governorate',
+                  listData: governorateList,
+                  selected: _getGovernorateSelected,
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => SearchResult()));
+                  },
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Container(
+                        margin: EdgeInsets.symmetric(vertical: 30),
+                        decoration: BoxDecoration(
+                            color: Colors.blue,
+                            borderRadius: BorderRadius.circular(10.0)),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Center(
+                            child: Text(
+                              'Search',
+                              textAlign: TextAlign.center,
+                              style: infoWidget.titleButton
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

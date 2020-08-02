@@ -185,9 +185,8 @@ bool isLoading=true;
                           _auth.getUserType != 'doctor'
                               ? 'Welcome ${_auth.userData.firstName} ${_auth.userData.lastName} !'
                               : 'Welcome Dr. ${_auth.userData.firstName} ${_auth.userData.lastName} ',
-                          style: Theme.of(context).textTheme.display1.copyWith(
-                              fontSize: infoWidget.orientation ==Orientation.portrait?infoWidget.screenWidth*0.04:infoWidget.screenWidth*0.035
-                          )),
+                          style: infoWidget.subTitle
+                          ),
                     ],
                   ),
                 ],

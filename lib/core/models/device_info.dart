@@ -13,6 +13,7 @@ class DeviceInfo {
   final TextStyle subTitle;
   final double defaultVerticalPadding;
   final double defaultHorizontalPadding;
+  final TextStyle titleButton;
   DeviceInfo(
       {this.orientation,
       this.deviceType,
@@ -21,6 +22,7 @@ class DeviceInfo {
       this.localWidth,
         this.title,
         this.subTitle,
+        this.titleButton,
         this.defaultVerticalPadding,
         this.defaultHorizontalPadding,
       this.localHeight});

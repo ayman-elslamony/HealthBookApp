@@ -6,8 +6,8 @@ import 'package:healthbook/screens/user_profile/show_profile.dart';
 import '../user_profile/user_profile.dart';
 
 class DoctorAppointmentCard extends StatefulWidget {
-  Function cancelButton;
-  DoctorAppointment doctorAppointment;
+  final Function cancelButton;
+  final DoctorAppointment doctorAppointment;
   DoctorAppointmentCard({this.cancelButton,this.doctorAppointment});
 
   @override

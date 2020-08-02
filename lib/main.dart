@@ -50,14 +50,15 @@ class MyApp extends StatelessWidget {
               ),
             ),
             appBarTheme: AppBarTheme(
+              elevation: 5.0,
               textTheme: TextTheme(
                   title: TextStyle(
                       color: Colors.red,
                       fontWeight: FontWeight.bold,
                       )),
-              color: Colors.black.withOpacity(0.1),
+              //color: Colors.black.withOpacity(0.1),
               iconTheme: IconThemeData(
-                color: Colors.blue,
+                color: Colors.white,
               ),
             ),
             textTheme: ThemeData.light().textTheme.copyWith(

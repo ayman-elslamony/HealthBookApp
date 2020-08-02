@@ -8,13 +8,20 @@ class PersonalInfoCard extends StatefulWidget {
   final String maritalStatus;
   final String language;
   final String email;
+  final TextStyle title;
+  final TextStyle subTitle;
+  final double width;
+  final Orientation orientation;
   PersonalInfoCard(
       {this.address,
+        this.width,this.orientation,
       this.governorate,
       this.gender,
       this.phoneNumber,
       this.maritalStatus,
       this.language,
+        this.subTitle,
+        this.title,
       this.email});
 
   @override
@@ -32,8 +39,7 @@ class _PersonalInfoCardState extends State<PersonalInfoCard> {
         children: <Widget>[
           Text(
             title + " ",
-            style: TextStyle(
-                fontWeight: FontWeight.bold, fontSize: 18, color: Colors.blue),
+            style: widget.subTitle.copyWith(color: Colors.blue,fontWeight: FontWeight.w400)
           ),
           Expanded(
             child: Padding(
@@ -44,10 +50,7 @@ class _PersonalInfoCardState extends State<PersonalInfoCard> {
                 children: <Widget>[
                   Text(
                     content,
-                    style: TextStyle(
-                        fontWeight: FontWeight.normal,
-                        fontSize: 18,
-                        color: Colors.black),
+                    style: widget.subTitle.copyWith(color: Colors.black,fontWeight: FontWeight.w600),
                   ),
                 ],
               ),
@@ -64,7 +67,7 @@ class _PersonalInfoCardState extends State<PersonalInfoCard> {
       padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
       child: Material(
         shadowColor: Colors.blueAccent,
-        elevation: 8.0,
+        elevation: 3.0,
         borderRadius: BorderRadius.all(Radius.circular(10)),
         type: MaterialType.card,
         child: Column(
@@ -85,16 +88,12 @@ class _PersonalInfoCardState extends State<PersonalInfoCard> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         Text("Personal Information",
-                            style: TextStyle(
-                              color: Colors.red,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            )),
+                            style: widget.title.copyWith( color: Colors.red)),
                         Icon(
                           _showPersonalInfo
                               ? Icons.keyboard_arrow_up
                               : Icons.keyboard_arrow_down,
-                          size: 25,
+                          size: widget.orientation==Orientation.portrait?widget.width*0.073:widget.width*0.053,
                         ),
                       ],
                     ),

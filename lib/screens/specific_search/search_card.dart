@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class SpecialtyAndGovernrateCard extends StatefulWidget {
  final List<String> listData;
  final String name;
- Function selected;
+ final Function selected;
  SpecialtyAndGovernrateCard({this.name,this.listData,this.selected});
  @override
   _SpecialtyAndGovernrateCardState createState() => _SpecialtyAndGovernrateCardState();
@@ -19,7 +19,7 @@ class _SpecialtyAndGovernrateCardState extends State<SpecialtyAndGovernrateCard>
       padding: const EdgeInsets.only(top: 10),
       child: Material(
         shadowColor: Colors.blueAccent,
-        elevation: 8.0,
+        elevation: 5.0,
         borderRadius: BorderRadius.all(Radius.circular(10)),
         type: MaterialType.card,
         child: Padding(

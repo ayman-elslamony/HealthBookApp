@@ -411,7 +411,7 @@ class _RegisterUserDataState extends State<RegisterUserData> {
         padding: const EdgeInsets.symmetric(horizontal: 2.0),
         child: Material(
           shadowColor: Colors.blueAccent,
-          elevation: 8.0,
+          elevation: 2.0,
           borderRadius: BorderRadius.all(Radius.circular(10)),
           type: MaterialType.card,
           child: Row(
@@ -1226,7 +1226,7 @@ class _RegisterUserDataState extends State<RegisterUserData> {
                           padding: const EdgeInsets.symmetric(horizontal: 20.0),
                           child: Material(
                             shadowColor: Colors.blueAccent,
-                            elevation: 8.0,
+                            elevation: 2.0,
                             borderRadius: BorderRadius.all(Radius.circular(10)),
                             type: MaterialType.card,
                             child: Row(
@@ -1289,7 +1289,7 @@ class _RegisterUserDataState extends State<RegisterUserData> {
                       children: <Widget>[
                         Material(
                           shadowColor: Colors.blueAccent,
-                          elevation: 8.0,
+                          elevation: 2.0,
                           borderRadius: BorderRadius.all(Radius.circular(10)),
                           type: MaterialType.card,
                           child: Row(
@@ -1755,12 +1755,21 @@ class _RegisterUserDataState extends State<RegisterUserData> {
       backgroundColor: Colors.white,
       appBar: Navigator.of(context).canPop()
           ? AppBar(
-              leading: BackButton(
-                color: Colors.blue,
-                onPressed: () {
-                  Navigator.of(context).pop(true);
-                },
-              ),
+              leading: IconButton(
+                  icon: Icon(
+                    Icons.arrow_back_ios,
+                    size: MediaQuery.of(context).orientation == Orientation.portrait
+                        ? MediaQuery.of(context).size.width* 0.05
+                        : MediaQuery.of(context).size.width* 0.035,
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop(true);
+                    //TODO: make pop
+                  }),
+        shape: ContinuousRectangleBorder(
+            borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(30),
+                bottomRight: Radius.circular(30))),
             )
           : null,
       body: SafeArea(

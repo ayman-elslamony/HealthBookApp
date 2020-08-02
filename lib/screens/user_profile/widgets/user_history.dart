@@ -9,8 +9,9 @@ class UserHistory extends StatefulWidget {
 }
 
 class _UserHistoryState extends State<UserHistory> {
-  bool _showUserProblems = true;
+
   bool _showUserHistory = true;
+  bool _showUserProblems = true;
   List<String> _userProblemslist = ['Diabetes mellitus (ICD-250)','Diabetes mellitus (ICD-250)'];
 
   Widget _userProblems({String problemName}) {

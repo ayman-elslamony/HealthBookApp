@@ -33,7 +33,6 @@ class RegisterData{
      gender= json['gender']??'';
      job= json['job']??'';
      status= json['status']??'';
-   number= json['number'] ==null ?'':json['number'][0];
      address= json['address']??'';
      government= json['government']??'';
      print('bvdbcfnnbfnbf nf nfn');
@@ -41,7 +40,9 @@ class RegisterData{
        speciality =json['speciality']??'';
        doctorImage = json['doctorImage']??'';
        aboutYou =json['bio']??'';
+       number= json['number'] ==null ?'':json['number'][0];
      }else{
+       number= json['phone'] ==null ?'':json['phone'][0];
        patientImage= json['patientImage']??'';
        aboutYou= json['aboutYou']??'';
      }

@@ -73,25 +73,25 @@ class Auth with ChangeNotifier {
 
   Future<String> signIn(
       {String email, String password,bool isCommingFromSignUp =false}) async {
-//    print(email);
-//    print(password);
+    print(email);
+    print(password);
     var data = await _netWork.postData(
       url: '$_userType/login',
       headers: {'Content-Type': 'application/json'
       },
-      data: {'email':email,'password':password},
+      data: {'email':email.trim(),'password':password.trim()},
     );
     if (data['message'] == 'Auth success') {
       _token = data['token'];
       _userId=data['_id'];
-      _email = email;
+      _email = email.trim();
 //      print(_token);
 //      print(_userId);
       final prefs = await SharedPreferences.getInstance();
       if(!prefs.containsKey('dataToSignIn')){
         final dataToSignIn = json.encode({
-          'email': email,
-          'password': password,
+          'email': email.trim(),
+          'password': password.trim(),
           'userType': _userType,
         });
         prefs.setString('dataToSignIn', dataToSignIn);
@@ -310,7 +310,7 @@ workingDays: ['sat','mon','thur'],
     FormData formData;
       if(_userType =='patient'){
         formData = FormData.fromMap({
-          'number': listOfData['Phone number'],
+          'phone': listOfData['Phone number'],
           'address': listOfData['Location'],
           'status': listOfData['materialStatus'],
           'lastName': listOfData['Last name'],
@@ -432,8 +432,10 @@ workingDays: ['sat','mon','thur'],
   Future<void> logout() async {
     _token = null;
     _userId =null;
+    _email =null;
+    _userType = 'patient';
     final prefs = await SharedPreferences.getInstance();
     prefs.clear();
-    notifyListeners();
+    print('fbnfnfnf');
   }
 }
