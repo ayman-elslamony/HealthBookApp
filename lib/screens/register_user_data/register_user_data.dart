@@ -347,12 +347,11 @@ class _RegisterUserDataState extends State<RegisterUserData> {
             padding: EdgeInsets.all(10.0),
             child: Column(children: [
               Text(
-                'Pick an Image',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    color: Colors.red),
-              ),
+                  'Pick an Image',
+                  style: TextStyle(
+                      fontSize: MediaQuery.of(context).orientation==Orientation.portrait?MediaQuery.of(context).size.width * 0.04:MediaQuery.of(context).size.width * 0.03,
+                      color: Colors.blue,
+                      fontWeight: FontWeight.bold)),
               SizedBox(
                 height: 10.0,
               ),
@@ -363,6 +362,7 @@ class _RegisterUserDataState extends State<RegisterUserData> {
                     icon: Icon(
                       Icons.camera_alt,
                       color: Colors.white,
+                      size: MediaQuery.of(context).orientation==Orientation.portrait?MediaQuery.of(context).size.width*0.065:MediaQuery.of(context).size.width*0.049,
                     ),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10)),
@@ -370,7 +370,10 @@ class _RegisterUserDataState extends State<RegisterUserData> {
                     textColor: Theme.of(context).primaryColor,
                     label: Text(
                       'Use Camera',
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(
+                          fontSize: MediaQuery.of(context).orientation==Orientation.portrait?MediaQuery.of(context).size.width * 0.035:MediaQuery.of(context).size.width * 0.024,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold),
                     ),
                     onPressed: () {
                       _getImage(ImageSource.camera);
@@ -381,6 +384,7 @@ class _RegisterUserDataState extends State<RegisterUserData> {
                     icon: Icon(
                       Icons.camera,
                       color: Colors.white,
+                      size: MediaQuery.of(context).orientation==Orientation.portrait?MediaQuery.of(context).size.width*0.065:MediaQuery.of(context).size.width*0.049,
                     ),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10)),
@@ -388,7 +392,10 @@ class _RegisterUserDataState extends State<RegisterUserData> {
                     textColor: Theme.of(context).primaryColor,
                     label: Text(
                       'Use Gallery',
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(
+                          fontSize: MediaQuery.of(context).orientation==Orientation.portrait?MediaQuery.of(context).size.width * 0.035:MediaQuery.of(context).size.width * 0.024,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold),
                     ),
                     onPressed: () {
                       _getImage(ImageSource.gallery);

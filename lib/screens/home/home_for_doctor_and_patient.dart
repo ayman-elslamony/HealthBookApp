@@ -167,8 +167,6 @@ bool isLoading=true;
 
     return InfoWidget(
       builder: (context,infoWidget){
-        DeviceInfo x =infoWidget;
-        print(infoWidget.orientation);
         return Scaffold(
           key: _scaffoldState,
           body: Column(
@@ -204,78 +202,46 @@ bool isLoading=true;
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
-                              Column(
-                                children: <Widget>[
-                                  Text(
-                                    'You don\'t have any appointement for this week',
-                                    textAlign: TextAlign.center,
-                                    maxLines: 2,
-                                    style: TextStyle(
-                                        fontSize: infoWidget.orientation ==Orientation.portrait?infoWidget.screenWidth*0.04:infoWidget.screenWidth*0.035,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ],
+                              Expanded(
+                                child: Text(
+                                  'You don\'t have any appointement for this day',
+                                  textAlign: TextAlign.center,
+                                  maxLines: 2,
+                                  style: infoWidget.titleButton.copyWith(color: Colors.black),),
                               ),
                             ],
                           ),
                           SizedBox(
                             height: infoWidget.orientation ==Orientation.portrait?infoWidget.screenHeight*0.02:infoWidget.screenHeight*0.03,
                           ),
-                          InkWell(
-                            onTap: () {},
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Container(
-                                  decoration: BoxDecoration(
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.blue,
-                                          blurRadius: 40.0,
-                                          // has the effect of softening the shadow
-                                          spreadRadius: 1.0,
-                                          // has the effect of extending the shadow
-                                          offset: Offset(
-                                            0.0, // horizontal, move right 10
-                                            10.0, // vertical, move down 10
-                                          ),
-                                        )
-                                      ],
-                                      color: Colors.blue,
-                                      borderRadius: BorderRadius.circular(6.0)),
-                                  child: Padding(
-                                    padding: EdgeInsets.symmetric(horizontal: infoWidget.screenHeight*0.06,vertical: infoWidget.screenHeight*0.015),
-                                    child: Center(
-                                      child: Column(
-                                        children: <Widget>[
-                                          Text(
-                                            'Check Out Other Days',
-                                            textAlign: TextAlign.center,
-                                            maxLines: 2,
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: infoWidget.orientation ==Orientation.portrait?infoWidget.screenWidth*0.048:infoWidget.screenWidth*0.035,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Container(
+                                decoration: BoxDecoration(
+                                    color: Colors.blue,
+                                    borderRadius: BorderRadius.circular(6.0)),
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: infoWidget.screenHeight*0.06,vertical: infoWidget.screenHeight*0.015),
+                                  child: Center(
+                                    child: Text(
+                                      'Check Out Other Days',
+                                      textAlign: TextAlign.center,
+                                      maxLines: 2,
+                                      style: infoWidget.titleButton,
                                   ),
                                 ),
-                              ],
-                            ),
+                              ),
+                              )],
                           ),
                           SizedBox(
                             height: infoWidget.orientation ==Orientation.portrait?infoWidget.screenHeight*0.02:infoWidget.screenHeight*0.03,
                           ),
-                          Text(
+                          _auth.getUserType=='doctor'?SizedBox():Text(
                             'Stay Healty 💙',
                             textAlign: TextAlign.center,
                             maxLines: 2,
-                            style: TextStyle(
-                                color: Colors.blue,
-                                fontSize: infoWidget.orientation ==Orientation.portrait?infoWidget.screenWidth*0.048:infoWidget.screenWidth*0.035,
-                                fontWeight: FontWeight.bold),
+                            style: infoWidget.subTitle
                           ),
                         ],
                       ),

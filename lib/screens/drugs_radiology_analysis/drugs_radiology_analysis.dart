@@ -1,12 +1,6 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_simple_rating_bar/flutter_simple_rating_bar.dart';
-import 'package:healthbook/core/models/device_info.dart';
 import 'package:healthbook/core/ui_components/info_widget.dart';
 import 'package:healthbook/models/register_user_data.dart';
-import 'package:healthbook/screens/patient_prescription/show_previous_patient_precription.dart';
-import 'package:healthbook/screens/user_profile/user_profile.dart';
-
 import 'showDrugs.dart';
 
 class DoctorsInEachDosage {
@@ -246,22 +240,14 @@ class _DrugAndRadiologyAndAnalysisState extends State<DrugAndRadiologyAndAnalysi
                         children: <Widget>[
                           Icon(
                             Icons.notifications,
-                            size: infoWidget.orientation == Orientation.portrait
-                                ? infoWidget.screenHeight * 0.045
-                                : infoWidget.screenHeight * 0.08,
+                            size: infoWidget.orientation==Orientation.portrait?infoWidget.screenHeight * 0.04:infoWidget.screenHeight * 0.07,
                           ),
                           Positioned(
                               right: 2.9,
                               top: 2.8,
                               child: Container(
-                                width:
-                                infoWidget.orientation == Orientation.portrait
-                                    ? infoWidget.screenWidth * 0.025
-                                    : infoWidget.screenWidth * 0.017,
-                                height:
-                                infoWidget.orientation == Orientation.portrait
-                                    ? infoWidget.screenWidth * 0.025
-                                    : infoWidget.screenWidth * 0.017,
+                                width: infoWidget.orientation==Orientation.portrait?infoWidget.screenWidth * 0.023:infoWidget.screenWidth * 0.014,
+                                height: infoWidget.orientation==Orientation.portrait?infoWidget.screenWidth * 0.023:infoWidget.screenWidth* 0.014,
                                 decoration: BoxDecoration(
                                     color: Colors.red,
                                     borderRadius: BorderRadius.circular(5)),

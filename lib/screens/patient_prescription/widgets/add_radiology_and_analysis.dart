@@ -50,10 +50,9 @@ class _AddRadiologyAndAnalysisState extends State<AddRadiologyAndAnalysis> {
               Text(
                 'Pick an Image',
                 style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    color: Colors.red),
-              ),
+                    fontSize: MediaQuery.of(context).orientation==Orientation.portrait?MediaQuery.of(context).size.width * 0.04:MediaQuery.of(context).size.width * 0.03,
+                    color: Colors.blue,
+                    fontWeight: FontWeight.bold)),
               SizedBox(
                 height: 10.0,
               ),
@@ -64,6 +63,7 @@ class _AddRadiologyAndAnalysisState extends State<AddRadiologyAndAnalysis> {
                     icon: Icon(
                       Icons.camera_alt,
                       color: Colors.white,
+                      size: MediaQuery.of(context).orientation==Orientation.portrait?MediaQuery.of(context).size.width*0.065:MediaQuery.of(context).size.width*0.049,
                     ),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10)),
@@ -71,7 +71,10 @@ class _AddRadiologyAndAnalysisState extends State<AddRadiologyAndAnalysis> {
                     textColor: Theme.of(context).primaryColor,
                     label: Text(
                       'Use Camera',
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(
+                          fontSize: MediaQuery.of(context).orientation==Orientation.portrait?MediaQuery.of(context).size.width * 0.035:MediaQuery.of(context).size.width * 0.024,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold),
                     ),
                     onPressed: () {
                       _getImage(context, ImageSource.camera);
@@ -82,6 +85,7 @@ class _AddRadiologyAndAnalysisState extends State<AddRadiologyAndAnalysis> {
                     icon: Icon(
                       Icons.camera,
                       color: Colors.white,
+                      size: MediaQuery.of(context).orientation==Orientation.portrait?MediaQuery.of(context).size.width*0.065:MediaQuery.of(context).size.width*0.049,
                     ),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10)),
@@ -89,7 +93,10 @@ class _AddRadiologyAndAnalysisState extends State<AddRadiologyAndAnalysis> {
                     textColor: Theme.of(context).primaryColor,
                     label: Text(
                       'Use Gallery',
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(
+                          fontSize: MediaQuery.of(context).orientation==Orientation.portrait?MediaQuery.of(context).size.width * 0.035:MediaQuery.of(context).size.width * 0.024,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold),
                     ),
                     onPressed: () {
                       _getImage(context, ImageSource.gallery);
@@ -190,7 +197,10 @@ class _AddRadiologyAndAnalysisState extends State<AddRadiologyAndAnalysis> {
                     borderRadius: BorderRadius.circular(15),
                     border: Border.all(color: Colors.blue[500]),
                   ),
-                  child: _imageFile == null? Center(child: Text('Image',style: TextStyle(color: Colors.blue,fontSize: 18),),):
+                  child: _imageFile == null? Center(child: Text('Image',style: TextStyle(
+                      fontSize: MediaQuery.of(context).orientation==Orientation.portrait?MediaQuery.of(context).size.width * 0.035:MediaQuery.of(context).size.width * 0.024,
+                      color: Colors.blue,
+                      fontWeight: FontWeight.bold),),):
                   Hero(
                     tag: 'image',
                     child: InkWell(
@@ -211,31 +221,36 @@ class _AddRadiologyAndAnalysisState extends State<AddRadiologyAndAnalysis> {
                     onTap: () {
                       _openImagePicker(context,);
                     },
-                    child: Container(
-                      padding: EdgeInsets.all(10.0),
-                      height: 40,
-                      width: 150,
-                      decoration: BoxDecoration(
-                          color: Colors.blue,
-                          borderRadius: BorderRadius.circular(10)),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          Text(
-                            "Select Image",
-                            style: Theme.of(context)
-                                .textTheme
-                                .display1
-                                .copyWith(color: Colors.white, fontSize: 17),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Container(
+                          decoration: BoxDecoration(
+                              color: Colors.blue,
+                              borderRadius: BorderRadius.circular(10)),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 6.0,horizontal: 9.0),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: <Widget>[
+                                Text(
+                                  "Select Image",
+                                  style: TextStyle(
+                                      fontSize: MediaQuery.of(context).orientation==Orientation.portrait?MediaQuery.of(context).size.width * 0.035:MediaQuery.of(context).size.width * 0.024,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Icon(
+                                  Icons.camera_alt,
+                                  size: MediaQuery.of(context).orientation==Orientation.portrait?MediaQuery.of(context).size.width*0.065:MediaQuery.of(context).size.width*0.049,
+                                  color: Colors.white,
+                                )
+                              ],
+                            ),
                           ),
-                          Icon(
-                            Icons.camera_alt,
-                            size: 20,
-                            color: Colors.white,
-                          )
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),

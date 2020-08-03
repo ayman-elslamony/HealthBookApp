@@ -11,7 +11,10 @@ class ClinicInfoCard extends StatefulWidget {
   final String startTime;
   final String endTime;
   final String number;
-
+  final TextStyle title;
+  final TextStyle subTitle;
+  final double width;
+  final Orientation orientation;
 
   ClinicInfoCard(
       {this.address,
@@ -22,7 +25,7 @@ class ClinicInfoCard extends StatefulWidget {
       this.governorate,
       this.watingTime,
       this.fees,
-      this.workingDays});
+      this.workingDays,this.title,this.subTitle,this.width,this.orientation});
 
   @override
   _ClinicInfoCardState createState() => _ClinicInfoCardState();
@@ -38,18 +41,22 @@ class _ClinicInfoCardState extends State<ClinicInfoCard> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
-            title,
-            style: TextStyle(
-                fontWeight: FontWeight.bold, fontSize: 18, color: Colors.blue),
+              title + " ",
+              style: widget.subTitle.copyWith(color: Colors.black,fontWeight: FontWeight.w600)
           ),
-          Padding(
-            padding: const EdgeInsets.only(left: 5.0),
-            child: Text(
-              content,
-              style: TextStyle(
-                  fontWeight: FontWeight.normal,
-                  fontSize: 18,
-                  color: Colors.black),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 5.0),
+              child: Column(
+                // mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    content,
+                    style: widget.subTitle.copyWith(color: Color(0xff484848),fontWeight: FontWeight.w500),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -76,7 +83,7 @@ class _ClinicInfoCardState extends State<ClinicInfoCard> {
       padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
       child: Material(
         shadowColor: Colors.blueAccent,
-        elevation: 8.0,
+        elevation: 0.5,
         borderRadius: BorderRadius.all(Radius.circular(10)),
         type: MaterialType.card,
         child: Column(
@@ -96,16 +103,12 @@ class _ClinicInfoCardState extends State<ClinicInfoCard> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         Text("Clinic Information",
-                            style: TextStyle(
-                              color: Colors.red,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            )),
+                            style: widget.title.copyWith( color: Colors.blue,fontWeight: FontWeight.w500)),
                         Icon(
                           _showClinicInfo
                               ? Icons.keyboard_arrow_up
                               : Icons.keyboard_arrow_down,
-                          size: 25,
+                          size: widget.orientation==Orientation.portrait?widget.width*0.065:widget.width*0.049,
                         ),
                       ],
                     ),

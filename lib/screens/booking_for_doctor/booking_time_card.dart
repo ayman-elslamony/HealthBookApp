@@ -100,7 +100,7 @@ Widget _createBookingTime({int index,TextStyle textStyle}){
           padding: EdgeInsets.only(top: infoWidget.defaultVerticalPadding*1.5),
           child: Material(
             shadowColor: Colors.blueAccent,
-            elevation: 0.1,
+            elevation: 2.0,
             borderRadius: BorderRadius.all(Radius.circular(10)),
             type: MaterialType.card,
             child: Column(
@@ -119,12 +119,12 @@ Widget _createBookingTime({int index,TextStyle textStyle}){
                         children: <Widget>[
                           SizedBox(),
                           Text("Tomorrow",
-                              style: infoWidget.title),
+                              style: infoWidget.titleButton.copyWith(color: Colors.black)),
                           Icon(
                             _showBookingInfo
                                 ? Icons.keyboard_arrow_up
                                 : Icons.keyboard_arrow_down,
-                            size: 25,
+                            size: infoWidget.orientation==Orientation.portrait?infoWidget.screenWidth*0.065:infoWidget.screenWidth*0.049,
                           ),
                         ],
                       ),
@@ -142,13 +142,13 @@ Widget _createBookingTime({int index,TextStyle textStyle}){
                     child: Container(
                       //width: double.infinity,
                       child: GridView.builder(
-                        shrinkWrap: true,
+                          shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),
                           itemCount: 9,
                           gridDelegate:
                           SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 3,
-                              childAspectRatio: 2.5,
+                              childAspectRatio: infoWidget.orientation==Orientation.portrait?3:4.7,
                               crossAxisSpacing: 10,
                               mainAxisSpacing: 10),
                           itemBuilder: (ctx, index) => _createBookingTime(index: index,textStyle: infoWidget.subTitle)),

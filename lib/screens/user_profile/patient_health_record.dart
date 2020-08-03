@@ -1,28 +1,165 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
-//import 'package:flutter_sms/flutter_sms.dart';
+import 'package:healthbook/core/ui_components/info_widget.dart';
+import 'package:healthbook/models/doctor_appointment.dart';
+import 'package:healthbook/models/register_user_data.dart';
+import 'package:healthbook/screens/drugs_radiology_analysis/drugs_radiology_analysis.dart';
 import 'package:healthbook/screens/patient_prescription/widgets/patient_prescription.dart';
-import 'package:healthbook/screens/user_profile/widgets/user_history.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'user_profile.dart';
+import 'widgets/show_patient_health_record.dart';
+
 
 class PatientHealthRecord extends StatelessWidget {
-  final GlobalKey<ScaffoldState> _patientHealthRecordState = GlobalKey<ScaffoldState>();
+  final DoctorAppointment doctorAppointment;
+
+  PatientHealthRecord({this.doctorAppointment});
+
+  final List<DrugList> allDrugList = [
+    DrugList(
+        diagnoseName: 'Diabetes mellitus (ICD-250)',
+        diagnoseDate: '12-10-2020',
+        allDoctorsInEachDosage: [
+          DoctorsInEachDosage(
+              date: '5-6-77',
+              doctorData: RegisterData(
+                  firstName: 'ahmed',
+                  middleName: 'mohamed',
+                  lastName: 'nour',
+                  number: '01145523795',
+                  status: 'not',
+                  job: 'Doctor',
+                  government: 'Mansoura',
+                  gender: 'Male',
+                  birthDate: '12/5/2020',
+                  aboutYou: 'iam doctor',
+                  address: 'man man man ',
+                  speciality: 'doc',
+                  patientImage:
+                      'https://www.talkwalker.com/images/2020/blog-headers/image-analysis.png'),
+              allPrescription: [
+                Prescription(
+                    prescriptionDate: '12-1-2020',
+                    prescriptionName: 'Prescription One',
+                    allMedicine: [
+                      Medicine(
+                          medicineName: 'panadol extra',
+                          medicineDosage: 'each 4 hour'),
+                      Medicine(
+                          medicineName: 'extramol',
+                          medicineDosage: 'each 12 hour'),
+                    ],
+                    allAnalysis: [
+                      RadiologyAndAnalysisStructure(
+                          name: 'dfn',
+                          description: 'fedg etet tt',
+                          image:
+                              'https://www.mediclinicinfohub.co.za/wp-content/uploads/2018/10/GettyImages-769782917_Facebook.jpg'),
+                      RadiologyAndAnalysisStructure(
+                          name: 'ggg',
+                          description: 'fgdtet dgtt',
+                          image:
+                              'https://www.mediclinicinfohub.co.za/wp-content/uploads/2018/10/GettyImages-769782917_Facebook.jpg'),
+                    ],
+                    allRadiology: [
+                      RadiologyAndAnalysisStructure(
+                          name: 'drttrn',
+                          description: 'feazg ett',
+                          image:
+                              'https://www.mediclinicinfohub.co.za/wp-content/uploads/2018/10/GettyImages-769782917_Facebook.jpg'),
+                      RadiologyAndAnalysisStructure(
+                          name: 'giuoig',
+                          description: 'fgqqet dgtt',
+                          image:
+                              'https://www.mediclinicinfohub.co.za/wp-content/uploads/2018/10/GettyImages-769782917_Facebook.jpg'),
+                    ]),
+                Prescription(
+                    prescriptionDate: '8-11-2020',
+                    prescriptionName: 'Prescription two',
+                    allMedicine: [
+                      Medicine(
+                          medicineName: 'novadol',
+                          medicineDosage: 'each 24 hour'),
+                      Medicine(
+                          medicineName: 'omega3',
+                          medicineDosage: 'each 12 hour'),
+                    ]),
+              ]),
+          DoctorsInEachDosage(
+              date: '5-6-77',
+              doctorData: RegisterData(
+                  firstName: 'Ayman',
+                  middleName: 'Kamel',
+                  lastName: 'Elslamony',
+                  number: '01145523795',
+                  status: 'not',
+                  job: 'Doctor',
+                  government: 'Mansoura',
+                  gender: 'Male',
+                  birthDate: '12/5/2020',
+                  aboutYou: 'iam doctor',
+                  address: 'man man man ',
+                  speciality: 'doc',
+                  patientImage:
+                      'https://www.talkwalker.com/images/2020/blog-headers/image-analysis.png'),
+              allPrescription: [
+                Prescription(
+                    prescriptionDate: '2-1-2020',
+                    prescriptionName: 'Prescription three',
+                    allMedicine: [
+                      Medicine(
+                          medicineName: 'zeta', medicineDosage: 'each 2 hour'),
+                      Medicine(
+                          medicineName: 'beta', medicineDosage: 'each 1 hour'),
+                    ]),
+                Prescription(
+                    prescriptionDate: '8-1-2020',
+                    prescriptionName: 'Prescription one',
+                    allMedicine: [
+                      Medicine(
+                          medicineName: 'zeta', medicineDosage: 'each 2 hour'),
+                      Medicine(
+                          medicineName: 'beta', medicineDosage: 'each 1 hour'),
+                    ]),
+              ]),
+        ]),
+    DrugList(
+        diagnoseName: 'mellitus (ICD-250)',
+        diagnoseDate: '1-1-2020',
+        allDoctorsInEachDosage: [
+          DoctorsInEachDosage(
+              date: '5-6-77',
+              doctorData: RegisterData(
+                  firstName: 'nour',
+                  middleName: 'marwan',
+                  lastName: 'nemar',
+                  number: '01145523795',
+                  status: 'not',
+                  job: 'Doctor',
+                  government: 'Mansoura',
+                  gender: 'Male',
+                  birthDate: '12/5/2020',
+                  aboutYou: 'iam doctor',
+                  address: 'man man man ',
+                  speciality: 'doc',
+                  patientImage:
+                      'https://www.talkwalker.com/images/2020/blog-headers/image-analysis.png'),
+              allPrescription: [
+                Prescription(
+                    prescriptionDate: '12-1-2020',
+                    prescriptionName: 'Prescription One',
+                    allMedicine: [
+                      Medicine(
+                          medicineName: 'panadol extra',
+                          medicineDosage: 'each 4 hour')
+                    ]),
+              ]),
+        ])
+  ];
+  final GlobalKey<ScaffoldState> _patientHealthRecordState =
+      GlobalKey<ScaffoldState>();
   static const routeName = 'PatientHealthRecord';
-  String _patient_name = "Mohamed Salah Ismail";
-  String _patient_job = "Student";
-  String _about =
-      " A personal health record is a collection of information about your"
-      "health. If you have a vaccination record or a folder of medical papers,"
-      "you already have a basic personal health record. ";
-  String _address = "address............";
-  String _governorate = "governorate............";
-  String _gender = "male............";
-  String _marital_status = "maritalstatus............";
-  String _language = "language............";
-  String _email = "email............";
-  String _home_phone = "01211447755";
+
   @override
   Widget build(BuildContext context) {
     _cancelButton() {
@@ -32,23 +169,21 @@ class PatientHealthRecord extends StatelessWidget {
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(25.0))),
           contentPadding: EdgeInsets.only(top: 10.0),
-          title:  ColorizeAnimatedTextKit(
+          title: ColorizeAnimatedTextKit(
               totalRepeatCount: 9,
               pause: Duration(milliseconds: 1000),
               isRepeatingAnimation: true,
               speed: Duration(seconds: 1),
               text: [' please tell the patient '],
               textAlign: TextAlign.center,
-              textStyle: TextStyle(
-                  fontSize: 23.0, fontFamily: "Horizon"),
+              textStyle: TextStyle(fontSize: 23.0, fontFamily: "Horizon"),
               colors: [
                 Colors.blue,
                 Colors.green,
                 Colors.blue,
               ],
-              alignment: AlignmentDirectional
-                  .topStart // or Alignment.topLeft
-          ),
+              alignment: AlignmentDirectional.topStart // or Alignment.topLeft
+              ),
           content: Padding(
             padding: const EdgeInsets.only(top: 10),
             child: Container(
@@ -57,12 +192,12 @@ class PatientHealthRecord extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   InkWell(
-                    onTap: (){
+                    onTap: () {
                       launch("tel://21213123123");
                       Navigator.of(context).pop();
                     },
                     child: Container(
-                        height:  38,
+                        height: 38,
                         width: 75,
                         decoration: BoxDecoration(
                             color: Colors.green,
@@ -77,13 +212,13 @@ class PatientHealthRecord extends StatelessWidget {
                             Text(
                               'Call ',
                               style:
-                              TextStyle(color: Colors.white, fontSize: 18),
+                                  TextStyle(color: Colors.white, fontSize: 18),
                             ),
                           ],
                         )),
                   ),
                   InkWell(
-                    onTap: (){
+                    onTap: () {
 //                      sendSMS(message: 'Hello Patient', recipients: ['+201145523795'])
 //                          .catchError((onError) {
 //                        print(onError);
@@ -106,7 +241,7 @@ class PatientHealthRecord extends StatelessWidget {
                             Text(
                               'Message ',
                               style:
-                              TextStyle(color: Colors.white, fontSize: 18),
+                                  TextStyle(color: Colors.white, fontSize: 18),
                             ),
                           ],
                         )),
@@ -126,16 +261,17 @@ class PatientHealthRecord extends StatelessWidget {
               child: Text('Ok'),
               onPressed: () {
                 final snackBar = SnackBar(
-                  content: Text('SuccessFully deleted',style:
-                  TextStyle(color: Colors.white, fontSize: 15),),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                  content: Text(
+                    'SuccessFully deleted',
+                    style: TextStyle(color: Colors.white, fontSize: 15),
+                  ),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5)),
                   duration: Duration(seconds: 5),
                   backgroundColor: Colors.blue,
                   action: SnackBarAction(
                     label: 'Undo',
-                    onPressed: () {
-
-                    },
+                    onPressed: () {},
                   ),
                 );
                 _patientHealthRecordState.currentState.showSnackBar(snackBar);
@@ -146,70 +282,173 @@ class PatientHealthRecord extends StatelessWidget {
         ),
       );
     }
-    return Scaffold(
-      key: _patientHealthRecordState
-      ,appBar: AppBar(
-        leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios),
-            onPressed: () {
-              Navigator.of(context).pop();
-            }),
-        actions: <Widget>[
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: InkWell(
-              onTap: () {
-//                Navigator.pushNamed(context, MapSample.routeName);
-              },
-              child: Center(
-                  child: FlatButton(
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))
-                      ,color: Colors.blue,
-                      onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context)=>PatientPrescription()));
-                      },
-                      child: Text(
-                        'Adding Prescription',
-                        style: TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold),
-                      ))),
-            ),
-          ),
-        ],
-      ),
-      body:
-    Padding(
-      padding: const EdgeInsets.only(top: 10.0),
-      child: ListView(
-          children: <Widget>[
-            InkWell(
-              onTap: (){
-                Navigator.of(context).push(MaterialPageRoute(builder: (context)=>UserProfile()));
-              },
-              child: ListTile(
-                leading: SizedBox(
-                  width: 60,
-                  height: 60,
-                  child: CircleAvatar(
-                    backgroundColor: Colors.white,
-                    backgroundImage: AssetImage('assets/user.png'),
+
+    return InfoWidget(
+      builder: (context, infoWidget) {
+        return Scaffold(
+            key: _patientHealthRecordState,
+            appBar: AppBar(
+              leading: IconButton(
+                  icon: Icon(
+                    Icons.arrow_back_ios,
+                    size: MediaQuery.of(context).orientation ==
+                            Orientation.portrait
+                        ? MediaQuery.of(context).size.width * 0.05
+                        : MediaQuery.of(context).size.width * 0.035,
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    //TODO: make pop
+                  }),
+              shape: ContinuousRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(30),
+                      bottomRight: Radius.circular(30))),
+              actions: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => PatientPrescription(
+                            doctorAppointment: doctorAppointment,
+                          )));
+                    },
+                    child: Center(
+                        child: Text('Adding Prescription',
+                            style: infoWidget.titleButton)),
                   ),
                 ),
-                title: FittedBox(
-                  child: Text('Mahmoud Essam',
-                      style: TextStyle(
-                          color: Colors.blue,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold)),
-                ),
-                trailing: FlatButton.icon(padding: EdgeInsets.all(0.0),onPressed: _cancelButton, icon: Icon(Icons.delete,color: Colors.red,size: 18,), label: Text('Cancel',style: TextStyle(color: Colors.red),)),
-              ),
+              ],
             ),
-            SizedBox(height: 20.0,),
-            UserHistory(),
-          ],
-        ),
-    ),
+            body: Padding(
+              padding: const EdgeInsets.only(top: 10.0),
+              child: Column(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Container(
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.all(Radius.circular(
+                                    infoWidget.orientation ==
+                                            Orientation.portrait
+                                        ? 35.0
+                                        : 55.0)),
+                                child: FadeInImage.assetNetwork(
+                                  placeholder: 'assets/user.png',
+                                  image: doctorAppointment.registerData.patientImage,
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                              width: infoWidget.screenWidth * 0.18 //
+                              ,
+                              height: infoWidget.screenWidth * 0.18,
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          width: infoWidget.defaultVerticalPadding,
+                        ),
+                        Expanded(
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              Expanded(
+                                child: Text('${doctorAppointment.registerData.firstName} ${doctorAppointment.registerData.lastName}',
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: infoWidget.title
+                                        .copyWith(color: Colors.blue)),
+                              ),
+                              FlatButton.icon(
+                                padding: EdgeInsets.all(0.0),
+                                onPressed: _cancelButton,
+                                icon: Icon(
+                                  Icons.delete,
+                                  color: Colors.blue,
+                                  size: infoWidget.orientation ==
+                                          Orientation.portrait
+                                      ? infoWidget.screenWidth * 0.057
+                                      : infoWidget.screenWidth * 0.035,
+                                ),
+                                label: Text('Cancel',
+                                    style: infoWidget.titleButton.copyWith(
+                                        color: Colors.blue,
+                                        fontWeight: FontWeight.normal)),
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: infoWidget.orientation == Orientation.portrait
+                        ? infoWidget.screenHeight * 0.02
+                        : infoWidget.screenHeight * 0.04,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: infoWidget.defaultHorizontalPadding*2.5,
+                        vertical: infoWidget.defaultVerticalPadding),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          "Health Record:",
+                          style: infoWidget.titleButton
+                              .copyWith(color: Colors.blue,fontWeight: FontWeight.w600),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Divider(
+                    height: 6,
+                    color: Colors.blue,
+                  ),
+                  Divider(
+                    height: 6,
+                    color: Colors.blue,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, index) => RaisedButton(
+                        onPressed: () {
+                          Navigator.of(context).push(MaterialPageRoute(builder: (context)=>ShowHealthRecord(
+                            allDrugList: allDrugList,
+                            diagnoseName: allDrugList[index].diagnoseName,
+                            indexForDrugList: index,
+                          )));
+                        },
+                        color: Colors.blue,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        child: Padding(
+                          padding: EdgeInsets.all(8),
+                          child: Text(
+                            allDrugList[index].diagnoseName,
+                            style: infoWidget.titleButton,
+                          ),
+                        ),
+                      ),
+                      itemCount: allDrugList.length,
+                    ),
+                  )
+                ],
+              ),
+            ));
+      },
     );
   }
 }

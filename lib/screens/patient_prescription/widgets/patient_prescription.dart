@@ -1,19 +1,15 @@
 import 'dart:io';
 
+import 'package:age/age.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:healthbook/core/models/device_info.dart';
+import 'package:healthbook/core/ui_components/info_widget.dart';
+import 'package:healthbook/models/doctor_appointment.dart';
 import 'package:healthbook/screens/patient_prescription/previous_prescription.dart';
 
 import 'ShowImage.dart';
 import 'add_radiology_and_analysis.dart';
-
-class PatientPrescription extends StatefulWidget {
-  static const routeName = '/PatientPrescription';
-
-  @override
-  _PatientPrescriptionState createState() => _PatientPrescriptionState();
-}
-
 class RadiologyAndAnalysisResult {
   String name;
   String description;
@@ -22,30 +18,27 @@ class RadiologyAndAnalysisResult {
   RadiologyAndAnalysisResult({this.name, this.description, this.imgUrl});
 }
 
+class PatientPrescription extends StatefulWidget {
+  static const routeName = '/PatientPrescription';
+  final DoctorAppointment doctorAppointment;
+
+  PatientPrescription({this.doctorAppointment});
+
+  @override
+  _PatientPrescriptionState createState() => _PatientPrescriptionState();
+}
 class _PatientPrescriptionState extends State<PatientPrescription>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
-  bool _isProblemSelected = false;
   bool _showRadiology = false;
   bool _showAnalysis = false;
-  bool _showVitals = false;
-  bool _showLavResult = false;
-
-  Map<String, String> _vitalAndLabResultMap = {
-    'BloodPressure': '',
-    'PlusRate': '',
-    'OxygenSaturation': '',
-    'RespiratoryRate': '',
-    'WBC': '',
-    'HGB': '',
-  };
-
+  bool _isProblemSelected = false;
   List<RadiologyAndAnalysisResult> _radiologyList = [];
   List<RadiologyAndAnalysisResult> _analysisList = [];
   String _name = '';
   String _description = '';
   File _imageFile;
-
+  AgeDuration birthDate;
   String _diagnose = '';
   String _selectedProblem = ' Selected Diagnose ';
   List<String> _listOfProblems = ['A', 'B', 'C', 'D', 'Add Diagnose'];
@@ -58,79 +51,8 @@ class _PatientPrescriptionState extends State<PatientPrescription>
   static final _addProblemFormKey = new GlobalKey<FormState>();
   static final _addRadiologyFormKey = new GlobalKey<FormState>();
   static final _addAnalysisFormKey = new GlobalKey<FormState>();
-
-  _cardWithTextForm({String typeName, String measureType, String hintText}) {
-    return Material(
-        shadowColor: Colors.blueAccent,
-        elevation: 8.0,
-        borderRadius: BorderRadius.all(Radius.circular(10)),
-        type: MaterialType.card,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: SizedBox(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                AutoSizeText(
-                  typeName,
-                  presetFontSizes: [18, 16, 14],
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(
-                  height: 5,
-                ),
-                Container(
-                  width: 90,
-                  child: TextFormField(
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        color: Colors.blue,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18),
-                    decoration: InputDecoration(
-                      contentPadding: EdgeInsets.all(8.0),
-                      filled: true,
-                      fillColor: Colors.white,
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                        borderSide: BorderSide(
-                          color: Colors.blue,
-                        ),
-                      ),
-                      disabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                        borderSide: BorderSide(
-                          color: Colors.blue,
-                        ),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                        borderSide: BorderSide(color: Colors.blue),
-                      ),
-                      hintStyle:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                      hintText: hintText,
-                    ),
-// ignore: missing_return
-                    onChanged: (val) {
-                      _vitalAndLabResultMap[typeName] = val;
-                    },
-                  ),
-                ),
-                SizedBox(
-                  height: 5,
-                ),
-                Text(
-                  measureType,
-                  style: TextStyle(fontSize: 15),
-                ),
-              ],
-            ),
-          ),
-        ));
-  }
-
+  List<String> mybirth=[];
+  DateTime today;
   _addMedicine() {
     Padding _medicineContainer = Padding(
       padding: const EdgeInsets.all(8.0),
@@ -143,6 +65,7 @@ class _PatientPrescriptionState extends State<PatientPrescription>
           child: Column(
             children: <Widget>[
               TextFormField(
+                autofocus: false,
                 decoration: InputDecoration(
                   contentPadding: EdgeInsets.all(8.0),
                   prefixIcon: Icon(
@@ -202,6 +125,7 @@ class _PatientPrescriptionState extends State<PatientPrescription>
                   ),
                   Expanded(
                     child: TextFormField(
+                      autofocus: false,
                       textInputAction: TextInputAction.newline,
                       decoration: InputDecoration(
                         contentPadding: EdgeInsets.all(8.0),
@@ -211,6 +135,12 @@ class _PatientPrescriptionState extends State<PatientPrescription>
                         ),
                         filled: true,
                         fillColor: Colors.white,
+                        errorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                          borderSide: BorderSide(
+                            color: Colors.blue,
+                          ),
+                        ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(10.0)),
                           borderSide: BorderSide(
@@ -276,8 +206,14 @@ class _PatientPrescriptionState extends State<PatientPrescription>
 
   @override
   void initState() {
-    _tabController = new TabController(length: 2, vsync: this);
+    _tabController = new TabController(length: 2, vsync: this,);
     _tabController.addListener(_setActiveTabIndex);
+    today= DateTime.now();
+    mybirth=widget.doctorAppointment.registerData.birthDate.split('/');
+    print(mybirth);
+    DateTime birthday = DateTime(mybirth.length!=3?2020:int.parse(mybirth[2]),mybirth.length!=3?1:int.parse(mybirth[1]),mybirth.length!=3?1: int.parse(mybirth[0]));
+    birthDate = Age.dateDifference(
+        fromDate: birthday, toDate: today, includeToDate: false);
     super.initState();
   }
 
@@ -303,7 +239,7 @@ class _PatientPrescriptionState extends State<PatientPrescription>
     });
   }
 
-  _addRadiologyAndAnalysisResult({String type}) {
+  _addRadiologyAndAnalysisResult({String type,TextStyle textStyle}) {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -312,6 +248,7 @@ class _PatientPrescriptionState extends State<PatientPrescription>
         contentPadding: EdgeInsets.only(top: 10.0),
         title: Text(
           'Add $type',
+          style: textStyle.copyWith(color: Colors.blue),
           textAlign: TextAlign.center,
         ),
         content: AddRadiologyAndAnalysis(
@@ -518,425 +455,392 @@ class _PatientPrescriptionState extends State<PatientPrescription>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios),
-            onPressed: () {
-              Navigator.of(context).pop();
-            }),
-        centerTitle: true,
-        actions: <Widget>[
-          _activeTabIndex == 0
-              ? Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: RaisedButton(
-                    onPressed: () {},
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                    color: Colors.blue,
-                    child: Text(
-                      'Save',
-                      style: TextStyle(color: Colors.white),
-                    ),
+    return InfoWidget(
+      builder: (context,infoWidget){
+        return Scaffold(
+          appBar: AppBar(
+            leading: IconButton(
+                icon: Icon(
+                  Icons.arrow_back_ios,
+                  size:
+                  MediaQuery
+                      .of(context)
+                      .orientation == Orientation.portrait
+                      ? MediaQuery
+                      .of(context)
+                      .size
+                      .width * 0.05
+                      : MediaQuery
+                      .of(context)
+                      .size
+                      .width * 0.035,
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                }),
+            actions: <Widget>[
+              _activeTabIndex == 0
+                  ? Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: RaisedButton(
+                  onPressed: () {},
+                  elevation: 1.0,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                  color: Colors.white,
+                  child: Text(
+                    'Save',
+                    style: infoWidget.subTitle.copyWith(color: Colors.blue),
                   ),
-                )
-              : SizedBox(
-                  width: 0.1,
-                )
-        ],
-        bottom: TabBar(
-          unselectedLabelColor: Colors.black,
-          labelColor: Colors.red,
-          tabs: [
-            new Tab(
-              text: 'New PRESCRIPTION',
+                ),
+              )
+                  : SizedBox(
+                width: 0.1,
+              )
+            ],
+            bottom: TabBar(
+              unselectedLabelColor:  Color(0xff484848),
+              labelColor: Colors.white,
+              labelStyle: infoWidget.subTitle,
+              tabs: [
+                new Tab(
+                  text: 'NEW PRESCRIPTION',
+                ),
+                new Tab(
+                  text: 'PREVIOUS PRESCRIPTION',
+                ),
+              ],
+              controller: _tabController,
+              indicatorColor: Colors.blue,
+              indicatorSize: TabBarIndicatorSize.tab,
             ),
-            new Tab(
-              text: 'Previous PRESCRIPTION',
-            ),
-          ],
-          controller: _tabController,
-          indicatorColor: Colors.blue,
-          indicatorSize: TabBarIndicatorSize.tab,
-        ),
-        bottomOpacity: 1,
-      ),
-      body: TabBarView(
-        controller: _tabController,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ListView(
-              children: <Widget>[
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+            bottomOpacity: 1,
+          ),
+          body: TabBarView(
+            controller: _tabController,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ListView(
                   children: <Widget>[
-                    Column(
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        SizedBox(
-                          width: 60,
-                          height: 60,
-                          child: CircleAvatar(
-                            backgroundColor: Colors.white,
-                            backgroundImage: AssetImage('assets/user.png'),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Container(
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.all(Radius.circular(infoWidget.orientation == Orientation.portrait
+                                    ? 35.0:55.0)),
+                                child: FadeInImage.assetNetwork(
+                                  placeholder: 'assets/user.png',
+                                  image: '${widget.doctorAppointment.registerData.patientImage}',
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                              width:  infoWidget.screenWidth * 0.18//
+                              ,
+                              height: infoWidget.screenWidth * 0.18,
+                            ),
+                          ],
+                        ),
+                        SizedBox(width: infoWidget.defaultVerticalPadding,),
+                        Expanded(
+                          child: Column(
+                            children: <Widget>[
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: <Widget>[
+                                  Expanded(
+                                    child: Text(
+                                        '${widget.doctorAppointment.registerData.firstName} ${widget.doctorAppointment.registerData.lastName}'
+                                        ,maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: infoWidget.title),
+                                  ),
+                                  Text(
+                                    '${today.year}-${today.month}-${today.day}',
+                                    style:
+                                    infoWidget.subTitle.copyWith(fontWeight: FontWeight.w500),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],)
+                              ,
+                              mybirth.length!=3?SizedBox():Padding(
+                                padding: EdgeInsets.only(left: infoWidget.defaultVerticalPadding),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: Text('Age: ${birthDate.years} years',
+                                          style: infoWidget.subTitle),
+                                    ),
+                                  ],),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: infoWidget.defaultVerticalPadding),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: Text(
+                                        'Prescription: one',
+                                        style:
+                                        infoWidget.subTitle.copyWith(fontWeight: FontWeight.w500),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: infoWidget.defaultVerticalPadding),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  children: <Widget>[
+                                    Expanded(
+                                      child:  Text(
+                                        'Appointement at ${widget.doctorAppointment.appointStart} PM',
+                                        style: infoWidget.subTitle.copyWith(fontWeight: FontWeight.w500),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],),
+                              )
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                    SizedBox(
+                      height: infoWidget.orientation ==Orientation.portrait?infoWidget.screenHeight*0.02:infoWidget.screenHeight*0.04,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text('Diagnose:',
+                            style: infoWidget.titleButton.copyWith( color: Colors.blue,)),
+                        Material(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                          type: MaterialType.card,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              ConstrainedBox(
+                               constraints: BoxConstraints(
+                                 maxWidth: infoWidget.screenWidth*0.60,
+                                 minWidth: infoWidget.screenWidth*0.05
+                               )
+                                ,child: Padding(
+                                    padding: const EdgeInsets.only(left: 8.0,bottom: 5,top: 5,right: 5),
+                                    child: Text(_selectedProblem,
+                                        maxLines: 4,
+                                        style: infoWidget.subTitle.copyWith(color: Colors.white))),
+                              ),
+                              Container(
+                                height: infoWidget.screenWidth*0.1,
+                                width: infoWidget.screenWidth*0.11,
+                                child: PopupMenuButton(
+                                  tooltip: 'Select Diagnose',
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                  itemBuilder: (ctx) => _listOfProblems
+                                      .map((String val) => PopupMenuItem<String>(
+                                    value: val,
+                                    child: Center(child: Text(val.toString())),
+                                  ))
+                                      .toList(),
+                                  onSelected: (val) async {
+                                    if (val == 'Add Diagnose') {
+                                      await showDialog(
+                                        context: context,
+                                        builder: (ctx) => AlertDialog(
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(25.0))),
+                                          contentPadding:
+                                          EdgeInsets.only(top: 10.0),
+                                          title: Text(
+                                            'Add Diagnose',
+                                            textAlign: TextAlign.center,
+                                          ),
+                                          content: Form(
+                                            key: _addProblemFormKey,
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: TextFormField(
+                                                autofocus: false,
+                                                decoration: InputDecoration(
+                                                  contentPadding:
+                                                  EdgeInsets.all(8.0),
+                                                  filled: true,
+                                                  fillColor: Colors.white,
+                                                  focusedBorder:
+                                                  OutlineInputBorder(
+                                                    borderRadius:
+                                                    BorderRadius.all(
+                                                        Radius.circular(
+                                                            10.0)),
+                                                    borderSide: BorderSide(
+                                                      color: Colors.blue,
+                                                    ),
+                                                  ),
+                                                  disabledBorder:
+                                                  OutlineInputBorder(
+                                                    borderRadius:
+                                                    BorderRadius.all(
+                                                        Radius.circular(
+                                                            10.0)),
+                                                    borderSide: BorderSide(
+                                                      color: Colors.blue,
+                                                    ),
+                                                  ),
+                                                  errorBorder: OutlineInputBorder(
+                                                    borderRadius:
+                                                    BorderRadius.all(
+                                                        Radius.circular(
+                                                            10.0)),
+                                                    borderSide: BorderSide(
+                                                        color: Colors.blue),
+                                                  ),
+                                                  enabledBorder:
+                                                  OutlineInputBorder(
+                                                    borderRadius:
+                                                    BorderRadius.all(
+                                                        Radius.circular(
+                                                            10.0)),
+                                                    borderSide: BorderSide(
+                                                        color: Colors.blue),
+                                                  ),
+                                                  hintStyle:
+                                                  TextStyle(fontSize: 14),
+                                                  hintText: 'Diagnose',
+                                                ),
+                                                // ignore: missing_return
+                                                validator: (String val) {
+                                                  if (val.isEmpty) {
+                                                    return 'Please enter Problem';
+                                                  }
+                                                },
+                                                onSaved: (String val) {
+                                                  setState(() {
+                                                    _isProblemSelected = true;
+                                                    _selectedProblem = val;
+                                                    _listOfProblems.insert(
+                                                        _listOfProblems.length -
+                                                            1,
+                                                        val);
+                                                  });
+                                                },
+                                              ),
+                                            ),
+                                          ),
+                                          actions: <Widget>[
+                                            FlatButton(
+                                              child: Text('OK'),
+                                              onPressed: () {
+                                                if (_addProblemFormKey
+                                                    .currentState
+                                                    .validate()) {
+                                                  _addProblemFormKey.currentState
+                                                      .save();
+                                                  Navigator.of(ctx).pop();
+                                                }
+                                              },
+                                            ),
+                                            FlatButton(
+                                              child: Text('Cancel'),
+                                              onPressed: () {
+                                                Navigator.of(ctx).pop();
+                                              },
+                                            )
+                                          ],
+                                        ),
+                                      );
+                                    } else {
+                                      setState(() {
+                                        _selectedProblem = val;
+                                        _isProblemSelected = true;
+                                      });
+                                    }
+                                  },
+                                  icon: Icon(
+                                    Icons.keyboard_arrow_down,
+                                    size: infoWidget.orientation==Orientation.portrait?infoWidget.screenWidth*0.065:infoWidget.screenWidth*0.049,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(left: 8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      padding: const EdgeInsets.only(top: 16, bottom: 8.0),
+                      child: Row(
                         children: <Widget>[
-                          Text('Mahmoud Essam',
-                              style: TextStyle(
-                                  color: Colors.blue,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold)),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 8.0),
-                            child: Text('30 years old',
-                                style: TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.bold)),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 8.0),
-                            child: Text('texas,united states',
-                                style: TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.bold)),
+                          Text(
+                            'Diagnose description: ',
+                          style: infoWidget.titleButton.copyWith( color: Colors.blue,)),
+                          Expanded(
+                            //width: 80,
+                            child: TextFormField(
+                              autofocus: false,
+                              decoration: InputDecoration(
+                                contentPadding: EdgeInsets.all(8.0),
+                                filled: true,
+                                fillColor: Colors.white,
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
+                                  borderSide: BorderSide(
+                                    color: Colors.blue,
+                                  ),
+                                ),
+                                disabledBorder: OutlineInputBorder(
+                                  borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
+                                  borderSide: BorderSide(
+                                    color: Colors.blue,
+                                  ),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
+                                  borderSide: BorderSide(color: Colors.blue),
+                                ),
+                              ),
+                              maxLines: 3,
+                              onChanged: (val) {
+                                _diagnose = val;
+                              },
+                            ),
                           ),
                         ],
                       ),
                     ),
-                    Spacer(),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        SizedBox(
-                          height: 17,
-                        ),
-                        Text('prescription one',
-                            style: TextStyle(
-                                color: Colors.blue,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold)),
-                        Text('04-07-2020',
-                            style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold)),
+                        Text('Medicine:',
+                            style: infoWidget.titleButton.copyWith( color: Colors.blue,)),
+                        RaisedButton(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          onPressed: _addMedicine,
+                          color: Colors.blue,
+                          child: Text('Add Medicine',
+                              style: infoWidget.subTitle.copyWith(color: Colors.white))),
                       ],
-                    )
-                  ],
-                ),
-
-//              Container(
-//                  color: Colors.black54,
-//                  width: MediaQuery.of(context).size.width,
-//                  //  height: MediaQuery.of(context).size.height*0.16,
-//                  child: Padding(
-//                    padding: const EdgeInsets.only(
-//                        left: 20, right: 20, top: 15, bottom: 15),
-//                    child: Row(
-//                      crossAxisAlignment: CrossAxisAlignment.center,
-//                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                      children: <Widget>[
-//                        Padding(
-//                          padding: const EdgeInsets.only(left: 8.0),
-//                          child: Column(
-//                            crossAxisAlignment: CrossAxisAlignment.start,
-//                            children: <Widget>[
-//                              Text('Dr: Mahmoud Essam',
-//                                  style: TextStyle(
-//                                      color: Colors.white,
-//                                      fontSize: 18,
-//                                      fontWeight: FontWeight.bold)),
-//                              Padding(
-//                                padding: const EdgeInsets.only(left: 8.0),
-//                                child: Text('Surgeon',
-//                                    style: TextStyle(
-//                                        color: Colors.white70,
-//                                        fontSize: 17,
-//                                        fontWeight: FontWeight.bold)),
-//                              ),
-//                              Padding(
-//                                padding: const EdgeInsets.only(left: 8.0),
-//                                child: Text('Clinic Name',
-//                                    style: TextStyle(
-//                                        color: Colors.white70,
-//                                        fontSize: 17,
-//                                        fontWeight: FontWeight.bold)),
-//                              ),
-//                              Padding(
-//                                padding: const EdgeInsets.only(left: 8.0),
-//                                child: Text('texas,united states',
-//                                    style: TextStyle(
-//                                        color: Colors.white70,
-//                                        fontSize: 17,
-//                                        fontWeight: FontWeight.bold)),
-//                              ),
-//                            ],
-//                          ),
-//                        ),
-//                        Column(
-//                          mainAxisAlignment: MainAxisAlignment.center,
-//                          children: <Widget>[
-//                            SizedBox(
-//                              width: 75,
-//                              height: 75,
-//                              child: CircleAvatar(
-//                                backgroundColor: Colors.white,
-//                                backgroundImage: AssetImage('assets/user.png'),
-//                              ),
-//                            ),
-//                          ],
-//                        ),
-//                      ],
-//                    ),
-//                  )),
-                SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text('Diagnose:',
-                        style: TextStyle(
-                            color: Colors.blue,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold)),
-                    Material(
-                      color: Colors.blue,
-//                  shadowColor: Colors.blueAccent,
-//                  elevation: 8.0,
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                      type: MaterialType.card,
-                      child: Padding(
-                        padding: const EdgeInsets.all(1.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Padding(
-                                padding: const EdgeInsets.only(left: 8.0),
-                                child: AutoSizeText(_selectedProblem,
-                                    presetFontSizes: [16, 14, 12],
-                                    overflow: TextOverflow.ellipsis,
-                                    textAlign: TextAlign.justify,
-                                    maxLines: 1,
-                                    style: TextStyle(
-                                        fontSize: 16, color: Colors.white))),
-                            Container(
-                              height: 40,
-                              width: 35,
-                              child: PopupMenuButton(
-                                tooltip: 'Select Diagnose',
-                                itemBuilder: (ctx) => _listOfProblems
-                                    .map((String val) => PopupMenuItem<String>(
-                                          value: val,
-                                          child: Text(val.toString()),
-                                        ))
-                                    .toList(),
-                                onSelected: (val) async {
-                                  if (val == 'Add Diagnose') {
-                                    await showDialog(
-                                      context: context,
-                                      builder: (ctx) => AlertDialog(
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(25.0))),
-                                        contentPadding:
-                                            EdgeInsets.only(top: 10.0),
-                                        title: Text(
-                                          'Add Problem',
-                                          textAlign: TextAlign.center,
-                                        ),
-                                        content: Form(
-                                          key: _addProblemFormKey,
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: TextFormField(
-                                              decoration: InputDecoration(
-                                                contentPadding:
-                                                    EdgeInsets.all(8.0),
-                                                filled: true,
-                                                fillColor: Colors.white,
-                                                focusedBorder:
-                                                    OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(
-                                                              10.0)),
-                                                  borderSide: BorderSide(
-                                                    color: Colors.blue,
-                                                  ),
-                                                ),
-                                                disabledBorder:
-                                                    OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(
-                                                              10.0)),
-                                                  borderSide: BorderSide(
-                                                    color: Colors.blue,
-                                                  ),
-                                                ),
-                                                errorBorder: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(
-                                                              10.0)),
-                                                  borderSide: BorderSide(
-                                                      color: Colors.blue),
-                                                ),
-                                                enabledBorder:
-                                                    OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(
-                                                              10.0)),
-                                                  borderSide: BorderSide(
-                                                      color: Colors.blue),
-                                                ),
-                                                hintStyle:
-                                                    TextStyle(fontSize: 14),
-                                                hintText: 'Problem',
-                                              ),
-                                              // ignore: missing_return
-                                              validator: (String val) {
-                                                if (val.isEmpty) {
-                                                  return 'Please enter Problem';
-                                                }
-                                              },
-                                              onSaved: (String val) {
-                                                setState(() {
-                                                  _isProblemSelected = true;
-                                                  _selectedProblem = val;
-                                                  _listOfProblems.insert(
-                                                      _listOfProblems.length -
-                                                          1,
-                                                      val);
-                                                });
-                                              },
-                                            ),
-                                          ),
-                                        ),
-                                        actions: <Widget>[
-                                          FlatButton(
-                                            child: Text('OK'),
-                                            onPressed: () {
-                                              if (_addProblemFormKey
-                                                  .currentState
-                                                  .validate()) {
-                                                _addProblemFormKey.currentState
-                                                    .save();
-                                                Navigator.of(ctx).pop();
-                                              }
-                                            },
-                                          ),
-                                          FlatButton(
-                                            child: Text('Cancel'),
-                                            onPressed: () {
-                                              Navigator.of(ctx).pop();
-                                            },
-                                          )
-                                        ],
-                                      ),
-                                    );
-                                  } else {
-                                    setState(() {
-                                      _selectedProblem = val;
-                                      _isProblemSelected = true;
-                                    });
-                                  }
-                                },
-                                icon: Icon(
-                                  Icons.keyboard_arrow_down,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
                     ),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 16, bottom: 8.0),
-                  child: Row(
-                    children: <Widget>[
-                      Text(
-                        'Diagnose description: ',
-                        style: TextStyle(color: Colors.blue, fontSize: 18),
-                      ),
-                      Expanded(
-                        //width: 80,
-                        child: TextFormField(
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.all(8.0),
-                            filled: true,
-                            fillColor: Colors.white,
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10.0)),
-                              borderSide: BorderSide(
-                                color: Colors.blue,
-                              ),
-                            ),
-                            disabledBorder: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10.0)),
-                              borderSide: BorderSide(
-                                color: Colors.blue,
-                              ),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10.0)),
-                              borderSide: BorderSide(color: Colors.blue),
-                            ),
-                          ),
-                          maxLines: 3,
-                          onChanged: (val) {
-                            _diagnose = val;
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text('Medicine:',
-                        style: TextStyle(
-                            color: Colors.blue,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold)),
-                    RaisedButton(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
-                      onPressed: _addMedicine,
-                      color: Colors.blue,
-                      child: Text('Add Medicine',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold)),
-                    )
-                  ],
-                ),
-                _allMedicine.length == 0
-                    ? SizedBox()
-                    : SizedBox(
-                        height: 135.0 * _allMedicine.length,
-                        width: MediaQuery.of(context).size.width,
-                        child: Form(
+                    _allMedicine.length == 0
+                        ? SizedBox()
+                        : Form(
                           key: _formKey,
                           child: ListView.builder(
                             shrinkWrap: true,
@@ -945,21 +849,23 @@ class _PatientPrescriptionState extends State<PatientPrescription>
                               final Widget item = _allMedicine[index];
                               return Dismissible(
                                   background: Container(
-                                    color: Colors.red,
+                                    color: Colors.blue,
                                     child: Center(
                                         child: Icon(
-                                      Icons.delete,
-                                      size: 35,
-                                    )),
+                                          Icons.delete,
+                                          color: Colors.white,
+                                          size: infoWidget.orientation==Orientation.portrait?infoWidget.screenWidth*0.065:infoWidget.screenWidth*0.049,
+                                        )),
                                     alignment: Alignment.centerLeft,
                                   ),
                                   secondaryBackground: Container(
-                                    color: Colors.red,
+                                    color: Colors.blue,
                                     child: Center(
                                         child: Icon(
-                                      Icons.delete,
-                                      size: 35,
-                                    )),
+                                          Icons.delete,
+                                          color: Colors.white,
+                                          size: infoWidget.orientation==Orientation.portrait?infoWidget.screenWidth*0.065:infoWidget.screenWidth*0.049,
+                                        )),
                                     alignment: Alignment.centerLeft,
                                   ),
                                   key: ObjectKey(item),
@@ -995,202 +901,192 @@ class _PatientPrescriptionState extends State<PatientPrescription>
                             },
                             itemCount: _allMedicine.length,
                           ),
-                        )),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Material(
-                    color: Color(0xfffafbff),
-                    shadowColor: Colors.blueAccent,
-                    elevation: 8.0,
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                    type: MaterialType.card,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        InkWell(
-                            onTap: () {
-                              setState(() {
-                                _showRadiology = !_showRadiology;
-                              });
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                mainAxisAlignment:
+                        ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Material(
+                        color: Color(0xfffafbff),
+                        shadowColor: Colors.blueAccent,
+                        elevation: 2.0,
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                        type: MaterialType.card,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    _showRadiology = !_showRadiology;
+                                  });
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(
+                                    mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      SizedBox(),
+                                      Text("Radiology Result",
+                                          style: infoWidget.titleButton.copyWith( color: Colors.blue,)),
+                                      Icon(
+                                        _showRadiology
+                                            ? Icons.keyboard_arrow_up
+                                            : Icons.keyboard_arrow_down,
+                                        size: infoWidget.orientation==Orientation.portrait?infoWidget.screenWidth*0.065:infoWidget.screenWidth*0.049,
+                                      ),
+                                    ],
+                                  ),
+                                )),
+                            _showRadiology
+                                ? Padding(
+                              padding: const EdgeInsets.only(bottom: 8.0),
+                              child: Divider(
+                                color: Colors.grey,
+                                height: 4,
+                              ),
+                            )
+                                : SizedBox(),
+                            _showRadiology
+                                ? Padding(
+                              padding: const EdgeInsets.only(
+                                  bottom: 8.0, left: 15, right: 15, top: 6.0),
+                              child: Column(
                                 children: <Widget>[
-                                  SizedBox(),
-                                  Text("Radiology Result",
-                                      style: TextStyle(
-                                        color: Colors.blue,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                      )),
-                                  Icon(
-                                    _showRadiology
-                                        ? Icons.keyboard_arrow_up
-                                        : Icons.keyboard_arrow_down,
-                                    size: 25,
+                                  _radiologyList.length == 0
+                                      ? SizedBox()
+                                      : ListView.builder(
+                                    shrinkWrap: true,
+                                    physics:
+                                    NeverScrollableScrollPhysics(),
+                                    itemBuilder: (context, index) =>
+                                        _radiologyAndAnalysisContent(
+                                            type: 'Radiology',
+                                            index: index),
+                                    itemCount:
+                                    _radiologyList.length,
+                                  ),
+                                  Padding(
+                                    padding:
+                                    const EdgeInsets.only(bottom: 8.0),
+                                    child: RaisedButton(
+                                      onPressed: () {
+                                        _addRadiologyAndAnalysisResult(
+                                            type: 'Radiology',textStyle: infoWidget.titleButton);
+                                      },
+                                      color: Colors.blue,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                          BorderRadius.circular(10)),
+                                      child: Text(
+                                        'Add Radiology',
+                                          style: infoWidget.subTitle.copyWith(color: Colors.white)
+                                      ),
+                                    ),
                                   ),
                                 ],
                               ),
-                            )),
-                        _showRadiology
-                            ? Padding(
-                                padding: const EdgeInsets.only(bottom: 8.0),
-                                child: Divider(
-                                  color: Colors.grey,
-                                  height: 4,
-                                ),
-                              )
-                            : SizedBox(),
-                        _showRadiology
-                            ? Padding(
-                                padding: const EdgeInsets.only(
-                                    bottom: 8.0, left: 15, right: 15, top: 6.0),
-                                child: Column(
-                                  children: <Widget>[
-                                    _radiologyList.length == 0
-                                        ? SizedBox()
-                                        : ListView.builder(
-                                            shrinkWrap: true,
-                                            physics:
-                                                NeverScrollableScrollPhysics(),
-                                            itemBuilder: (context, index) =>
-                                                _radiologyAndAnalysisContent(
-                                                    type: 'Radiology',
-                                                    index: index),
-                                            itemCount:
-                                                _radiologyList.length,
-                                          ),
-                                    Padding(
-                                      padding:
-                                          const EdgeInsets.only(bottom: 8.0),
-                                      child: RaisedButton(
-                                        onPressed: () {
-                                          _addRadiologyAndAnalysisResult(
-                                              type: 'Radiology');
-                                        },
-                                        color: Colors.blue,
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10)),
-                                        child: Text(
-                                          'Add Radiology',
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              color: Colors.white),
-                                        ),
+                            )
+                                : SizedBox(),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Material(
+                        color: Color(0xfffafbff),
+                        shadowColor: Colors.blueAccent,
+                        elevation: 2.0,
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                        type: MaterialType.card,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    _showAnalysis = !_showAnalysis;
+                                  });
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      SizedBox(),
+                                      Text("Analysis Result",
+                                          style: infoWidget.titleButton.copyWith( color: Colors.blue,)),
+                                      Icon(
+                                        _showAnalysis
+                                            ? Icons.keyboard_arrow_up
+                                            : Icons.keyboard_arrow_down,
+                                        size: infoWidget.orientation==Orientation.portrait?infoWidget.screenWidth*0.065:infoWidget.screenWidth*0.049,
+                                      ),
+                                    ],
+                                  ),
+                                )),
+                            _showAnalysis
+                                ? Padding(
+                              padding: const EdgeInsets.only(bottom: 8.0),
+                              child: Divider(
+                                color: Colors.grey,
+                                height: 4,
+                              ),
+                            )
+                                : SizedBox(),
+                            _showAnalysis
+                                ? Padding(
+                              padding: const EdgeInsets.only(
+                                  bottom: 8.0, left: 15, right: 15, top: 6.0),
+                              child: Column(
+                                children: <Widget>[
+                                  _analysisList.length == 0
+                                      ? SizedBox()
+                                      : ListView.builder(
+                                    shrinkWrap: true,
+                                    physics:
+                                    NeverScrollableScrollPhysics(),
+                                    itemBuilder: (context, index) =>
+                                        _radiologyAndAnalysisContent(
+                                            type: 'Analysis',
+                                            index: index),
+                                    itemCount: _analysisList.length,
+                                  ),
+                                  Padding(
+                                    padding:
+                                    const EdgeInsets.only(bottom: 8.0),
+                                    child: RaisedButton(
+                                      onPressed: () {
+                                        _addRadiologyAndAnalysisResult(
+                                            type: 'Analysis',textStyle: infoWidget.titleButton);
+                                      },
+                                      color: Colors.blue,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                          BorderRadius.circular(10)),
+                                      child: Text(
+                                        'Add Analysis',
+                                        style: infoWidget.subTitle.copyWith(color: Colors.white),
                                       ),
                                     ),
-                                  ],
-                                ),
-                              )
-                            : SizedBox(),
-                      ],
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Material(
-                    color: Color(0xfffafbff),
-                    shadowColor: Colors.blueAccent,
-                    elevation: 8.0,
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                    type: MaterialType.card,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        InkWell(
-                            onTap: () {
-                              setState(() {
-                                _showAnalysis = !_showAnalysis;
-                              });
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  SizedBox(),
-                                  Text("Analysis Result",
-                                      style: TextStyle(
-                                        color: Colors.blue,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                      )),
-                                  Icon(
-                                    _showAnalysis
-                                        ? Icons.keyboard_arrow_up
-                                        : Icons.keyboard_arrow_down,
-                                    size: 25,
                                   ),
                                 ],
                               ),
-                            )),
-                        _showAnalysis
-                            ? Padding(
-                                padding: const EdgeInsets.only(bottom: 8.0),
-                                child: Divider(
-                                  color: Colors.grey,
-                                  height: 4,
-                                ),
-                              )
-                            : SizedBox(),
-                        _showAnalysis
-                            ? Padding(
-                                padding: const EdgeInsets.only(
-                                    bottom: 8.0, left: 15, right: 15, top: 6.0),
-                                child: Column(
-                                  children: <Widget>[
-                                    _analysisList.length == 0
-                                        ? SizedBox()
-                                        : ListView.builder(
-                                            shrinkWrap: true,
-                                            physics:
-                                                NeverScrollableScrollPhysics(),
-                                            itemBuilder: (context, index) =>
-                                                _radiologyAndAnalysisContent(
-                                                    type: 'Analysis',
-                                                    index: index),
-                                            itemCount: _analysisList.length,
-                                          ),
-                                    Padding(
-                                      padding:
-                                          const EdgeInsets.only(bottom: 8.0),
-                                      child: RaisedButton(
-                                        onPressed: () {
-                                          _addRadiologyAndAnalysisResult(
-                                              type: 'Analysis');
-                                        },
-                                        color: Colors.blue,
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10)),
-                                        child: Text(
-                                          'Add Analysis',
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              color: Colors.white),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              )
-                            : SizedBox(),
-                      ],
+                            )
+                                : SizedBox(),
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+              PreviousPrescription()
+            ],
           ),
-          PreviousPrescription()
-        ],
-      ),
+        );
+      },
     );
   }
 }

@@ -122,14 +122,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: <Widget>[
                         Icon(
                           Icons.notifications,
-                          size: infoWidget.orientation==Orientation.portrait?infoWidget.screenHeight * 0.045:infoWidget.screenHeight * 0.08,
+                          size: infoWidget.orientation==Orientation.portrait?infoWidget.screenHeight * 0.04:infoWidget.screenHeight * 0.07,
                         ),
                         Positioned(
                             right: 2.9,
                             top: 2.8,
                             child: Container(
-                              width: infoWidget.orientation==Orientation.portrait?infoWidget.screenWidth * 0.025:infoWidget.screenWidth * 0.017,
-                              height: infoWidget.orientation==Orientation.portrait?infoWidget.screenWidth * 0.025:infoWidget.screenWidth* 0.017,
+                              width: infoWidget.orientation==Orientation.portrait?infoWidget.screenWidth * 0.023:infoWidget.screenWidth * 0.014,
+                              height: infoWidget.orientation==Orientation.portrait?infoWidget.screenWidth * 0.023:infoWidget.screenWidth* 0.014,
                               decoration: BoxDecoration(
                                   color: Colors.red,
                                   borderRadius: BorderRadius.circular(5)),

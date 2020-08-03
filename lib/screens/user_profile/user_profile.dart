@@ -173,6 +173,10 @@ class _UserProfileState extends State<UserProfile> {
                   endTime: _auth.getClinicData.clossingTime,
                   watingTime: _auth.getClinicData.waitingTime,
                   workingDays: _auth.getClinicData.workingDays,
+                  title: infoWidget.title,
+                  orientation: infoWidget.orientation,
+                  subTitle: infoWidget.titleButton,
+                  width: infoWidget.screenWidth,
                 )
                     : SizedBox()
               ],

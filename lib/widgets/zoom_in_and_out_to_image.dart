@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 class ShowImage extends StatelessWidget {
-  String imgUrl;
-  bool isImgUrlAsset;
+  final String imgUrl;
+  final bool isImgUrlAsset;
 
   ShowImage({this.imgUrl,this.isImgUrlAsset});
 
@@ -28,7 +28,6 @@ class ShowImage extends StatelessWidget {
             ),
             onPressed: () {
               Navigator.of(context).pop();
-              //TODO: make pop
             }),
        ),
       body: Container(

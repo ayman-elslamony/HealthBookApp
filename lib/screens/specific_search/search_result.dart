@@ -42,14 +42,14 @@ class _SearchResultState extends State<SearchResult> {
                         children: <Widget>[
                           Icon(
                             Icons.notifications,
-                            size: infoWidget.orientation==Orientation.portrait?infoWidget.screenHeight * 0.045:infoWidget.screenHeight * 0.08,
+                            size: infoWidget.orientation==Orientation.portrait?infoWidget.screenHeight * 0.04:infoWidget.screenHeight * 0.07,
                           ),
                           Positioned(
                               right: 2.9,
                               top: 2.8,
                               child: Container(
-                                width: infoWidget.orientation==Orientation.portrait?infoWidget.screenWidth * 0.025:infoWidget.screenWidth * 0.017,
-                                height: infoWidget.orientation==Orientation.portrait?infoWidget.screenWidth * 0.025:infoWidget.screenWidth* 0.017,
+                                width: infoWidget.orientation==Orientation.portrait?infoWidget.screenWidth * 0.023:infoWidget.screenWidth * 0.014,
+                                height: infoWidget.orientation==Orientation.portrait?infoWidget.screenWidth * 0.023:infoWidget.screenWidth* 0.014,
                                 decoration: BoxDecoration(
                                     color: Colors.red,
                                     borderRadius: BorderRadius.circular(5)),
@@ -77,7 +77,8 @@ class _SearchResultState extends State<SearchResult> {
                                 borderRadius: BorderRadius.all(Radius.circular(25.0))),
                             contentPadding: EdgeInsets.only(top: 10.0),
                             content: SizedBox(
-                                height: infoWidget.screenHeight*0.65,
+                                height: infoWidget.screenHeight*0.55,
+                                width: infoWidget.screenWidth*0.82,
                                 child: SpecificSearch()),
                             actions: <Widget>[
                               FlatButton(
@@ -89,7 +90,7 @@ class _SearchResultState extends State<SearchResult> {
                             ],
                           ),
                         );
-                      }, icon: Icon(Icons.filter_list,color: Colors.white,size: infoWidget.orientation==Orientation.portrait?infoWidget.screenWidth * 0.085:infoWidget.screenWidth * 0.059,), label: Text('Search by',style: infoWidget.titleButton,),color: Colors.blue,shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10))),)),
+                      }, icon: Icon(Icons.filter_list,color: Colors.white,size: infoWidget.orientation==Orientation.portrait?infoWidget.screenWidth * 0.085:infoWidget.screenWidth * 0.05,), label: Text('Search by',style: infoWidget.titleButton,),color: Colors.blue,shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10))),)),
                     ],
                   ),
                   Padding(

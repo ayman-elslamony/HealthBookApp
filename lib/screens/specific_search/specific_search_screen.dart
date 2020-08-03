@@ -158,7 +158,7 @@ class _SpecificSearchState extends State<SpecificSearch> {
       builder: (context, infoWidget) {
         return Padding(
           padding: const EdgeInsets.symmetric(
-            horizontal: 20,
+            horizontal: 15,
           ),
           child: SingleChildScrollView(
             child: Column(
@@ -166,11 +166,7 @@ class _SpecificSearchState extends State<SpecificSearch> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 SizedBox(
-                  height: infoWidget.screenHeight * 0.10,
-                ),
-
-                SizedBox(
-                  height: infoWidget.screenHeight*0.03,
+                  height: infoWidget.defaultVerticalPadding*5,
                 ),
                 Container(
                   height: infoWidget.orientation==Orientation.portrait?infoWidget.screenHeight*0.075:infoWidget.screenHeight*0.14,
@@ -291,7 +287,7 @@ class _SpecificSearchState extends State<SpecificSearch> {
                             child: Text(
                               'Search',
                               textAlign: TextAlign.center,
-                              style: infoWidget.titleButton
+                              style: infoWidget.titleButton.copyWith(fontWeight: FontWeight.w500)
                             ),
                           ),
                         ),
