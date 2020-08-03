@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:age/age.dart';
 import 'package:flutter/material.dart';
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:healthbook/core/models/device_info.dart';
 import 'package:healthbook/core/ui_components/info_widget.dart';
 import 'package:healthbook/models/doctor_appointment.dart';
@@ -286,28 +285,30 @@ class _PatientPrescriptionState extends State<PatientPrescription>
     );
   }
 
-  Widget _radiologyAndAnalysisContent({String type, int index}) {
+  Widget _radiologyAndAnalysisContent({String type, int index,DeviceInfo infoWidget}) {
     String uniqueKey = '$type _ $index';
     RadiologyAndAnalysisResult item =
         type == 'Radiology' ? _radiologyList[index] : _analysisList[index];
     return SizedBox(
       child: Dismissible(
           background: Container(
-            color: Colors.red,
+            color: Colors.blue,
             child: Center(
                 child: Icon(
-              Icons.delete,
-              size: 35,
-            )),
+                  Icons.delete,
+                  color: Colors.white,
+                  size: infoWidget.orientation==Orientation.portrait?infoWidget.screenWidth*0.065:infoWidget.screenWidth*0.049,
+                )),
             alignment: Alignment.centerLeft,
           ),
           secondaryBackground: Container(
-            color: Colors.red,
+            color: Colors.blue,
             child: Center(
                 child: Icon(
-              Icons.delete,
-              size: 35,
-            )),
+                  Icons.delete,
+                  color: Colors.white,
+                  size: infoWidget.orientation==Orientation.portrait?infoWidget.screenWidth*0.065:infoWidget.screenWidth*0.049,
+                )),
             alignment: Alignment.centerLeft,
           ),
           key: ObjectKey(uniqueKey),
@@ -360,7 +361,7 @@ class _PatientPrescriptionState extends State<PatientPrescription>
                                           )));
                                 },
                                 child: Container(
-                                  height: 150,
+                                  height: infoWidget.orientation==Orientation.portrait?150:200,
                                   width: double.infinity,
                                   decoration: BoxDecoration(
                                       borderRadius: BorderRadius.only(
@@ -388,7 +389,7 @@ class _PatientPrescriptionState extends State<PatientPrescription>
                                           )));
                                 },
                                 child: Container(
-                                  height: 150,
+                                  height: infoWidget.orientation==Orientation.portrait?150:200,
                                   width: double.infinity,
                                   decoration: BoxDecoration(
                                       borderRadius: BorderRadius.only(
@@ -412,13 +413,15 @@ class _PatientPrescriptionState extends State<PatientPrescription>
                           children: <Widget>[
                             Text(
                               '$type Name:',
-                              style: TextStyle(fontSize: 16),
+                              style: infoWidget.subTitle.copyWith(color: Colors.black,fontWeight: FontWeight.w600)
+    ,
                             ),
-                            AutoSizeText(
+                            Text(
                               type == 'Radiology'
                                   ? _radiologyList[index].name
                                   : _analysisList[index].name,
-                              presetFontSizes: [16, 14, 12],
+                              style: infoWidget.subTitle.copyWith(color: Color(0xff484848),fontWeight: FontWeight.w500),
+
                             ),
                           ],
                         ),
@@ -433,13 +436,14 @@ class _PatientPrescriptionState extends State<PatientPrescription>
                           children: <Widget>[
                             Text(
                               'Description of $type: ',
-                              style: TextStyle(fontSize: 16),
+                                style: infoWidget.subTitle.copyWith(color: Colors.black,fontWeight: FontWeight.w600)
+
                             ),
-                            AutoSizeText(
+                            Text(
                               type == 'Radiology'
                                   ? _radiologyList[index].description
                                   : _analysisList[index].description,
-                              presetFontSizes: [16, 14, 12],
+                              style: infoWidget.subTitle.copyWith(color: Color(0xff484848),fontWeight: FontWeight.w500),
                             ),
                           ],
                         ),
@@ -961,6 +965,7 @@ class _PatientPrescriptionState extends State<PatientPrescription>
                                     itemBuilder: (context, index) =>
                                         _radiologyAndAnalysisContent(
                                             type: 'Radiology',
+                                            infoWidget: infoWidget,
                                             index: index),
                                     itemCount:
                                     _radiologyList.length,

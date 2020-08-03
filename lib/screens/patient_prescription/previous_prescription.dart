@@ -1,4 +1,3 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:healthbook/core/models/device_info.dart';
 import 'package:healthbook/core/ui_components/info_widget.dart';
