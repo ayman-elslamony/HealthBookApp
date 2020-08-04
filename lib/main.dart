@@ -13,12 +13,12 @@ import 'package:healthbook/screens/specific_search/map.dart';
 import 'package:healthbook/screens/register_user_data/register_user_data.dart';
 import 'package:healthbook/screens/patient_prescription/widgets/patient_prescription.dart';
 
-void main() =>  runApp(DevicePreview(
-  builder: (context) => MyApp(),
-));
-//void main() => runApp(
-//      MyApp(),
-//    );
+//void main() =>  runApp(DevicePreview(
+//  builder: (context) => MyApp(),
+//));
+void main() => runApp(
+      MyApp(),
+    );
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
