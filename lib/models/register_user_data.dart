@@ -1,6 +1,7 @@
 import 'package:healthbook/providers/auth_controller.dart';
 
 class RegisterData{
+  String id;
   String firstName;
   String middleName;
   String lastName;
@@ -17,7 +18,7 @@ class RegisterData{
   String speciality;
   String doctorImage;
 
-  RegisterData({this.speciality,this.doctorImage,
+  RegisterData({this.id,this.speciality,this.doctorImage,
     this.firstName, this.middleName, this.lastName, this.birthDate,
     this.gender, this.job, this.status,
     this.number, this.address, this.government, this.patientImage,
@@ -26,6 +27,7 @@ class RegisterData{
   RegisterData.fromJson(Map<String, dynamic> json,String userType){
     print(json['firstName']);
     // nationalID= json['nationalID'];
+    id = json['_id']??'';
      firstName= json['firstName']??'';
      middleName= json['middleName']??'';
      lastName= json['lastName']??'';
@@ -50,6 +52,7 @@ class RegisterData{
 
   Map<String, dynamic> toJson(String userType) {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['_id']=this.id;
     data['number'] = [this.number];
     data['address'] = this.address;
     data['status'] = this.status;

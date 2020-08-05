@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:healthbook/core/ui_components/info_widget.dart';
+import 'package:healthbook/models/booking_time.dart';
+import 'package:healthbook/providers/auth_controller.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:toast/toast.dart';
 
 class BookingInfoCard extends StatefulWidget {
   final bool showBookingTime;
-
-  BookingInfoCard({this.showBookingTime=false});
+  final List<BookingTime> bookingTime;
+  final int indexForSearchResult;
+  BookingInfoCard({this.indexForSearchResult,this.showBookingTime=false,this.bookingTime});
 
   @override
   _BookingInfoCardState createState() => _BookingInfoCardState();
@@ -12,10 +18,10 @@ class BookingInfoCard extends StatefulWidget {
 
 class _BookingInfoCardState extends State<BookingInfoCard> {
   bool _showBookingInfo = false;
-  List<bool> _avilableBookingTime = List.generate(9, (i)=>true);
+  Auth _auth;
 Widget _createBookingTime({int index,TextStyle textStyle}){
   return InkWell(
-    onTap: widget.showBookingTime?null :_avilableBookingTime[index]?(){
+    onTap: widget.showBookingTime?null :widget.bookingTime[index].isAvailable?(){
        showDialog(
          context: context,
          builder: (ctx) => AlertDialog(
@@ -35,19 +41,9 @@ Widget _createBookingTime({int index,TextStyle textStyle}){
                    mainAxisAlignment: MainAxisAlignment.center,
                    children: <Widget>[
                      Text(
-                       'Thursday , ${index+1}:30 Am o\'clock ',
+                       '${ DateFormat('EEEE').format(DateTime.now())} , ${widget.bookingTime[index].time} o\'clock ',
                        style: TextStyle(
                            color: Colors.red, fontSize: 16,fontWeight: FontWeight.bold),
-                     ),
-                   ],
-                 ),
-                 Row(
-                   mainAxisAlignment: MainAxisAlignment.center,
-                   children: <Widget>[
-                     Text(
-                       'In your Clinic Doctor',
-                       style: TextStyle(
-                           color: Colors.blue, fontSize: 16,fontWeight: FontWeight.bold),
                      ),
                    ],
                  ),
@@ -57,18 +53,27 @@ Widget _createBookingTime({int index,TextStyle textStyle}){
            actions: <Widget>[
              FlatButton(
                child: Text('Ok',style: TextStyle(color: Colors.red,fontSize: 16,fontWeight: FontWeight.bold),),
-               onPressed: () {
-                 setState(() {
-                   _avilableBookingTime[index] = false;
-                 });
-                 Navigator.of(ctx).pop();
+               onPressed: () async{
+                bool x =  await _auth.patientReservationInDoctor(
+                 appointStart: widget.bookingTime[index].time,
+                    index: widget.indexForSearchResult
+                );
+                if(x==true){
+                  Toast.show('Scufully Booking', context);
+                  setState(() {
+                    widget.bookingTime[index].isAvailable = false;
+                  });
+                  Navigator.of(ctx).pop();
+                }else{
+                  Toast.show('Please Try again', context);
+                }
                },
              ),
              FlatButton(
                child: Text('Cancel',style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),),
                onPressed: () {
                  setState(() {
-                   _avilableBookingTime[index] = true;
+                   widget.bookingTime[index].isAvailable = true;
                  });
                  Navigator.of(ctx).pop();
                },
@@ -80,18 +85,22 @@ Widget _createBookingTime({int index,TextStyle textStyle}){
     }:null,
     child: Container(
       decoration: BoxDecoration(
-          color:  _avilableBookingTime[index]?Colors.blue:Colors.grey,
+          color: widget.bookingTime[index].isAvailable?Colors.blue:Colors.grey,
           borderRadius: BorderRadius.circular(10)),
       child: Center(
         child: Text(
-          '${index+1}:30',
+          '${widget.bookingTime[index].time}',
           style: textStyle.copyWith(color: Colors.white),
         ),
       ),
     ),
   );
 }
-
+  @override
+  void initState() {
+    _auth = Provider.of<Auth>(context,listen: false);
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return InfoWidget(
@@ -118,7 +127,7 @@ Widget _createBookingTime({int index,TextStyle textStyle}){
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           SizedBox(),
-                          Text("Tomorrow",
+                          Text("Today",
                               style: infoWidget.titleButton.copyWith(color: Colors.black)),
                           Icon(
                             _showBookingInfo
@@ -144,7 +153,7 @@ Widget _createBookingTime({int index,TextStyle textStyle}){
                       child: GridView.builder(
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),
-                          itemCount: 9,
+                          itemCount: widget.bookingTime.length,
                           gridDelegate:
                           SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 3,

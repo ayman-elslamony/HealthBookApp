@@ -3,8 +3,10 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:healthbook/models/appointment.dart';
+import 'package:healthbook/models/booking_time.dart';
 import 'package:healthbook/models/doctor_appointment.dart';
 import 'package:healthbook/models/patient_appointment.dart';
+import 'package:healthbook/models/search_result.dart';
 import 'package:path/path.dart';
 import 'package:healthbook/list_of_infomation/list_of_information.dart';
 import 'package:healthbook/models/clinic_data.dart';
@@ -37,6 +39,7 @@ class Auth with ChangeNotifier {
 //  );
   static List<DoctorAppointment> appointmentForDoctor=[];
   static List<PatientAppointment> appointmentForPatient=[];
+  List<SearchResult> _searchResult=[];
   static ClinicData clinicData;
   bool get isAuth {
     return token != null;
@@ -50,8 +53,13 @@ class Auth with ChangeNotifier {
   RegisterData get userData{
     return rgisterData;
   }
+
   ClinicData get getClinicData{
     return clinicData;
+  }
+  List<SearchResult> get searchResult{
+
+    return _searchResult;
   }
   List<DoctorAppointment> get allAppointment{
     return appointmentForDoctor;
@@ -411,6 +419,69 @@ class Auth with ChangeNotifier {
       return data['message'];
   }
 
+  Future<void> getAllSearchResult()async{
+    var userData = await _netWork
+        .getData(url: 'doctor/5ec8a319fa6d9b35d08f0058', headers: {
+      'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IncyQHcuY29tIiwiX2lkIjoiNWVjOGEzMTlmYTZkOWIzNWQwOGYwMDU4Iiwicm9sZSI6MCwiaWF0IjoxNTk2NTkxNDc3fQ.LqPY6GQV3hsFtSI4EjTKjub1-7ADFKf45Vt3SG-ubxg',
+    });
+    print(userData);
+    var clinicData = await _netWork
+        .getData(url: 'clinic/5ed6899e7966c600175a388b', headers: {
+      'Authorization': 'Bearer $_token',
+    });
+    print(clinicData);
+    List<SearchResult> result=[];
+    result.add(SearchResult.fromJson(userData['doctor'], clinicData['clinic']));
+    _searchResult=result;
+    notifyListeners();
+  }
+
+Future<List<Appointment>> availableTime({String clinicId})async{
+  List<Appointment> allAppointment=[];
+    var appointmentData;
+    appointmentData = await _netWork
+        .getData(url:'appoint/appoint-clinic/$clinicId', headers: {
+      'Authorization': 'Bearer $_token',
+      'Content-Type': 'application/json',
+    },
+        isAppoitment: true);
+    print('appointmentData$appointmentData');
+    if(appointmentData.length !=0){
+      for(int i=0; i<appointmentData.length; i++){
+        allAppointment.add(Appointment.fromJson(appointmentData[i]));
+      }
+
+    }
+    print('allAppointment${allAppointment.length}');
+    return allAppointment;
+}
+Future<bool> patientReservationInDoctor({String appointStart,int index})async{
+  var appointmentData;
+  DateTime dateTime= DateTime.now();
+ try{
+   int time;
+   if(appointStart.contains(':')){
+     List<String> splitTime = appointStart.split(':');
+      time= int.parse(splitTime[0])*60+int.parse(splitTime[1]);
+   }else{
+      time = int.parse(appointStart);
+   }
+   time =time+int.parse(_searchResult[index].clinicData.waitingTime);
+   int hour = time ~/ 60;
+   int minutes = time % 60;
+   appointmentData = await _netWork
+       .postData(url:'appoint/', headers: {
+     'Authorization': 'Bearer $_token',
+   },
+       data: {'appointStart' : appointStart,'appointEnd' : '${minutes==0?'$hour':'$hour:$minutes'}','appointDate' :'${dateTime.day}-${dateTime.month}-${dateTime.year}','appointStatus' : 'none','doctorID' : _searchResult[index].doctorData.id,"patientID" : _userId,'clinicID': _searchResult[index].clinicData.sId}
+   );
+   print(appointmentData);
+   return appointmentData['message']=='Appointement created'?true:false;
+ }catch (e){
+   print(e);
+   return false;
+ }
+}
   Future<bool> tryToLogin() async {
     final prefs = await SharedPreferences.getInstance();
     if (!prefs.containsKey('dataToSignIn')) {
