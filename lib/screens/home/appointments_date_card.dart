@@ -79,7 +79,7 @@ class _AppointmentsDateCardState extends State<AppointmentsDateCard> {
        Padding(
          padding:  EdgeInsets.only(right: infoWidget.defaultHorizontalPadding),
          child: Text(
-             _auth.getUserType=='doctor'?'${appointements.allAppointment.length ==0?'No':appointements.allAppointment.length} Patient':"${appointements.allAppointment.length ==0?'No':appointements.allAppointment.length} Appointement",
+             _auth.getUserType=='doctor'?'${appointements.allAppointment.length ==0?'No':appointements.allAppointment.length} Patient':"${appointements.allAppointmentOfPatient.length ==0?'No':appointements.allAppointmentOfPatient.length} Appointement",
              maxLines: 1,
              textAlign: TextAlign.justify,
              overflow: TextOverflow.ellipsis,

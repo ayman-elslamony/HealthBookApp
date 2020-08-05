@@ -7,7 +7,7 @@ class NetWork {
   String baseUrl = 'https://fathomless-tundra-83455.herokuapp.com/';
 
   Future<dynamic> getData(
-      {String url, Map<String, dynamic> headers}) async {
+      {String url, Map<String, dynamic> headers,bool isAppoitment=false}) async {
     var jsonResponse;
     dio.options.baseUrl = baseUrl;
 
@@ -15,7 +15,16 @@ class NetWork {
 
     Response response = await dio.get('$url').catchError((err) {print(err);});
     if (response.statusCode >= 200 && response.statusCode < 300) {
-      jsonResponse = json.decode(response.toString());
+          try{
+
+            if(isAppoitment){
+              var encodeFirst = json.encode(response.data);
+              jsonResponse =json.decode(encodeFirst);
+            }else{
+              jsonResponse =json.decode(response.toString());
+            }
+
+          }catch(e){print(e);}
       return jsonResponse;
     } else if (response == null) {
       return response;
@@ -86,6 +95,29 @@ Future<dynamic> updateData(
   }
 
 
+  Future<dynamic> deleteAppointment(
+      {Map<String, dynamic> headers, String url}) async {
+    try {
+      dio.options.baseUrl = baseUrl;
+      headers != null ? dio.options.headers = headers : '';
+
+      var jsonResponse;
+      Response response;
+      response = await dio.delete(url);
+      print(response.statusCode);
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        print('success');
+        jsonResponse = json.decode(response.toString());
+        return jsonResponse;
+      } else if (response == null) {
+        return response;
+      } else {
+        return response;
+      }
+    } on DioError catch (e) {
+      return e.response.data;
+    }
+  }
 
 
 //  Future<dynamic> postData(

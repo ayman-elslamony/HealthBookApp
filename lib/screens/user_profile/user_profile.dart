@@ -168,7 +168,7 @@ class _UserProfileState extends State<UserProfile> {
                   address:  _auth.getClinicData.address,
                   governorate: _auth.getClinicData.government,
                   fees: _auth.getClinicData.fees,
-                  number: _auth.getClinicData.number,
+                  number: _auth.getClinicData.number[0],
                   startTime: _auth.getClinicData.openingTime,
                   endTime: _auth.getClinicData.clossingTime,
                   watingTime: _auth.getClinicData.waitingTime,

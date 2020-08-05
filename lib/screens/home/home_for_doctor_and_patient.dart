@@ -30,16 +30,20 @@ bool isLoading=true;
     getAllAppoitment();
   }
   getAllAppoitment()async{
-
-      await _auth.getUserAppointment();
-
-    setState(() {
-      isLoading=false;
-    });
+      if(_auth.getUserType=='doctor'?_auth.allAppointment.length==0:_auth.allAppointmentOfPatient.length==0){
+        await _auth.getUserAppointment();
+        setState(() {
+          isLoading=false;
+        });
+      }else{
+        setState(() {
+          isLoading=false;
+        });
+      }
   }
   @override
   Widget build(BuildContext context) {
-    _cancelButton() {
+    _cancelButton(String id) {
       showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
@@ -70,13 +74,7 @@ bool isLoading=true;
                 children: <Widget>[
                   InkWell(
                     onTap: () {
-
-
                       launch("tel://21213123123");
-
-
-
-                      Navigator.of(context).pop();
                     },
                     child: Container(
                         height: 38,
@@ -105,7 +103,6 @@ bool isLoading=true;
 //                          .catchError((onError) {
 //                        print(onError);
                       //  });
-                      Navigator.of(context).pop();
                     },
                     child: Container(
                         height: 38,
@@ -141,23 +138,36 @@ bool isLoading=true;
             ),
             FlatButton(
               child: Text('Ok'),
-              onPressed: () {
-                final snackBar = SnackBar(
-                  content: Text(
-                    'SuccessFully deleted',
-                    style: TextStyle(color: Colors.white, fontSize: 15),
-                  ),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5)),
-                  duration: Duration(seconds: 5),
-                  backgroundColor: Colors.blue,
-                  action: SnackBarAction(
-                    label: 'Undo',
-                    onPressed: () {},
-                  ),
-                );
-                _scaffoldState.currentState.showSnackBar(snackBar);
-                Navigator.of(ctx).pop();
+              onPressed: () async{
+                bool x =await  _auth.deleteAppointmentForPatAndDoc(appointmentId: id,type: 'doctor');
+                if(x==true){
+                  final snackBar = SnackBar(
+                    content: Text(
+                      'SuccessFully deleted',
+                      style: TextStyle(color: Colors.white, fontSize: 15),
+                    ),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5)),
+                    duration: Duration(seconds: 5),
+                    backgroundColor: Colors.blue,
+                  );
+                  _scaffoldState.currentState.showSnackBar(snackBar);
+                  Navigator.of(ctx).pop();
+                }else{
+                  final snackBar = SnackBar(
+                    content: Text(
+                      'failed to deleted',
+                      style: TextStyle(color: Colors.white, fontSize: 15),
+                    ),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5)),
+                    duration: Duration(seconds: 5),
+                    backgroundColor: Colors.blue,
+                  );
+                  _scaffoldState.currentState.showSnackBar(snackBar);
+                  Navigator.of(ctx).pop();
+                }
+
               },
             )
           ],
@@ -165,123 +175,130 @@ bool isLoading=true;
       );
     }
 
-    return InfoWidget(
-      builder: (context,infoWidget){
-        return Scaffold(
-          key: _scaffoldState,
-          body: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              SizedBox(height: infoWidget.orientation ==Orientation.portrait?infoWidget.screenHeight*0.015:infoWidget.screenHeight*0.03,),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Column(
-                    children: <Widget>[
-                      Text(
-                          _auth.getUserType != 'doctor'
-                              ? 'Welcome ${_auth.userData.firstName} ${_auth.userData.lastName} !'
-                              : 'Welcome Dr. ${_auth.userData.firstName} ${_auth.userData.lastName} ',
-                          style: infoWidget.subTitle
-                          ),
-                    ],
-                  ),
-                ],
-              ),
-              AppointmentsDateCard(),
-              isLoading?Expanded(child: Center(child: CircularProgressIndicator(backgroundColor: Colors.blue,),)):Consumer<Auth>(builder: (context, appointements, _) {
-                if (_auth.getUserType == 'doctor'?
-                appointements.allAppointment.length==0 :appointements.allAppointmentOfPatient.length==0) {
-                  return Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Expanded(
-                                child: Text(
-                                  'You don\'t have any appointement for this day',
-                                  textAlign: TextAlign.center,
-                                  maxLines: 2,
-                                  style: infoWidget.titleButton.copyWith(color: Colors.black),),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: infoWidget.orientation ==Orientation.portrait?infoWidget.screenHeight*0.02:infoWidget.screenHeight*0.03,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Container(
-                                decoration: BoxDecoration(
-                                    color: Colors.blue,
-                                    borderRadius: BorderRadius.circular(6.0)),
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: infoWidget.screenHeight*0.06,vertical: infoWidget.screenHeight*0.015),
-                                  child: Center(
-                                    child: Text(
-                                      'Check Out Other Days',
-                                      textAlign: TextAlign.center,
-                                      maxLines: 2,
-                                      style: infoWidget.titleButton,
+    return RefreshIndicator(
+      onRefresh: ()async{
+        await _auth.getUserAppointment();
+      },
+      backgroundColor: Colors.white,
+      color: Colors.blue,
+      child: InfoWidget(
+        builder: (context,infoWidget){
+          return Scaffold(
+            key: _scaffoldState,
+            body: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                SizedBox(height: infoWidget.orientation ==Orientation.portrait?infoWidget.screenHeight*0.015:infoWidget.screenHeight*0.03,),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Column(
+                      children: <Widget>[
+                        Text(
+                            _auth.getUserType != 'doctor'
+                                ? 'Welcome ${_auth.userData.firstName} ${_auth.userData.lastName} !'
+                                : 'Welcome Dr. ${_auth.userData.firstName} ${_auth.userData.lastName} ',
+                            style: infoWidget.subTitle
+                            ),
+                      ],
+                    ),
+                  ],
+                ),
+                AppointmentsDateCard(),
+                isLoading?Expanded(child: Center(child: CircularProgressIndicator(backgroundColor: Colors.blue,),)):Consumer<Auth>(builder: (context, appointements, _) {
+                  if (_auth.getUserType == 'doctor'?
+                  appointements.allAppointment.length==0 :appointements.allAppointmentOfPatient.length==0) {
+                    return Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Expanded(
+                                  child: Text(
+                                    'You don\'t have any appointement for this day',
+                                    textAlign: TextAlign.center,
+                                    maxLines: 2,
+                                    style: infoWidget.titleButton.copyWith(color: Colors.black),),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: infoWidget.orientation ==Orientation.portrait?infoWidget.screenHeight*0.02:infoWidget.screenHeight*0.03,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Container(
+                                  decoration: BoxDecoration(
+                                      color: Colors.blue,
+                                      borderRadius: BorderRadius.circular(6.0)),
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(horizontal: infoWidget.screenHeight*0.06,vertical: infoWidget.screenHeight*0.015),
+                                    child: Center(
+                                      child: Text(
+                                        'Check Out Other Days',
+                                        textAlign: TextAlign.center,
+                                        maxLines: 2,
+                                        style: infoWidget.titleButton,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              )],
-                          ),
-                          SizedBox(
-                            height: infoWidget.orientation ==Orientation.portrait?infoWidget.screenHeight*0.02:infoWidget.screenHeight*0.03,
-                          ),
-                          _auth.getUserType=='doctor'?SizedBox():Text(
-                            'Stay Healty 💙',
-                            textAlign: TextAlign.center,
-                            maxLines: 2,
-                            style: infoWidget.subTitle
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                } else {
-                  print(appointements.allAppointment.length);
-                  return Expanded(
-                      child: ListView.builder(
-                        itemBuilder: (ctx, index) =>
-                        _auth.getUserType != 'doctor'
-                            ?
-                        InkWell(
-                            onTap: () {
-                              Navigator.of(context)
-                                  .push(MaterialPageRoute(builder: (_)=>ShowUserProfile(
-                                type: 'doctor',
-                                userData: appointements.allAppointmentOfPatient[index].registerData,
-                                clinicData: appointements.allAppointmentOfPatient[index].clinicData,
-                              )));
-                            },
-                            child:
-                            //see app as patient
-                            PatientAppointmentCard(patientAppointment: appointements.allAppointmentOfPatient[index])
-                        ): DoctorAppointmentCard(
-                          cancelButton: _cancelButton,
-                          //see app as doctor
-                          doctorAppointment: appointements.allAppointment[index],
+                                )],
+                            ),
+                            SizedBox(
+                              height: infoWidget.orientation ==Orientation.portrait?infoWidget.screenHeight*0.02:infoWidget.screenHeight*0.03,
+                            ),
+                            _auth.getUserType=='doctor'?SizedBox():Text(
+                              'Stay Healty 💙',
+                              textAlign: TextAlign.center,
+                              maxLines: 2,
+                              style: infoWidget.subTitle
+                            ),
+                          ],
                         ),
-                        itemCount:
-                        _auth.getUserType == 'doctor'?
-                        appointements.allAppointment.length :appointements.allAppointmentOfPatient.length,
-                      )
-                  );
-                }
-              })
-            ],
-          ),
-        );
-      },
+                      ),
+                    );
+                  } else {
+                    print(appointements.allAppointment.length);
+                    return Expanded(
+                        child: ListView.builder(
+                          itemBuilder: (ctx, index) =>
+                          _auth.getUserType != 'doctor'
+                              ?
+                          InkWell(
+                              onTap: () {
+                                Navigator.of(context)
+                                    .push(MaterialPageRoute(builder: (_)=>ShowUserProfile(
+                                  type: 'doctor',
+                                  userData: appointements.allAppointmentOfPatient[index].registerData,
+                                  clinicData: appointements.allAppointmentOfPatient[index].clinicData,
+                                )));
+                              },
+                              child:
+                              //see app as patient
+                              PatientAppointmentCard(patientAppointment: appointements.allAppointmentOfPatient[index])
+                          ): DoctorAppointmentCard(
+                            cancelButton: _cancelButton,
+                            //see app as doctor
+                            doctorAppointment: appointements.allAppointment[index],
+                          ),
+                          itemCount:
+                          _auth.getUserType == 'doctor'?
+                          appointements.allAppointment.length :appointements.allAppointmentOfPatient.length,
+                        )
+                    );
+                  }
+                })
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }

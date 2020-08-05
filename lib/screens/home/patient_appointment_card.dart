@@ -3,6 +3,9 @@ import 'package:flutter_simple_rating_bar/flutter_simple_rating_bar.dart';
 import 'package:healthbook/core/ui_components/info_widget.dart';
 import 'package:healthbook/models/doctor_appointment.dart';
 import 'package:healthbook/models/patient_appointment.dart';
+import 'package:healthbook/providers/auth_controller.dart';
+import 'package:provider/provider.dart';
+import 'package:toast/toast.dart';
 
 //import 'package:flutter_sms/flutter_sms.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -113,7 +116,7 @@ class PatientAppointmentCard extends StatelessWidget {
                                 children: <Widget>[
                                   Expanded(
                                     child: Text(
-                                      'Location: ${patientAppointment.registerData.address}',
+                                      'Location: ${patientAppointment.clinicData.address}',
                                       style:
                                       infoWidget.subTitle.copyWith(fontWeight: FontWeight.w500),
                                       maxLines: 2,
@@ -210,20 +213,31 @@ class PatientAppointmentCard extends StatelessWidget {
                               ),
                             )),
                       ),
-                      Container(
-                          decoration: BoxDecoration(
-                              color: Colors.red,
-                              borderRadius: BorderRadius.circular(10)),
-                          child: Padding(
-                            padding: EdgeInsets.all(infoWidget.defaultHorizontalPadding),
+                      InkWell(
+                        onTap: ()async{
+                          Auth _auth = Provider.of<Auth>(context,listen: false);
+                          bool x = await _auth.deleteAppointmentForPatAndDoc(appointmentId: patientAppointment.appointmentId,type: 'patient');
+                            if(x==true){
+                              Toast.show('SuccessFully deleted', context);
+                            }else{
+                              Toast.show('failed to deleted', context);
+                            }
+                          },
+                        child: Container(
+                            decoration: BoxDecoration(
+                                color: Colors.red,
+                                borderRadius: BorderRadius.circular(10)),
+                            child: Padding(
+                              padding: EdgeInsets.all(infoWidget.defaultHorizontalPadding),
 
-                            child: Center(
-                              child: Text(
-                                'Cancel',
-                                style: infoWidget.titleButton,
+                              child: Center(
+                                child: Text(
+                                  'Cancel',
+                                  style: infoWidget.titleButton,
+                                ),
                               ),
-                            ),
-                          )),
+                            )),
+                      ),
                     ],
                   )
                 ],

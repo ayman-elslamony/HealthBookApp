@@ -50,98 +50,108 @@ class _DoctorAppointmentCardState extends State<DoctorAppointmentCard> {
                   horizontal: infoWidget.defaultHorizontalPadding * 1.3),
               child: Column(
                 children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Container(
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.all(Radius.circular(infoWidget.orientation == Orientation.portrait
-                                  ? 35.0:55.0)),
-                              child: FadeInImage.assetNetwork(
-                                placeholder: 'assets/user.png',
-                                image: widget.doctorAppointment.registerData.patientImage,
-                                fit: BoxFit.fill,
-                              ),
-                            ),
-                            width:  infoWidget.screenWidth * 0.18//
-                            ,
-                            height: infoWidget.screenWidth * 0.18,
-                          ),
-                        ],
-                      ),
-                      SizedBox(width: infoWidget.defaultVerticalPadding,),
-                      Expanded(
-                        child: Column(
+                  InkWell(
+                    onTap: (){
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context)=>
+                      ShowUserProfile(
+                        userData: widget.doctorAppointment.registerData,
+                        type: 'patient',
+                      )
+                      ));
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: <Widget>[
-                                Expanded(
-                                  child: Text(
-                                      '${widget.doctorAppointment.registerData.firstName} ${widget.doctorAppointment.registerData.lastName}'
-                                      ,maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: infoWidget.title),
+                            Container(
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.all(Radius.circular(infoWidget.orientation == Orientation.portrait
+                                    ? 35.0:55.0)),
+                                child: FadeInImage.assetNetwork(
+                                  placeholder: 'assets/user.png',
+                                  image: widget.doctorAppointment.registerData.patientImage,
+                                  fit: BoxFit.fill,
                                 ),
-                                Text(
-                                  widget.doctorAppointment.appointDate,
-                                  style:
-                                  infoWidget.subTitle.copyWith(fontWeight: FontWeight.w500,color: Colors.blue),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],)
-                            ,
-                            mybirth.length!=3?SizedBox():Padding(
-                              padding: EdgeInsets.only(left: infoWidget.defaultVerticalPadding),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                children: <Widget>[
-                                  Expanded(
-                                    child: Text('Age: ${birthDate.years} years',
-                                        style: infoWidget.subTitle.copyWith(fontWeight: FontWeight.w500)),
-                                  ),
-                                ],),
+                              ),
+                              width:  infoWidget.screenWidth * 0.18//
+                              ,
+                              height: infoWidget.screenWidth * 0.18,
                             ),
-                            Padding(
-                              padding: EdgeInsets.only(left: infoWidget.defaultVerticalPadding),
-                              child: Row(
+                          ],
+                        ),
+                        SizedBox(width: infoWidget.defaultVerticalPadding,),
+                        Expanded(
+                          child: Column(
+                            children: <Widget>[
+                              Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 children: <Widget>[
                                   Expanded(
                                     child: Text(
-                                  'Appointement number: 1',
-                                      style:
-                                      infoWidget.subTitle.copyWith(fontWeight: FontWeight.w500),
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
+                                        '${widget.doctorAppointment.registerData.firstName} ${widget.doctorAppointment.registerData.lastName}'
+                                        ,maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: infoWidget.title),
                                   ),
-                                ],),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: infoWidget.defaultVerticalPadding),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                children: <Widget>[
-                                  Expanded(
-                                    child:  Text(
-                                      'Appointement at ${widget.doctorAppointment.appointStart} PM',
-                                      style: infoWidget.subTitle.copyWith(fontWeight: FontWeight.w500),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
+                                  Text(
+                                    widget.doctorAppointment.appointDate,
+                                    style:
+                                    infoWidget.subTitle.copyWith(fontWeight: FontWeight.w500,color: Colors.blue),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
-                                ],),
-                            )
-                          ],
-                        ),
-                      )
-                    ],
+                                ],)
+                              ,
+                              mybirth.length!=3?SizedBox():Padding(
+                                padding: EdgeInsets.only(left: infoWidget.defaultVerticalPadding),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: Text('Age: ${birthDate.years} years',
+                                          style: infoWidget.subTitle.copyWith(fontWeight: FontWeight.w500)),
+                                    ),
+                                  ],),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: infoWidget.defaultVerticalPadding),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: Text(
+                                    'Appointement number: 1',
+                                        style:
+                                        infoWidget.subTitle.copyWith(fontWeight: FontWeight.w500),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: infoWidget.defaultVerticalPadding),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  children: <Widget>[
+                                    Expanded(
+                                      child:  Text(
+                                        'Appointement at ${widget.doctorAppointment.appointStart} PM',
+                                        style: infoWidget.subTitle.copyWith(fontWeight: FontWeight.w500),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],),
+                              )
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                   SizedBox(
                     height: infoWidget.orientation ==Orientation.portrait?infoWidget.screenHeight*0.02:infoWidget.screenHeight*0.04,
@@ -167,7 +177,10 @@ class _DoctorAppointmentCardState extends State<DoctorAppointmentCard> {
                             )),
                       ),
                       InkWell(
-                        onTap: widget.cancelButton,
+                        onTap: (){
+                          print(widget.doctorAppointment.appointmentId);
+                          widget.cancelButton(widget.doctorAppointment.appointmentId);
+                        },
                         child: Container(
                             decoration: BoxDecoration(
                                 color: Colors.red,

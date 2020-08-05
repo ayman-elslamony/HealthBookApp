@@ -3,18 +3,27 @@ import 'package:flutter/material.dart';
 import 'package:healthbook/core/ui_components/info_widget.dart';
 import 'package:healthbook/models/doctor_appointment.dart';
 import 'package:healthbook/models/register_user_data.dart';
+import 'package:healthbook/providers/auth_controller.dart';
 import 'package:healthbook/screens/drugs_radiology_analysis/drugs_radiology_analysis.dart';
 import 'package:healthbook/screens/patient_prescription/widgets/patient_prescription.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'widgets/show_patient_health_record.dart';
 
 
-class PatientHealthRecord extends StatelessWidget {
+class PatientHealthRecord extends StatefulWidget {
   final DoctorAppointment doctorAppointment;
 
   PatientHealthRecord({this.doctorAppointment});
 
+  static const routeName = 'PatientHealthRecord';
+
+  @override
+  _PatientHealthRecordState createState() => _PatientHealthRecordState();
+}
+
+class _PatientHealthRecordState extends State<PatientHealthRecord> {
   final List<DrugList> allDrugList = [
     DrugList(
         diagnoseName: 'Diabetes mellitus (ICD-250)',
@@ -156,13 +165,14 @@ class PatientHealthRecord extends StatelessWidget {
               ]),
         ])
   ];
+
   final GlobalKey<ScaffoldState> _patientHealthRecordState =
       GlobalKey<ScaffoldState>();
-  static const routeName = 'PatientHealthRecord';
 
   @override
   Widget build(BuildContext context) {
     _cancelButton() {
+      Auth _auth = Provider.of<Auth>(context, listen: false);
       showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
@@ -183,7 +193,7 @@ class PatientHealthRecord extends StatelessWidget {
                 Colors.blue,
               ],
               alignment: AlignmentDirectional.topStart // or Alignment.topLeft
-              ),
+          ),
           content: Padding(
             padding: const EdgeInsets.only(top: 10),
             child: Container(
@@ -194,7 +204,6 @@ class PatientHealthRecord extends StatelessWidget {
                   InkWell(
                     onTap: () {
                       launch("tel://21213123123");
-                      Navigator.of(context).pop();
                     },
                     child: Container(
                         height: 38,
@@ -212,7 +221,7 @@ class PatientHealthRecord extends StatelessWidget {
                             Text(
                               'Call ',
                               style:
-                                  TextStyle(color: Colors.white, fontSize: 18),
+                              TextStyle(color: Colors.white, fontSize: 18),
                             ),
                           ],
                         )),
@@ -222,8 +231,7 @@ class PatientHealthRecord extends StatelessWidget {
 //                      sendSMS(message: 'Hello Patient', recipients: ['+201145523795'])
 //                          .catchError((onError) {
 //                        print(onError);
-//                      });
-                      Navigator.of(context).pop();
+                      //  });
                     },
                     child: Container(
                         height: 38,
@@ -241,7 +249,7 @@ class PatientHealthRecord extends StatelessWidget {
                             Text(
                               'Message ',
                               style:
-                                  TextStyle(color: Colors.white, fontSize: 18),
+                              TextStyle(color: Colors.white, fontSize: 18),
                             ),
                           ],
                         )),
@@ -259,23 +267,39 @@ class PatientHealthRecord extends StatelessWidget {
             ),
             FlatButton(
               child: Text('Ok'),
-              onPressed: () {
-                final snackBar = SnackBar(
-                  content: Text(
-                    'SuccessFully deleted',
-                    style: TextStyle(color: Colors.white, fontSize: 15),
-                  ),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5)),
-                  duration: Duration(seconds: 5),
-                  backgroundColor: Colors.blue,
-                  action: SnackBarAction(
-                    label: 'Undo',
-                    onPressed: () {},
-                  ),
-                );
-                _patientHealthRecordState.currentState.showSnackBar(snackBar);
-                Navigator.of(ctx).pop();
+              onPressed: () async{
+                bool x =await  _auth.deleteAppointmentForPatAndDoc(appointmentId: widget.doctorAppointment.appointmentId,type: 'doctor');
+                if(x==true){
+                  final snackBar = SnackBar(
+                    content: Text(
+                      'SuccessFully deleted',
+                      style: TextStyle(color: Colors.white, fontSize: 15),
+                    ),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5)),
+                    duration: Duration(seconds: 3),
+                    backgroundColor: Colors.blue,
+                  );
+                  _patientHealthRecordState.currentState.showSnackBar(snackBar);
+                  Navigator.of(ctx).pop();
+                  await Future.delayed(Duration(seconds: 2),(){
+                    Navigator.of(context).pop();
+                  });
+                }else{
+                  final snackBar = SnackBar(
+                    content: Text(
+                      'failed to deleted',
+                      style: TextStyle(color: Colors.white, fontSize: 15),
+                    ),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5)),
+                    duration: Duration(seconds: 5),
+                    backgroundColor: Colors.blue,
+                  );
+                  _patientHealthRecordState.currentState.showSnackBar(snackBar);
+                  Navigator.of(ctx).pop();
+                }
+
               },
             )
           ],
@@ -311,7 +335,7 @@ class PatientHealthRecord extends StatelessWidget {
                     onTap: () {
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => PatientPrescription(
-                            doctorAppointment: doctorAppointment,
+                            doctorAppointment: widget.doctorAppointment,
                           )));
                     },
                     child: Center(
@@ -343,7 +367,7 @@ class PatientHealthRecord extends StatelessWidget {
                                         : 55.0)),
                                 child: FadeInImage.assetNetwork(
                                   placeholder: 'assets/user.png',
-                                  image: doctorAppointment.registerData.patientImage,
+                                  image: widget.doctorAppointment.registerData.patientImage,
                                   fit: BoxFit.fill,
                                 ),
                               ),
@@ -362,7 +386,7 @@ class PatientHealthRecord extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: <Widget>[
                               Expanded(
-                                child: Text('${doctorAppointment.registerData.firstName} ${doctorAppointment.registerData.lastName}',
+                                child: Text('${widget.doctorAppointment.registerData.firstName} ${widget.doctorAppointment.registerData.lastName}',
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                     style: infoWidget.title

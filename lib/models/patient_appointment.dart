@@ -17,13 +17,13 @@ class PatientAppointment{
         this.appointStatus,
         this.clinicData,
         this.registerData});
-  PatientAppointment.fromJson(Map<String, dynamic> json,Map<String,dynamic> patientData,Map<String,dynamic> clinic){
+  PatientAppointment.fromJson(Map<String, dynamic> json,Map<String,dynamic> doctorData,Map<String,dynamic> clinic){
     appointmentId=json['_id'];
     appointStart = json['appointStart'];
     appointEnd = json['appointEnd'];
     appointDate = json['appointDate'];
     appointStatus = json['appointStatus'];
     clinicData =ClinicData.fromJson(clinic);
-    registerData =RegisterData.fromJson(patientData, 'patient');
+    registerData =RegisterData.fromJson(doctorData, 'doctor');
   }
 }
