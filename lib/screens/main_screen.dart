@@ -105,205 +105,207 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return InfoWidget(
-      builder: (context, infoWidget) {
-        print(infoWidget.screenWidth);print(infoWidget.screenHeight);
-        return Scaffold(
-          key: mainKey,
-          appBar: AppBar(
-            centerTitle: true,
-            title: Text(type[_page], style: infoWidget.titleButton,),
-            actions: <Widget>[
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: InkWell(
-                  onTap: () {},
-                  child: Center(
-                    child: Stack(
-                      children: <Widget>[
-                        Icon(
-                          Icons.notifications,
-                          size: infoWidget.orientation==Orientation.portrait?infoWidget.screenHeight * 0.04:infoWidget.screenHeight * 0.07,
-                        ),
-                        Positioned(
-                            right: 2.9,
-                            top: 2.8,
-                            child: Container(
-                              width: infoWidget.orientation==Orientation.portrait?infoWidget.screenWidth * 0.023:infoWidget.screenWidth * 0.014,
-                              height: infoWidget.orientation==Orientation.portrait?infoWidget.screenWidth * 0.023:infoWidget.screenWidth* 0.014,
-                              decoration: BoxDecoration(
-                                  color: Colors.red,
-                                  borderRadius: BorderRadius.circular(5)),
-                            ))
-                      ],
-                    ),
-                  ),
-                ),
-              )
-            ],
-            shape: ContinuousRectangleBorder(
-                borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(30),
-                    bottomRight: Radius.circular(30))),
-          ),
-          drawer: Container(
-            width: infoWidget.orientation==Orientation.portrait?infoWidget.screenWidth * 0.61:infoWidget.screenWidth * 0.50,
-            height: infoWidget.screenHeight,
-            child: Drawer(
-              child: ListView(
-                children: <Widget>[
-                  UserAccountsDrawerHeader(
-                    onDetailsPressed: () {
-                      Navigator.of(context).pop();
-                      setState(() {
-                        _page = 2;
-                      });
-                      _pageController.jumpToPage(_page);
-                    },
-                    accountName: Text(
-                        "${_auth.userData.firstName.toUpperCase()} ${_auth
-                            .userData.lastName.toUpperCase()}"),
-                    accountEmail: Text("${_auth.email}"),
-                    currentAccountPicture: CircleAvatar(
-                      backgroundColor:
-
-                      Theme
-                          .of(context)
-                          .platform == TargetPlatform.iOS
-                          ? Colors.blue
-                          : Colors.white,
-                      child: Text(
-                        "${_auth.userData.firstName.substring(0, 1)
-                            .toUpperCase()}",
-                        style: TextStyle(fontSize: 40.0),
+    return  PickupLayout(
+      scaffold: InfoWidget(
+        builder: (context, infoWidget) {
+          print(infoWidget.screenWidth);print(infoWidget.screenHeight);
+          return Scaffold(
+            key: mainKey,
+            appBar: AppBar(
+              centerTitle: true,
+              title: Text(type[_page], style: infoWidget.titleButton,),
+              actions: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: InkWell(
+                    onTap: () {},
+                    child: Center(
+                      child: Stack(
+                        children: <Widget>[
+                          Icon(
+                            Icons.notifications,
+                            size: infoWidget.orientation==Orientation.portrait?infoWidget.screenHeight * 0.04:infoWidget.screenHeight * 0.07,
+                          ),
+                          Positioned(
+                              right: 2.9,
+                              top: 2.8,
+                              child: Container(
+                                width: infoWidget.orientation==Orientation.portrait?infoWidget.screenWidth * 0.023:infoWidget.screenWidth * 0.014,
+                                height: infoWidget.orientation==Orientation.portrait?infoWidget.screenWidth * 0.023:infoWidget.screenWidth* 0.014,
+                                decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    borderRadius: BorderRadius.circular(5)),
+                              ))
+                        ],
                       ),
                     ),
                   ),
-                  _drawerListTile(
-                      name: "Home",
-                      imgPath: 'assets/icons/home.png',
-                      infoWidget: infoWidget,
-                      onTap: () {
+                )
+              ],
+              shape: ContinuousRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(30),
+                      bottomRight: Radius.circular(30))),
+            ),
+            drawer: Container(
+              width: infoWidget.orientation==Orientation.portrait?infoWidget.screenWidth * 0.61:infoWidget.screenWidth * 0.50,
+              height: infoWidget.screenHeight,
+              child: Drawer(
+                child: ListView(
+                  children: <Widget>[
+                    UserAccountsDrawerHeader(
+                      onDetailsPressed: () {
                         Navigator.of(context).pop();
                         setState(() {
-                          _page = 0;
+                          _page = 2;
                         });
                         _pageController.jumpToPage(_page);
-                      }),
-                  _drawerListTile(
-                      name: "Clinic",
-                      imgPath: 'assets/icons/clinic.png',
-                      infoWidget: infoWidget,
-                      onTap: () {
-                        Navigator.of(context).pop();
-                        setState(() {
-                          _page = 1;
-                        });
-                        _pageController.jumpToPage(_page);
-                      }),
-                  _drawerListTile(
-                      name: "Edit Profile",
-                      imgPath: 'assets/icons/profile.png',
-                      infoWidget: infoWidget,
-                      onTap: () async {
-                        print('njb');
-                        await Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) =>
-                                RegisterUserData(isEditingEnable: true,)));
-                        Navigator.of(context).pop();
-                      }),
-                  _auth.getUserType == 'doctor' ? SizedBox() : _drawerListTile(
-                      name: "Drug List",
-                      isIcon: true,
-                      icon: Icons.assignment,
-                      infoWidget: infoWidget,
-                      onTap: () {
-                        Navigator.of(context)
-                            .push(
-                            MaterialPageRoute(builder: (context) => DrugAndRadiologyAndAnalysis()));
-                      }),
-                  _auth.getUserType == 'doctor' ? SizedBox() : _drawerListTile(
-                      name: "Radiology And Analysis",
-                      isIcon: true,
-                      icon: Icons.insert_drive_file,
-                      infoWidget: infoWidget,
-                      onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => DrugAndRadiologyAndAnalysis(isDrugs: false,)));
-                      }),
+                      },
+                      accountName: Text(
+                          "${_auth.userData.firstName.toUpperCase()} ${_auth
+                              .userData.lastName.toUpperCase()}"),
+                      accountEmail: Text("${_auth.email}"),
+                      currentAccountPicture: CircleAvatar(
+                        backgroundColor:
+
+                        Theme
+                            .of(context)
+                            .platform == TargetPlatform.iOS
+                            ? Colors.blue
+                            : Colors.white,
+                        child: Text(
+                          "${_auth.userData.firstName.substring(0, 1)
+                              .toUpperCase()}",
+                          style: TextStyle(fontSize: 40.0),
+                        ),
+                      ),
+                    ),
+                    _drawerListTile(
+                        name: "Home",
+                        imgPath: 'assets/icons/home.png',
+                        infoWidget: infoWidget,
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          setState(() {
+                            _page = 0;
+                          });
+                          _pageController.jumpToPage(_page);
+                        }),
+                    _drawerListTile(
+                        name: "Clinic",
+                        imgPath: 'assets/icons/clinic.png',
+                        infoWidget: infoWidget,
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          setState(() {
+                            _page = 1;
+                          });
+                          _pageController.jumpToPage(_page);
+                        }),
+                    _drawerListTile(
+                        name: "Edit Profile",
+                        imgPath: 'assets/icons/profile.png',
+                        infoWidget: infoWidget,
+                        onTap: () async {
+                          print('njb');
+                          await Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) =>
+                                  RegisterUserData(isEditingEnable: true,)));
+                          Navigator.of(context).pop();
+                        }),
+                    _auth.getUserType == 'doctor' ? SizedBox() : _drawerListTile(
+                        name: "Drug List",
+                        isIcon: true,
+                        icon: Icons.assignment,
+                        infoWidget: infoWidget,
+                        onTap: () {
+                          Navigator.of(context)
+                              .push(
+                              MaterialPageRoute(builder: (context) => DrugAndRadiologyAndAnalysis()));
+                        }),
+                    _auth.getUserType == 'doctor' ? SizedBox() : _drawerListTile(
+                        name: "Radiology And Analysis",
+                        isIcon: true,
+                        icon: Icons.insert_drive_file,
+                        infoWidget: infoWidget,
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => DrugAndRadiologyAndAnalysis(isDrugs: false,)));
+                        }),
 //              _drawerListTile(
 //                  name: "Setting",
 //                  isIcon: true,
 //                  icon: Icons.settings,
 //                  onTap: () {}),
-                  _drawerListTile(
-                      name: "Log Out",
-                      isIcon: true,
-                      icon: Icons.exit_to_app,
-                      infoWidget: infoWidget,
-                      onTap: () async {
-                        await Provider.of<Auth>(context, listen: false)
-                            .logout();
-                        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>Login()));
-                      }),
-                ],
+                    _drawerListTile(
+                        name: "Log Out",
+                        isIcon: true,
+                        icon: Icons.exit_to_app,
+                        infoWidget: infoWidget,
+                        onTap: () async {
+                          await Provider.of<Auth>(context, listen: false)
+                              .logout();
+                          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>Login()));
+                        }),
+                  ],
+                ),
               ),
             ),
-          ),
 
-          bottomNavigationBar: CurvedNavigationBar(
-            height: infoWidget
-                .screenHeight >=960?70:50,
-            key: _bottomNavigationKey,
-            backgroundColor: Colors.white,
-            color: Colors.blue,
-            items: <Widget>[
-              _page == 0
-                  ? _iconNavBar('assets/icons/home.png',infoWidget)
-                  : _iconNavBar('assets/icons/homename.png',infoWidget),
-              _page == 1
-                  ? _iconNavBar('assets/icons/clinic.png',infoWidget)
-                  : _iconNavBar('assets/icons/clinicname.png',infoWidget),
-              _page == 2
-                  ? _iconNavBar('assets/icons/profile.png',infoWidget)
-                  : _iconNavBar('assets/icons/profilename.png',infoWidget),
-            ],
-            onTap: (index) {
-              setState(() {
-                _page = index;
-              });
-              _pageController.jumpToPage(_page);
-              _textEditingController.clear();
-            },
-          ),
-          body: Padding(
-            padding: const EdgeInsets.only(bottom: 14.0),
-            child: PageView(
-              controller: _pageController,
-              onPageChanged: (index) {
+            bottomNavigationBar: CurvedNavigationBar(
+              height: infoWidget
+                  .screenHeight >=960?70:50,
+              key: _bottomNavigationKey,
+              backgroundColor: Colors.white,
+              color: Colors.blue,
+              items: <Widget>[
+                _page == 0
+                    ? _iconNavBar('assets/icons/home.png',infoWidget)
+                    : _iconNavBar('assets/icons/homename.png',infoWidget),
+                _page == 1
+                    ? _iconNavBar('assets/icons/clinic.png',infoWidget)
+                    : _iconNavBar('assets/icons/clinicname.png',infoWidget),
+                _page == 2
+                    ? _iconNavBar('assets/icons/profile.png',infoWidget)
+                    : _iconNavBar('assets/icons/profilename.png',infoWidget),
+              ],
+              onTap: (index) {
                 setState(() {
                   _page = index;
                 });
+                _pageController.jumpToPage(_page);
                 _textEditingController.clear();
-                final CurvedNavigationBarState navBarState =
-                    _bottomNavigationKey.currentState;
-                navBarState.setPage(_page);
               },
-              children: <Widget>[
-                // Login(),
-                // SendSms(),
-                // ForgetPassword(),
-                // PatientPrescription(),
-                Home(),
-                _auth.getUserType == 'doctor'
-                    ? ClinicInfo()
-                    : SpecificSearch(),
-                UserProfile()
-              ],
             ),
-          ),
-        );
-      },
+            body: Padding(
+              padding: const EdgeInsets.only(bottom: 14.0),
+              child: PageView(
+                controller: _pageController,
+                onPageChanged: (index) {
+                  setState(() {
+                    _page = index;
+                  });
+                  _textEditingController.clear();
+                  final CurvedNavigationBarState navBarState =
+                      _bottomNavigationKey.currentState;
+                  navBarState.setPage(_page);
+                },
+                children: <Widget>[
+                  // Login(),
+                  // SendSms(),
+                  // ForgetPassword(),
+                  // PatientPrescription(),
+                  Home(),
+                  _auth.getUserType == 'doctor'
+                      ? ClinicInfo()
+                      : SpecificSearch(),
+                  UserProfile()
+                ],
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 }

@@ -391,6 +391,8 @@ class _PatientHealthRecordState extends State<PatientHealthRecord> {
                         ),
                         Expanded(
                           child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -421,39 +423,7 @@ class _PatientHealthRecordState extends State<PatientHealthRecord> {
                                   ),
                                 ],
                               ),
-                              Row(children: <Widget>[
-                                IconButton(
-                                  icon: Icon(
-                                    Icons.video_call,
-                                    color: Colors.blue,
-                                  ),
-                                  onPressed: () async {
-                                    UserCall sender= UserCall(
-                                      uid: _auth.userId,
-                                      name: '${_auth.userData.firstName} ${_auth.userData.lastName}',
-                                      profilePhoto: _auth.userData.patientImage,
-                                      username: '${_auth.userData.firstName} ${_auth.userData.lastName}',
-                                    );
-                                    UserCall receiver= UserCall(
-                                      uid: widget.doctorAppointment.registerData.id,
-                                      name: '${widget.doctorAppointment.registerData.firstName} ${widget.doctorAppointment.registerData.lastName}',
-                                      profilePhoto: widget.doctorAppointment.registerData.patientImage,
-                                      username: '${widget.doctorAppointment.registerData.firstName} ${widget.doctorAppointment.registerData.lastName}',
-                                    );
 
-                                    await PermissionHandler().requestPermissions(
-                                      [PermissionGroup.camera, PermissionGroup.microphone],
-                                    );
-                                      CallUtils.dial(
-                                        from: sender,
-                                        to: receiver,
-                                        context: context,
-                                      );
-
-                                  }
-
-                                ),
-                              ],)
                             ],
                           ),
                         )
@@ -470,13 +440,53 @@ class _PatientHealthRecordState extends State<PatientHealthRecord> {
                         horizontal: infoWidget.defaultHorizontalPadding*2.5,
                         vertical: infoWidget.defaultVerticalPadding),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         Text(
                           "Health Record:",
                           style: infoWidget.titleButton
                               .copyWith(color: Colors.blue,fontWeight: FontWeight.w600),
                         ),
+                        InkWell(
+                          onTap: () async {
+                            UserCall sender= UserCall(
+                              uid: _auth.userId,
+                              name: '${_auth.userData.firstName} ${_auth.userData.lastName}',
+                              profilePhoto: _auth.userData.patientImage,
+                              username: '${_auth.userData.firstName} ${_auth.userData.lastName}',
+                            );
+                            UserCall receiver= UserCall(
+                              uid: widget.doctorAppointment.registerData.id,
+                              name: '${widget.doctorAppointment.registerData.firstName} ${widget.doctorAppointment.registerData.lastName}',
+                              profilePhoto: widget.doctorAppointment.registerData.patientImage,
+                              username: '${widget.doctorAppointment.registerData.firstName} ${widget.doctorAppointment.registerData.lastName}',
+                            );
+
+                            await PermissionHandler().requestPermissions(
+                              [PermissionGroup.camera, PermissionGroup.microphone],
+                            );
+                            CallUtils.dial(
+                              from: sender,
+                              to: receiver,
+                              context: context,
+                            );
+
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            //crossAxisAlignment: CrossAxisAlignment.end,
+                            children: <Widget>[ Icon(
+                            Icons.video_call,
+                            color: Colors.blue,
+                            size: 25,
+                          ),
+                              Text('Video Call',
+                                  style: infoWidget.titleButton.copyWith(
+                                      color: Colors.blue,
+                                      fontWeight: FontWeight.normal)),
+
+                            ],),
+                        )
                       ],
                     ),
                   ),

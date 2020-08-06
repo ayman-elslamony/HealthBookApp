@@ -7,8 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:toast/toast.dart';
 
 class BookingInfoCard extends StatefulWidget {
-  final bool showBookingTime;
-  final List<BookingTime> bookingTime;
+   final bool showBookingTime;List<BookingTime> bookingTime=[];
   final int indexForSearchResult;
   BookingInfoCard({this.indexForSearchResult,this.showBookingTime=false,this.bookingTime});
 
@@ -153,14 +152,14 @@ Widget _createBookingTime({int index,TextStyle textStyle}){
                       child: GridView.builder(
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),
-                          itemCount: widget.bookingTime.length,
+                          itemCount: widget.bookingTime == null ?0:widget.bookingTime.length,
                           gridDelegate:
                           SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 3,
                               childAspectRatio: infoWidget.orientation==Orientation.portrait?3:4.7,
                               crossAxisSpacing: 10,
                               mainAxisSpacing: 10),
-                          itemBuilder: (ctx, index) => _createBookingTime(index: index,textStyle: infoWidget.subTitle)),
+                          itemBuilder: (ctx, index) => widget.bookingTime == null || widget.bookingTime.length == 0?Padding(padding: EdgeInsets.all(8.0),child: Text('there is no any booking time',style: infoWidget.subTitle,),):_createBookingTime(index: index,textStyle: infoWidget.subTitle)),
                     ))
                     : SizedBox(),
               ],
