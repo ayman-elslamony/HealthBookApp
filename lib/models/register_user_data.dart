@@ -1,4 +1,4 @@
-import 'package:healthbook/providers/auth_controller.dart';
+
 
 class RegisterData{
   String id;
@@ -7,7 +7,6 @@ class RegisterData{
   String lastName;
   String birthDate;
   String gender;
-
   String job;
   String status;
   String number;

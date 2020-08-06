@@ -7,6 +7,7 @@ import 'package:healthbook/screens/specific_search/specific_search_screen.dart';
 import '../list_of_infomation/list_of_information.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_controller.dart';
+import 'callscreens/pickup/pickup_layout.dart';
 import 'clinic_info/clinic_info.dart';
 import 'home/home_for_doctor_and_patient.dart';
 import 'register_user_data/register_user_data.dart';
@@ -294,7 +295,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 // ForgetPassword(),
                 // PatientPrescription(),
                 Home(),
-               _auth.getUserType == 'doctor'
+                _auth.getUserType == 'doctor'
                     ? ClinicInfo()
                     : SpecificSearch(),
                 UserProfile()

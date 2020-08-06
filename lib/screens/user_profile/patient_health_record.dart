@@ -3,9 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:healthbook/core/ui_components/info_widget.dart';
 import 'package:healthbook/models/doctor_appointment.dart';
 import 'package:healthbook/models/register_user_data.dart';
+import 'package:healthbook/models/user.dart';
 import 'package:healthbook/providers/auth_controller.dart';
 import 'package:healthbook/screens/drugs_radiology_analysis/drugs_radiology_analysis.dart';
 import 'package:healthbook/screens/patient_prescription/widgets/patient_prescription.dart';
+import 'package:healthbook/utils/call_utilities.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -24,6 +27,7 @@ class PatientHealthRecord extends StatefulWidget {
 }
 
 class _PatientHealthRecordState extends State<PatientHealthRecord> {
+  Auth _auth;
   final List<DrugList> allDrugList = [
     DrugList(
         diagnoseName: 'Diabetes mellitus (ICD-250)',
@@ -169,6 +173,11 @@ class _PatientHealthRecordState extends State<PatientHealthRecord> {
   final GlobalKey<ScaffoldState> _patientHealthRecordState =
       GlobalKey<ScaffoldState>();
 
+  @override
+  void initState() {
+    _auth =Provider.of<Auth>(context,listen: false);
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     _cancelButton() {
@@ -381,33 +390,70 @@ class _PatientHealthRecordState extends State<PatientHealthRecord> {
                           width: infoWidget.defaultVerticalPadding,
                         ),
                         Expanded(
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          child: Column(
                             children: <Widget>[
-                              Expanded(
-                                child: Text('${widget.doctorAppointment.registerData.firstName} ${widget.doctorAppointment.registerData.lastName}',
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: infoWidget.title
-                                        .copyWith(color: Colors.blue)),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: <Widget>[
+                                  Expanded(
+                                    child: Text('${widget.doctorAppointment.registerData.firstName} ${widget.doctorAppointment.registerData.lastName}',
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: infoWidget.title
+                                            .copyWith(color: Colors.blue)),
+                                  ),
+                                  FlatButton.icon(
+                                    padding: EdgeInsets.all(0.0),
+                                    onPressed: _cancelButton,
+                                    icon: Icon(
+                                      Icons.delete,
+                                      color: Colors.blue,
+                                      size: infoWidget.orientation ==
+                                              Orientation.portrait
+                                          ? infoWidget.screenWidth * 0.057
+                                          : infoWidget.screenWidth * 0.035,
+                                    ),
+                                    label: Text('Cancel',
+                                        style: infoWidget.titleButton.copyWith(
+                                            color: Colors.blue,
+                                            fontWeight: FontWeight.normal)),
+                                  ),
+                                ],
                               ),
-                              FlatButton.icon(
-                                padding: EdgeInsets.all(0.0),
-                                onPressed: _cancelButton,
-                                icon: Icon(
-                                  Icons.delete,
-                                  color: Colors.blue,
-                                  size: infoWidget.orientation ==
-                                          Orientation.portrait
-                                      ? infoWidget.screenWidth * 0.057
-                                      : infoWidget.screenWidth * 0.035,
+                              Row(children: <Widget>[
+                                IconButton(
+                                  icon: Icon(
+                                    Icons.video_call,
+                                    color: Colors.blue,
+                                  ),
+                                  onPressed: () async {
+                                    User sender= User(
+                                      uid: _auth.userId,
+                                      name: '${_auth.userData.firstName} ${_auth.userData.lastName}',
+                                      profilePhoto: _auth.userData.patientImage,
+                                      username: '${_auth.userData.firstName} ${_auth.userData.lastName}',
+                                    );
+                                    User receiver= User(
+                                      uid: widget.doctorAppointment.registerData.id,
+                                      name: '${widget.doctorAppointment.registerData.firstName} ${widget.doctorAppointment.registerData.lastName}',
+                                      profilePhoto: widget.doctorAppointment.registerData.patientImage,
+                                      username: '${widget.doctorAppointment.registerData.firstName} ${widget.doctorAppointment.registerData.lastName}',
+                                    );
+
+                                    await PermissionHandler().requestPermissions(
+                                      [PermissionGroup.camera, PermissionGroup.microphone],
+                                    );
+                                      CallUtils.dial(
+                                        from: sender,
+                                        to: receiver,
+                                        context: context,
+                                      );
+
+                                  }
+
                                 ),
-                                label: Text('Cancel',
-                                    style: infoWidget.titleButton.copyWith(
-                                        color: Colors.blue,
-                                        fontWeight: FontWeight.normal)),
-                              ),
+                              ],)
                             ],
                           ),
                         )
