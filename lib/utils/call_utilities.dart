@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:healthbook/models/call.dart';
-import 'package:healthbook/models/user.dart';
 import 'package:healthbook/providers/call_methods.dart';
 import 'package:healthbook/screens/callscreens/call_screen.dart';
 
@@ -10,7 +9,7 @@ import 'package:healthbook/screens/callscreens/call_screen.dart';
 class CallUtils {
   static final CallMethods callMethods = CallMethods();
 
-  static dial({User from, User to, context}) async {
+  static dial({UserCall from, UserCall to, context}) async {
     Call call = Call(
       callerId: from.uid,
       callerName: from.name,

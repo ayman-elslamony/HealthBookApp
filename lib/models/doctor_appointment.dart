@@ -1,4 +1,4 @@
-import 'package:healthbook/models/register_user_data.dart';
+import 'package:healthbook/models/user_data.dart';
 
 class DoctorAppointment{
   String appointmentId;

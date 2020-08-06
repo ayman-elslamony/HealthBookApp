@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_simple_rating_bar/flutter_simple_rating_bar.dart';
 import 'package:healthbook/core/ui_components/info_widget.dart';
-import 'package:healthbook/models/appointment.dart';
+import 'package:healthbook/models/appointment_reservation.dart';
 import 'package:healthbook/models/booking_time.dart';
 import 'package:healthbook/models/search_result.dart';
 import 'package:healthbook/providers/auth_controller.dart';

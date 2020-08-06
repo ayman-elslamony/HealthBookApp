@@ -1,5 +1,3 @@
-
-
 class RegisterData{
   String id;
   String firstName;

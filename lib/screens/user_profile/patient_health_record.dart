@@ -1,9 +1,9 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:healthbook/core/ui_components/info_widget.dart';
+import 'package:healthbook/models/call.dart';
 import 'package:healthbook/models/doctor_appointment.dart';
-import 'package:healthbook/models/register_user_data.dart';
-import 'package:healthbook/models/user.dart';
+import 'package:healthbook/models/user_data.dart';
 import 'package:healthbook/providers/auth_controller.dart';
 import 'package:healthbook/screens/drugs_radiology_analysis/drugs_radiology_analysis.dart';
 import 'package:healthbook/screens/patient_prescription/widgets/patient_prescription.dart';
@@ -428,13 +428,13 @@ class _PatientHealthRecordState extends State<PatientHealthRecord> {
                                     color: Colors.blue,
                                   ),
                                   onPressed: () async {
-                                    User sender= User(
+                                    UserCall sender= UserCall(
                                       uid: _auth.userId,
                                       name: '${_auth.userData.firstName} ${_auth.userData.lastName}',
                                       profilePhoto: _auth.userData.patientImage,
                                       username: '${_auth.userData.firstName} ${_auth.userData.lastName}',
                                     );
-                                    User receiver= User(
+                                    UserCall receiver= UserCall(
                                       uid: widget.doctorAppointment.registerData.id,
                                       name: '${widget.doctorAppointment.registerData.firstName} ${widget.doctorAppointment.registerData.lastName}',
                                       profilePhoto: widget.doctorAppointment.registerData.patientImage,

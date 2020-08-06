@@ -1,7 +1,7 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:healthbook/core/ui_components/info_widget.dart';
-import 'package:healthbook/models/register_user_data.dart';
+import 'package:healthbook/models/user_data.dart';
 import 'package:healthbook/providers/auth_controller.dart';
 import 'package:healthbook/screens/callscreens/pickup/pickup_layout.dart';
 

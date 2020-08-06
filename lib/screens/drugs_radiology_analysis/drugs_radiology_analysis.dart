@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:healthbook/core/ui_components/info_widget.dart';
-import 'package:healthbook/models/register_user_data.dart';
+import 'package:healthbook/models/user_data.dart';
 import 'showDrugs.dart';
 
 class DoctorsInEachDosage {

@@ -4,7 +4,7 @@ import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:healthbook/configs/agora_configs.dart';
+import 'package:healthbook/screens/callscreens/configs/agora_configs.dart';
 import 'package:healthbook/models/call.dart';
 import 'package:healthbook/providers/auth_controller.dart';
 import 'package:healthbook/providers/call_methods.dart';

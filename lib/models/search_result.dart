@@ -1,5 +1,5 @@
 import 'clinic_data.dart';
-import 'register_user_data.dart';
+import 'user_data.dart';
 
 class SearchResult{
   RegisterData doctorData;
