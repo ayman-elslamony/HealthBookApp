@@ -183,15 +183,15 @@ class Auth with ChangeNotifier {
       },
       isAppoitment: true);
       print('appointmentData$appointmentData');
-      if(appointmentData.length !=0){
+      if(appointmentData['Doctor'].length !=0){
         List<DoctorAppointment> allAppointment=[];
         var userData = await _netWork
             .getData(url: 'patient/5ee3df2ef8ae63001735e985', headers: {
           'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFobWVkMTJAZ21haWwuY29tIiwiX2lkIjoiNWVlM2RmMmVmOGFlNjMwMDE3MzVlOTg1Iiwicm9sZSI6MiwiaWF0IjoxNTk2NTgwNjExfQ.D6HjAxcZraIEQlPEtG0jVbKrqT5dRiaW5dbuf7yJaCU',
         });
-        for(int i=0; i<appointmentData.length; i++){
-          print(appointmentData[i]['patientID']);
-          allAppointment.add(DoctorAppointment.fromJson(appointmentData[i],userData['patient']));
+        for(int i=0; i<appointmentData['Doctor'].length; i++){
+          print(appointmentData['Doctor'][i]['patientID']);
+          allAppointment.add(DoctorAppointment.fromJson(appointmentData['Doctor'][i],userData['patient']));
         }
         appointmentForDoctor =allAppointment;
         notifyListeners();
@@ -238,20 +238,20 @@ class Auth with ChangeNotifier {
 //      ));
       print('appointmentDataappointmentData$appointmentData');
       print(appointmentData);
-      if(appointmentData.length !=0){
+      if(appointmentData['patient'].length !=0){
         List<PatientAppointment> allAppointment=[];
         var userData = await _netWork
             .getData(url: 'doctor/5ec8a319fa6d9b35d08f0058', headers: {
           'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IncyQHcuY29tIiwiX2lkIjoiNWVjOGEzMTlmYTZkOWIzNWQwOGYwMDU4Iiwicm9sZSI6MCwiaWF0IjoxNTk2NTkxNDc3fQ.LqPY6GQV3hsFtSI4EjTKjub1-7ADFKf45Vt3SG-ubxg',
         });
         print(userData);
-        for(int i=0; i<appointmentData.length; i++){
+        for(int i=0; i<appointmentData['patient'].length; i++){
           var clinicData = await _netWork
-              .getData(url: 'clinic/${appointmentData[i]['clinicID']}', headers: {
+              .getData(url: 'clinic/${appointmentData['patient'][i]['clinicID']}', headers: {
             'Authorization': 'Bearer $_token',
           });
           print(clinicData);
-          allAppointment.add(PatientAppointment.fromJson(appointmentData[i], userData['doctor'], clinicData['clinic']));
+          allAppointment.add(PatientAppointment.fromJson(appointmentData['patient'][i], userData['doctor'], clinicData['clinic']));
         }
         appointmentForPatient = allAppointment;
         notifyListeners();

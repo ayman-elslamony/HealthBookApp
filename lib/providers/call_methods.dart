@@ -5,10 +5,8 @@ import 'package:healthbook/models/call.dart';
 class CallMethods {
   final CollectionReference callCollection =
       Firestore.instance.collection("call");
-
   Stream<DocumentSnapshot> callStream({String uid}) =>
       callCollection.document(uid).snapshots();
-
   Future<bool> makeCall({Call call}) async {
     try {
       call.hasDialled = true;
@@ -25,7 +23,6 @@ class CallMethods {
       return false;
     }
   }
-
   Future<bool> endCall({Call call}) async {
     try {
       await callCollection.document(call.callerId).delete();

@@ -277,36 +277,171 @@ class _LoginState extends State<Login> {
 //                    ),
 //                  ),
 
-                  Center(
-                    child: Form(
-                      key: _formKey,
-                      child: Padding(
-                        padding: EdgeInsets.all(infoWidget.screenWidth*0.02),
-                        child: Column(
-                          children: <Widget>[
-                            _goToSignUp
-                                ?SizedBox(
-                              height: infoWidget.orientation ==Orientation.portrait?infoWidget.screenHeight*0.08:infoWidget.screenHeight*0.14,
-                                  child: TextFormField(
+                  Form(
+                    key: _formKey,
+                    child: Padding(
+                      padding: EdgeInsets.all(infoWidget.screenWidth*0.02),
+                      child: Column(
+                        children: <Widget>[
+                          _goToSignUp
+                              ?SizedBox(
+                            height: infoWidget.orientation ==Orientation.portrait?infoWidget.screenHeight*0.08:infoWidget.screenHeight*0.14,
+                                child: TextFormField(
+                            autofocus: false,
+                            style: TextStyle(
+                                fontSize: infoWidget.orientation ==Orientation.portrait?infoWidget.screenWidth*0.04:infoWidget.screenWidth*0.035
+                            ),
+                            textInputAction: TextInputAction.next,
+                            decoration: InputDecoration(
+                                prefixIcon: Icon(Icons.new_releases),
+//                                  labelStyle: TextStyle(
+//
+//                                  ),
+                                filled: true,
+                                fillColor: Colors.white,
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
+                                  borderSide: BorderSide(
+                                    color: Colors.blue,
+                                  ),
+                                ),
+                                disabledBorder: OutlineInputBorder(
+                                  borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
+                                  borderSide: BorderSide(color: Colors.blue),
+                                ),
+                                errorBorder: OutlineInputBorder(
+                                  borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
+                                  borderSide: BorderSide(color: Colors.blue),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
+                                  borderSide: BorderSide(color: Colors.blue),
+                                ),
+                                focusedErrorBorder: OutlineInputBorder(
+                                  borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
+                                  borderSide: BorderSide(color: Colors.blue),
+                                ),
+                                labelText: 'National ID',
+                            ),
+                            keyboardType: TextInputType.emailAddress,
+// ignore: missing_return
+                            validator: (String val) {
+                                if (val.trim().isEmpty || val.trim().length != 14) {
+                                  return 'Please enter National ID';
+                                }
+                                if (val.trim().length != 14) {
+                                  return 'Invalid National ID';
+                                }
+                            },
+                            onSaved: (value) {
+                                _loginData['National ID'] = value.trim();
+                            },
+                            onFieldSubmitted: (_) {
+                                FocusScope.of(context).requestFocus(_emailNode);
+                            },
+                          ),
+                              ):SizedBox(),
+                          _goToSignUp
+                              ?SizedBox(
+                            height: infoWidget.screenHeight*0.02,
+                          ):SizedBox(),
+                          SizedBox(
+                            height: infoWidget.orientation ==Orientation.portrait?infoWidget.screenHeight*0.08:infoWidget.screenHeight*0.14,
+                            child: TextFormField(
+                              autofocus: false,
+                              textInputAction: TextInputAction.next,
+                              focusNode: _emailNode,
+                              style: TextStyle(
+                                  fontSize: infoWidget.orientation ==Orientation.portrait?infoWidget.screenWidth*0.04:infoWidget.screenWidth*0.035
+                              ),
+                              decoration: InputDecoration(
+                                prefixIcon: Icon(Icons.email),
+                                filled: true,
+                                fillColor: Colors.white,
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
+                                  borderSide: BorderSide(
+                                    color: Colors.blue,
+                                  ),
+                                ),
+                                disabledBorder: OutlineInputBorder(
+                                  borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
+                                  borderSide: BorderSide(color: Colors.blue),
+                                ),
+                                errorBorder: OutlineInputBorder(
+                                  borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
+                                  borderSide: BorderSide(color: Colors.blue),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
+                                  borderSide: BorderSide(color: Colors.blue),
+                                ),
+                                focusedErrorBorder: OutlineInputBorder(
+                                  borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
+                                  borderSide: BorderSide(color: Colors.blue),
+                                ),
+                                labelText: 'E-Mail',
+                              ),
+                              keyboardType: TextInputType.emailAddress,
+// ignore: missing_return
+                              validator: (value) {
+                                print(value);
+                                if (value.trim().isEmpty) {
+                                  return "Please enter your email";
+                                }
+                                if (!(value.contains("@"))) {
+                                  return "Invalid email";
+                                }
+                              },
+                              onSaved: (value) {
+                                _loginData['email'] = value.trim();
+                                _emailNode.unfocus();
+                              },
+                              onFieldSubmitted: (_) {
+                                _emailNode.unfocus();
+                                FocusScope.of(context).requestFocus(_passwordNode);
+                              },
+                            ),
+                          ),
+                          SizedBox(
+                            height: infoWidget.screenHeight*0.02,
+                          ),
+                          SizedBox(
+                            height: infoWidget.orientation ==Orientation.portrait?infoWidget.screenHeight*0.08:infoWidget.screenHeight*0.14,
+                            child: TextFormField(
                               autofocus: false,
                               style: TextStyle(
                                   fontSize: infoWidget.orientation ==Orientation.portrait?infoWidget.screenWidth*0.04:infoWidget.screenWidth*0.035
                               ),
-                              textInputAction: TextInputAction.next,
+                              textInputAction: _goToSignUp
+                                  ? TextInputAction.next
+                                  : TextInputAction.done,
+                              focusNode: _passwordNode,
+                              obscureText: _securePassword,
                               decoration: InputDecoration(
-                                  prefixIcon: Icon(Icons.new_releases),
-//                                  labelStyle: TextStyle(
-//
-//                                  ),
+                                  prefixIcon: Icon(Icons.lock_open),
+                                  suffixIcon: InkWell(
+                                    child: Icon(_securePassword == false
+                                        ? Icons.visibility
+                                        : Icons.visibility_off),
+                                    onTap: () {
+                                      setState(() {
+                                        _securePassword = !_securePassword;
+                                      });
+                                    },
+                                  ),
                                   filled: true,
                                   fillColor: Colors.white,
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0)),
-                                    borderSide: BorderSide(
-                                      color: Colors.blue,
-                                    ),
-                                  ),
                                   disabledBorder: OutlineInputBorder(
                                     borderRadius:
                                     BorderRadius.all(Radius.circular(10.0)),
@@ -317,53 +452,11 @@ class _LoginState extends State<Login> {
                                     BorderRadius.all(Radius.circular(10.0)),
                                     borderSide: BorderSide(color: Colors.blue),
                                   ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0)),
-                                    borderSide: BorderSide(color: Colors.blue),
-                                  ),
                                   focusedErrorBorder: OutlineInputBorder(
                                     borderRadius:
                                     BorderRadius.all(Radius.circular(10.0)),
                                     borderSide: BorderSide(color: Colors.blue),
                                   ),
-                                  labelText: 'National ID',
-                              ),
-                              keyboardType: TextInputType.emailAddress,
-// ignore: missing_return
-                              validator: (String val) {
-                                  if (val.trim().isEmpty || val.trim().length != 14) {
-                                    return 'Please enter National ID';
-                                  }
-                                  if (val.trim().length != 14) {
-                                    return 'Invalid National ID';
-                                  }
-                              },
-                              onSaved: (value) {
-                                  _loginData['National ID'] = value.trim();
-                              },
-                              onFieldSubmitted: (_) {
-                                  FocusScope.of(context).requestFocus(_emailNode);
-                              },
-                            ),
-                                ):SizedBox(),
-                            _goToSignUp
-                                ?SizedBox(
-                              height: infoWidget.screenHeight*0.02,
-                            ):SizedBox(),
-                            SizedBox(
-                              height: infoWidget.orientation ==Orientation.portrait?infoWidget.screenHeight*0.08:infoWidget.screenHeight*0.14,
-                              child: TextFormField(
-                                autofocus: false,
-                                textInputAction: TextInputAction.next,
-                                focusNode: _emailNode,
-                                style: TextStyle(
-                                    fontSize: infoWidget.orientation ==Orientation.portrait?infoWidget.screenWidth*0.04:infoWidget.screenWidth*0.035
-                                ),
-                                decoration: InputDecoration(
-                                  prefixIcon: Icon(Icons.email),
-                                  filled: true,
-                                  fillColor: Colors.white,
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius:
                                     BorderRadius.all(Radius.circular(10.0)),
@@ -371,203 +464,109 @@ class _LoginState extends State<Login> {
                                       color: Colors.blue,
                                     ),
                                   ),
-                                  disabledBorder: OutlineInputBorder(
-                                    borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0)),
-                                    borderSide: BorderSide(color: Colors.blue),
-                                  ),
-                                  errorBorder: OutlineInputBorder(
-                                    borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0)),
-                                    borderSide: BorderSide(color: Colors.blue),
-                                  ),
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius:
                                     BorderRadius.all(Radius.circular(10.0)),
                                     borderSide: BorderSide(color: Colors.blue),
                                   ),
-                                  focusedErrorBorder: OutlineInputBorder(
-                                    borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0)),
-                                    borderSide: BorderSide(color: Colors.blue),
-                                  ),
-                                  labelText: 'E-Mail',
-                                ),
-                                keyboardType: TextInputType.emailAddress,
-// ignore: missing_return
-                                validator: (value) {
-                                  print(value);
-                                  if (value.trim().isEmpty) {
-                                    return "Please enter your email";
-                                  }
-                                  if (!(value.contains("@"))) {
-                                    return "Invalid email";
-                                  }
-                                },
-                                onSaved: (value) {
-                                  _loginData['email'] = value.trim();
-                                  _emailNode.unfocus();
-                                },
-                                onFieldSubmitted: (_) {
-                                  _emailNode.unfocus();
-                                  FocusScope.of(context).requestFocus(_passwordNode);
-                                },
-                              ),
-                            ),
-                            SizedBox(
-                              height: infoWidget.screenHeight*0.02,
-                            ),
-                            SizedBox(
-                              height: infoWidget.orientation ==Orientation.portrait?infoWidget.screenHeight*0.08:infoWidget.screenHeight*0.14,
-                              child: TextFormField(
-                                autofocus: false,
-                                style: TextStyle(
-                                    fontSize: infoWidget.orientation ==Orientation.portrait?infoWidget.screenWidth*0.04:infoWidget.screenWidth*0.035
-                                ),
-                                textInputAction: _goToSignUp
-                                    ? TextInputAction.next
-                                    : TextInputAction.done,
-                                focusNode: _passwordNode,
-                                obscureText: _securePassword,
-                                decoration: InputDecoration(
-                                    prefixIcon: Icon(Icons.lock_open),
-                                    suffixIcon: InkWell(
-                                      child: Icon(_securePassword == false
-                                          ? Icons.visibility
-                                          : Icons.visibility_off),
-                                      onTap: () {
-                                        setState(() {
-                                          _securePassword = !_securePassword;
-                                        });
-                                      },
-                                    ),
-                                    filled: true,
-                                    fillColor: Colors.white,
-                                    disabledBorder: OutlineInputBorder(
-                                      borderRadius:
-                                      BorderRadius.all(Radius.circular(10.0)),
-                                      borderSide: BorderSide(color: Colors.blue),
-                                    ),
-                                    errorBorder: OutlineInputBorder(
-                                      borderRadius:
-                                      BorderRadius.all(Radius.circular(10.0)),
-                                      borderSide: BorderSide(color: Colors.blue),
-                                    ),
-                                    focusedErrorBorder: OutlineInputBorder(
-                                      borderRadius:
-                                      BorderRadius.all(Radius.circular(10.0)),
-                                      borderSide: BorderSide(color: Colors.blue),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderRadius:
-                                      BorderRadius.all(Radius.circular(10.0)),
-                                      borderSide: BorderSide(
-                                        color: Colors.blue,
-                                      ),
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderRadius:
-                                      BorderRadius.all(Radius.circular(10.0)),
-                                      borderSide: BorderSide(color: Colors.blue),
-                                    ),
-                                    labelText: 'Password'),
-
-// ignore: missing_return
-                                validator: (value) {
-                                  if (value.trim().isEmpty) {
-                                    return 'Please enter your password';
-                                  }
-                                  if (value.trim().isEmpty ||
-                                      value.trim().length < 1) {
-                                    return 'Password is too short!';
-                                  }
-                                },
-                                onSaved: (_) {
-                                  _passwordNode.unfocus();
-                                },
-                                onChanged: (value) {
-                                  _loginData['password'] = value.trim();
-                                },
-                                onFieldSubmitted:(val){
-                                  if(_goToSignUp){
-                                    _passwordNode.unfocus();
-                                    FocusScope.of(context)
-                                        .requestFocus(_confirmPassNode);
-                                  }else{
-                                    _passwordNode.unfocus();
-                                  }
-                                },
-                              ),
-                            ),
-                            SizedBox(
-                              height: infoWidget.screenHeight*0.02,
-                            ),
-                            _goToSignUp
-                                ? SizedBox(
-                              height: infoWidget.orientation ==Orientation.portrait?infoWidget.screenHeight*0.08:infoWidget.screenHeight*0.14,
-                                  child: TextFormField(
-                              autofocus: false,
-                                    style: TextStyle(
-                                        fontSize: infoWidget.orientation ==Orientation.portrait?infoWidget.screenWidth*0.04:infoWidget.screenWidth*0.035
-                                    ),
-                              textInputAction: TextInputAction.done,
-                              focusNode: _confirmPassNode,
-                              obscureText: true,
-                              decoration: InputDecoration(
-                                    prefixIcon: Icon(Icons.lock_open),
-                                    filled: true,
-                                    fillColor: Colors.white,
-                                    disabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(10.0)),
-                                      borderSide:
-                                      BorderSide(color: Colors.blue),
-                                    ),
-                                    focusedErrorBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(10.0)),
-                                      borderSide:
-                                      BorderSide(color: Colors.blue),
-                                    ),
-                                    errorBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(10.0)),
-                                      borderSide:
-                                      BorderSide(color: Colors.blue),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(10.0)),
-                                      borderSide: BorderSide(
-                                        color: Colors.blue,
-                                      ),
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(10.0)),
-                                      borderSide:
-                                      BorderSide(color: Colors.blue),
-                                    ),
-                                    labelText: 'Confirm Password'),
+                                  labelText: 'Password'),
 
 // ignore: missing_return
                               validator: (value) {
-                                  if (value.trim().isEmpty) {
-                                    return 'Please enter your password';
-                                  }
-                                  if (value.trim() != _loginData['password']) {
-                                    return 'Password not identical!';
-                                  }
+                                if (value.trim().isEmpty) {
+                                  return 'Please enter your password';
+                                }
+                                if (value.trim().isEmpty ||
+                                    value.trim().length < 1) {
+                                  return 'Password is too short!';
+                                }
                               },
                               onSaved: (_) {
-                                  _confirmPassNode.unfocus();
+                                _passwordNode.unfocus();
                               },
-                              onFieldSubmitted: (_) {
-                                  _confirmPassNode.unfocus();
+                              onChanged: (value) {
+                                _loginData['password'] = value.trim();
+                              },
+                              onFieldSubmitted:(val){
+                                if(_goToSignUp){
+                                  _passwordNode.unfocus();
+                                  FocusScope.of(context)
+                                      .requestFocus(_confirmPassNode);
+                                }else{
+                                  _passwordNode.unfocus();
+                                }
                               },
                             ),
-                                )
-                                : SizedBox(),
+                          ),
+                          SizedBox(
+                            height: infoWidget.screenHeight*0.02,
+                          ),
+                          _goToSignUp
+                              ? SizedBox(
+                            height: infoWidget.orientation ==Orientation.portrait?infoWidget.screenHeight*0.08:infoWidget.screenHeight*0.14,
+                                child: TextFormField(
+                            autofocus: false,
+                                  style: TextStyle(
+                                      fontSize: infoWidget.orientation ==Orientation.portrait?infoWidget.screenWidth*0.04:infoWidget.screenWidth*0.035
+                                  ),
+                            textInputAction: TextInputAction.done,
+                            focusNode: _confirmPassNode,
+                            obscureText: true,
+                            decoration: InputDecoration(
+                                  prefixIcon: Icon(Icons.lock_open),
+                                  filled: true,
+                                  fillColor: Colors.white,
+                                  disabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(10.0)),
+                                    borderSide:
+                                    BorderSide(color: Colors.blue),
+                                  ),
+                                  focusedErrorBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(10.0)),
+                                    borderSide:
+                                    BorderSide(color: Colors.blue),
+                                  ),
+                                  errorBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(10.0)),
+                                    borderSide:
+                                    BorderSide(color: Colors.blue),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(10.0)),
+                                    borderSide: BorderSide(
+                                      color: Colors.blue,
+                                    ),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(10.0)),
+                                    borderSide:
+                                    BorderSide(color: Colors.blue),
+                                  ),
+                                  labelText: 'Confirm Password'),
+
+// ignore: missing_return
+                            validator: (value) {
+                                if (value.trim().isEmpty) {
+                                  return 'Please enter your password';
+                                }
+                                if (value.trim() != _loginData['password']) {
+                                  return 'Password not identical!';
+                                }
+                            },
+                            onSaved: (_) {
+                                _confirmPassNode.unfocus();
+                            },
+                            onFieldSubmitted: (_) {
+                                _confirmPassNode.unfocus();
+                            },
+                          ),
+                              )
+                              : SizedBox(),
 //                            _goToSignUp
 //                                ? SizedBox()
 //                                : Padding(
@@ -595,96 +594,95 @@ class _LoginState extends State<Login> {
 //                                ],
 //                              ),
 //                            ),
-                            _goToSignUp
-                                ? SizedBox():SizedBox(
-                              height: infoWidget.screenHeight*0.065,
-                              width: double.infinity,
-                              child: Row(
-                                children: <Widget>[
-                                  Expanded(
-                                    child: RadioListTile(
-                                      title: Text('Patient',style: TextStyle(color: _selectedRadio==1?Colors.blue:Colors.black,fontWeight: _selectedRadio==1?FontWeight.bold:FontWeight.normal,fontSize: infoWidget.orientation==Orientation.portrait? infoWidget.screenWidth*0.04:infoWidget.screenWidth*0.032,),),
-                                      value: 1,
-                                      groupValue: _selectedRadio,
-                                      onChanged: onChangedRadio,
+                          _goToSignUp
+                              ? SizedBox():SizedBox(
+                            height: infoWidget.screenHeight*0.065,
+                            width: double.infinity,
+                            child: Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: RadioListTile(
+                                    title: Text('Patient',style: TextStyle(color: _selectedRadio==1?Colors.blue:Colors.black,fontWeight: _selectedRadio==1?FontWeight.bold:FontWeight.normal,fontSize: infoWidget.orientation==Orientation.portrait? infoWidget.screenWidth*0.04:infoWidget.screenWidth*0.032,),),
+                                    value: 1,
+                                    groupValue: _selectedRadio,
+                                    onChanged: onChangedRadio,
+                                    activeColor: Colors.blue,
+                                  ),
+                                ),
+                                Expanded(
+                                  child: RadioListTile(
+                                      title: Text('Doctor',style: TextStyle(color: _selectedRadio==2?Colors.blue:Colors.black,fontWeight: _selectedRadio==2?FontWeight.bold:FontWeight.normal,fontSize: infoWidget.orientation==Orientation.portrait? infoWidget.screenWidth*0.04:infoWidget.screenWidth*0.032,),),
+                                      value: 2,
                                       activeColor: Colors.blue,
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: RadioListTile(
-                                        title: Text('Doctor',style: TextStyle(color: _selectedRadio==2?Colors.blue:Colors.black,fontWeight: _selectedRadio==2?FontWeight.bold:FontWeight.normal,fontSize: infoWidget.orientation==Orientation.portrait? infoWidget.screenWidth*0.04:infoWidget.screenWidth*0.032,),),
-                                        value: 2,
-                                        activeColor: Colors.blue,
-                                        groupValue: _selectedRadio,
-                                        onChanged: onChangedRadio),
-                                  ),
-                                ],
-                              ),
+                                      groupValue: _selectedRadio,
+                                      onChanged: onChangedRadio),
+                                ),
+                              ],
                             ),
+                          ),
 
-                            SizedBox(
-                              height: infoWidget.orientation==Orientation.portrait?infoWidget.screenHeight*0.099:infoWidget.screenHeight*0.2,
-                            ),
-                            _loadingUser == true
-                                ? CircularProgressIndicator(
-                              backgroundColor: Colors.blue,
-                            )
-                                : RaisedButton(
-                              child:
-                              Text(_goToSignUp ? 'SIGN UP' : 'SIGN IN',style: TextStyle(fontSize: infoWidget.orientation==Orientation.portrait?infoWidget.screenWidth*0.044:infoWidget.screenWidth*0.035),),
-                              onPressed: _submit
+                          SizedBox(
+                            height: infoWidget.orientation==Orientation.portrait?infoWidget.screenHeight*0.099:infoWidget.screenHeight*0.2,
+                          ),
+                          _loadingUser == true
+                              ? CircularProgressIndicator(
+                            backgroundColor: Colors.blue,
+                          )
+                              : RaisedButton(
+                            child:
+                            Text(_goToSignUp ? 'SIGN UP' : 'SIGN IN',style: TextStyle(fontSize: infoWidget.orientation==Orientation.portrait?infoWidget.screenWidth*0.044:infoWidget.screenWidth*0.035),),
+                            onPressed: _submit
 //                                    (){
 //                                  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>RegisterUserData()));
 //                                }
-                              ,
-                              //_submit,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
+                            ,
+                            //_submit,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 30.0, vertical: 8.0),
+                            color: Theme.of(context).primaryColor,
+                            textColor: Theme.of(context)
+                                .primaryTextTheme
+                                .button
+                                .color,
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                _goToSignUp
+                                    ? 'Already have acount '
+                                    : 'Not Regiter? ',
+                                style:
+                                Theme.of(context).textTheme.display1.copyWith(
+                                  color: Colors.grey.shade500,
+                                  fontSize: infoWidget.orientation==Orientation.portrait?infoWidget.screenWidth*0.044:infoWidget.screenWidth*0.030,
+                                ),
                               ),
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 30.0, vertical: 8.0),
-                              color: Theme.of(context).primaryColor,
-                              textColor: Theme.of(context)
-                                  .primaryTextTheme
-                                  .button
-                                  .color,
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Text(
-                                  _goToSignUp
-                                      ? 'Already have acount '
-                                      : 'Not Regiter? ',
+                              InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    _goToSignUp = !_goToSignUp;
+                                  });
+                                  _formKey.currentState.reset();
+                                },
+                                child: Text(
+                                  _goToSignUp ? 'Sign In' : 'create new account',
                                   style:
-                                  Theme.of(context).textTheme.display1.copyWith(
-                                    color: Colors.grey.shade500,
-                                    fontSize: infoWidget.orientation==Orientation.portrait?infoWidget.screenWidth*0.044:infoWidget.screenWidth*0.030,
+                                  Theme.of(context).textTheme.body2.copyWith(
+                                    decoration: TextDecoration.underline,
+                                      fontSize: infoWidget.orientation==Orientation.portrait?infoWidget.screenWidth*0.044:infoWidget.screenWidth*0.030
                                   ),
                                 ),
-                                InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      _goToSignUp = !_goToSignUp;
-                                    });
-                                    _formKey.currentState.reset();
-                                  },
-                                  child: Text(
-                                    _goToSignUp ? 'Sign In' : 'create new account',
-                                    style:
-                                    Theme.of(context).textTheme.body2.copyWith(
-                                      decoration: TextDecoration.underline,
-                                        fontSize: infoWidget.orientation==Orientation.portrait?infoWidget.screenWidth*0.044:infoWidget.screenWidth*0.030
-                                    ),
-                                  ),
-                                )
-                              ],
-                            )
-                          ],
-                        ),
+                              )
+                            ],
+                          )
+                        ],
                       ),
                     ),
                   ),

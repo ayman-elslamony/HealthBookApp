@@ -23,7 +23,6 @@ dependencies:
   cupertino_icons: ^0.1.2
   intl:
   curved_navigation_bar: ^0.3.2
-  autocomplete_textfield: ^1.7.3
   age: ^0.0.1
   shared_preferences: ^0.5.8
   flutter_simple_rating_bar:

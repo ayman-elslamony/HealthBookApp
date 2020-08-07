@@ -167,7 +167,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       accountEmail: Text("${_auth.email}"),
                       currentAccountPicture: CircleAvatar(
                         backgroundColor:
-
                         Theme
                             .of(context)
                             .platform == TargetPlatform.iOS
