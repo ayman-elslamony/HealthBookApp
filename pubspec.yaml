@@ -76,8 +76,8 @@ flutter:
    - assets/icons/profilename.png
    - assets/icons/clinic.png
    - assets/icons/clinicname.png
-   - assets/icons/search.jpeg
-   - assets/icons/searchwithname.jpeg
+   - assets/icons/search.png
+   - assets/icons/nameSearch.png
   # To add assets to your application, add an assets section, like this:
   # assets:
   #  - images/a_dot_burr.jpeg

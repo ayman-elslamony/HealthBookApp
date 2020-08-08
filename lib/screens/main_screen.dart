@@ -42,6 +42,9 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _pageController = PageController();
     _auth = Provider.of<Auth>(context, listen: false);
+    if(_auth.getUserType=='patient'){
+    type = ['Home', 'Search', 'Profile'];
+    }
   }
 
   @override
@@ -202,7 +205,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           _pageController.jumpToPage(_page);
                         }):_drawerListTile(
                     name: "Search",
-                    imgPath: 'assets/icons/searchwithname.jpeg',
+                    imgPath: 'assets/icons/search.png',
                     infoWidget: infoWidget,
                     onTap: () {
                       Navigator.of(context).pop();
@@ -273,8 +276,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 _auth.getUserType == 'doctor'?_page == 1
                     ? _iconNavBar('assets/icons/clinic.png',infoWidget)
                     : _iconNavBar('assets/icons/clinicname.png',infoWidget):_page == 1
-                    ? _iconNavBar('assets/icons/search.jpeg',infoWidget)
-                    : _iconNavBar('assets/icons/searchwithname.jpeg',infoWidget),
+                    ? _iconNavBar('assets/icons/search.png',infoWidget)
+                    : _iconNavBar('assets/icons/nameSearch.png',infoWidget),
                 _page == 2
                     ? _iconNavBar('assets/icons/profile.png',infoWidget)
                     : _iconNavBar('assets/icons/profilename.png',infoWidget),
