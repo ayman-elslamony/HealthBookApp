@@ -100,7 +100,12 @@ class _RegisterUserDataState extends State<RegisterUserData> {
       _accountData['long'] = 0.0;
       _accountData['materialStatus'] = _auth.userData.status??'';
       _accountData['gender'] = _auth.userData.gender??'';
-      List<String> birth = _auth.userData.birthDate.split('/');
+      List<String> birth=[];
+      if(_auth.userData.birthDate.contains('-')){
+         birth = _auth.userData.birthDate.split('-');
+      }else{
+         birth = _auth.userData.birthDate.split('/');
+      }
       print(birth);
       print(_auth.userData.birthDate);
       _isDaySelected = birth.length==3?true:false;
@@ -108,7 +113,7 @@ class _RegisterUserDataState extends State<RegisterUserData> {
       _isYearSelected= birth.length==3?true:false;
       _isGenderSelected = _auth.userData.gender!=null?true:false;
       _isMaterialStatus = _auth.userData.status!=null?true:false;
-      _accountData['year']= birth[2]??'';
+      _accountData['year']= birth.length ==2?'':birth[2]??'';
       _accountData['month'] = birth[1]??'';
       _accountData['day'] = birth[0]??'';
       if (_auth.getUserType == 'doctor') {
@@ -411,7 +416,7 @@ class _RegisterUserDataState extends State<RegisterUserData> {
 
   @override
   Widget build(BuildContext context) {
-    SystemChannels.textInput.invokeMethod('TextInput.hide');
+//    SystemChannels.textInput.invokeMethod('TextInput.hide');
     Widget _createBirthDate(
         {String name, List<int> list, Function fun, int initialValue}) {
       return Padding(
@@ -1626,7 +1631,7 @@ class _RegisterUserDataState extends State<RegisterUserData> {
               });
               Toast.show("Successfully Editing", context,
                   duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
-              Navigator.of(context).pushNamed(HomeScreen.routeName);
+              Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>HomeScreen()));
             } else {
               await showDialog(
                 context: context,
@@ -1648,7 +1653,7 @@ class _RegisterUserDataState extends State<RegisterUserData> {
                     FlatButton(
                       child: Text("Ok"),
                       onPressed: () {
-                        Navigator.of(context).pushNamed(HomeScreen.routeName);
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>HomeScreen()));
                       },
                     ),
                     FlatButton(

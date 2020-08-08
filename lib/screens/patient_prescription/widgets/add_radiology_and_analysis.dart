@@ -115,7 +115,7 @@ class _AddRadiologyAndAnalysisState extends State<AddRadiologyAndAnalysis> {
       Padding(
         padding: const EdgeInsets.all(8.0),
         child: SizedBox(
-          height: MediaQuery.of(context).size.height*0.51,
+          height: widget.type == 'Radiology'?MediaQuery.of(context).size.height*0.51:MediaQuery.of(context).size.height*0.20,
           child:
           SingleChildScrollView(
             child: Column(
@@ -153,6 +153,7 @@ class _AddRadiologyAndAnalysisState extends State<AddRadiologyAndAnalysis> {
                   },
                   onChanged: (val){
                     name = val;
+                    widget.function(name,description,_imageFile);
                   },
                 ),
                 SizedBox(height: 8.0,),
@@ -190,7 +191,7 @@ class _AddRadiologyAndAnalysisState extends State<AddRadiologyAndAnalysis> {
                   },
                 ),
                 SizedBox(height: 8.0,),
-                Container(
+                widget.type == 'Radiology'? Container(
                   width: MediaQuery.of(context).size.width,
                   height: 150,
                   decoration: BoxDecoration(
@@ -214,8 +215,8 @@ class _AddRadiologyAndAnalysisState extends State<AddRadiologyAndAnalysis> {
                       ),
                     ),
                   ),
-                ),
-                Padding(
+                ):SizedBox(),
+                widget.type == 'Radiology'?Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: InkWell(
                     onTap: () {
@@ -253,7 +254,7 @@ class _AddRadiologyAndAnalysisState extends State<AddRadiologyAndAnalysis> {
                       ],
                     ),
                   ),
-                ),
+                ):SizedBox(),
               ],
             ),
           ),

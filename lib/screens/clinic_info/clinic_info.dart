@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:healthbook/core/ui_components/info_widget.dart';
+import 'package:healthbook/providers/auth_controller.dart';
 import 'package:healthbook/screens/booking_for_doctor/booking_time_card.dart';
 import 'package:healthbook/screens/clinic_info/edit_clinic.dart';
+import 'package:provider/provider.dart';
+import 'package:toast/toast.dart';
 
 class ClinicInfo extends StatefulWidget {
   @override
@@ -9,6 +12,12 @@ class ClinicInfo extends StatefulWidget {
 }
 
 class _ClinicInfoState extends State<ClinicInfo> {
+  Auth _auth;
+  @override
+  void initState() {
+    _auth = Provider.of<Auth>(context, listen: false);
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return InfoWidget(
@@ -45,9 +54,13 @@ class _ClinicInfoState extends State<ClinicInfo> {
                 Positioned(
                   child: FlatButton.icon(
                     onPressed: () {
+                      if(_auth.getClinicData ==null){
+                      Toast.show('You don\'t have clinic',context);
+                      }else{
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => EditClinic()));
-                    },
+                    }
+                      },
                     icon: Icon(
                       Icons.edit,
                       color: Colors.white,

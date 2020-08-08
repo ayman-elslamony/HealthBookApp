@@ -9,7 +9,9 @@ class SearchResult{
 
   SearchResult.fromJson(Map<String,dynamic> doctor,Map<String,dynamic> clinic)
   {
-    this.clinicData =ClinicData.fromJson(clinic);
+    if(clinic !=null){
+      this.clinicData =ClinicData.fromJson(clinic);
+    }
     this.doctorData =RegisterData.fromJson(doctor, 'doctor');
   }
 

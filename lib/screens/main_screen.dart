@@ -190,7 +190,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           });
                           _pageController.jumpToPage(_page);
                         }),
-                    _drawerListTile(
+                _auth.getUserType == 'doctor'?_drawerListTile(
                         name: "Clinic",
                         imgPath: 'assets/icons/clinic.png',
                         infoWidget: infoWidget,
@@ -200,7 +200,17 @@ class _HomeScreenState extends State<HomeScreen> {
                             _page = 1;
                           });
                           _pageController.jumpToPage(_page);
-                        }),
+                        }):_drawerListTile(
+                    name: "Search",
+                    imgPath: 'assets/icons/searchwithname.jpeg',
+                    infoWidget: infoWidget,
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      setState(() {
+                        _page = 1;
+                      });
+                      _pageController.jumpToPage(_page);
+                    }),
                     _drawerListTile(
                         name: "Edit Profile",
                         imgPath: 'assets/icons/profile.png',
@@ -210,7 +220,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           await Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) =>
                                   RegisterUserData(isEditingEnable: true,)));
-                          Navigator.of(context).pop();
                         }),
                     _auth.getUserType == 'doctor' ? SizedBox() : _drawerListTile(
                         name: "Drug List",
@@ -220,7 +229,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         onTap: () {
                           Navigator.of(context)
                               .push(
-                              MaterialPageRoute(builder: (context) => DrugAndRadiologyAndAnalysis()));
+                              MaterialPageRoute(builder: (context) => DrugAndRadiologyAndAnalysis(isDrugs: true,)));
                         }),
                     _auth.getUserType == 'doctor' ? SizedBox() : _drawerListTile(
                         name: "Radiology And Analysis",
@@ -261,9 +270,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 _page == 0
                     ? _iconNavBar('assets/icons/home.png',infoWidget)
                     : _iconNavBar('assets/icons/homename.png',infoWidget),
-                _page == 1
+                _auth.getUserType == 'doctor'?_page == 1
                     ? _iconNavBar('assets/icons/clinic.png',infoWidget)
-                    : _iconNavBar('assets/icons/clinicname.png',infoWidget),
+                    : _iconNavBar('assets/icons/clinicname.png',infoWidget):_page == 1
+                    ? _iconNavBar('assets/icons/search.jpeg',infoWidget)
+                    : _iconNavBar('assets/icons/searchwithname.jpeg',infoWidget),
                 _page == 2
                     ? _iconNavBar('assets/icons/profile.png',infoWidget)
                     : _iconNavBar('assets/icons/profilename.png',infoWidget),

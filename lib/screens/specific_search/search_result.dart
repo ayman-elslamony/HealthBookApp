@@ -10,28 +10,22 @@ import 'package:provider/provider.dart';
 import 'specific_search_screen.dart';
 
 class SearchResult extends StatefulWidget {
+  Function function;
+
+  SearchResult({this.function});
+
   @override
   _SearchResultState createState() => _SearchResultState();
 }
 
 class _SearchResultState extends State<SearchResult> {
   Auth _auth;
-  bool isLoading = true;
-
+  bool isLoading = false;
   @override
   void initState() {
     _auth = Provider.of(context, listen: false);
-    getSearchResult();
     super.initState();
   }
-
-  getSearchResult() async {
-    await _auth.getAllSearchResult();
-    setState(() {
-      isLoading = false;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return InfoWidget(
@@ -99,7 +93,7 @@ class _SearchResultState extends State<SearchResult> {
           ),
           body: RefreshIndicator(
             onRefresh: () async {
-              await _auth.getAllSearchResult();
+              await  widget.function();
               print(_auth.searchResult.length);
             },
             color: Colors.blue,
@@ -112,301 +106,291 @@ class _SearchResultState extends State<SearchResult> {
                   top: infoWidget.orientation == Orientation.portrait
                       ? 0.0
                       : 5.0),
-              child: Column(
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Expanded(
-                          child: FlatButton.icon(
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (ctx) => AlertDialog(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(25.0))),
-                              contentPadding: EdgeInsets.only(top: 10.0),
-                              content: SizedBox(
-                                  height: infoWidget.screenHeight * 0.55,
-                                  width: infoWidget.screenWidth * 0.82,
-                                  child: SpecificSearch()),
-                              actions: <Widget>[
-                                FlatButton(
-                                  child: Text('Cancel'),
-                                  onPressed: () {
-                                    Navigator.of(ctx).pop();
-                                  },
-                                )
-                              ],
-                            ),
-                          );
-                        },
-                        icon: Icon(
-                          Icons.filter_list,
-                          color: Colors.white,
-                          size: infoWidget.orientation == Orientation.portrait
-                              ? infoWidget.screenWidth * 0.085
-                              : infoWidget.screenWidth * 0.05,
-                        ),
-                        label: Text(
-                          'Search by',
-                          style: infoWidget.titleButton,
-                        ),
-                        color: Colors.blue,
-                        shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(10))),
-                      )),
-                    ],
-                  ),
-                  isLoading
-                      ? Expanded(
-                          child: Center(
-                          child: CircularProgressIndicator(
-                            backgroundColor: Colors.blue,
-                          ),
-                        ))
-                      : Consumer<Auth>(builder: (context, data, _) {
-                          print('data.searchResult.length${data.searchResult.length}');
-                          if (data.searchResult.length == 0) {
-                            return Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                            SizedBox(
-                              height: 50,
-                              child: ListView(
-                                children: <Widget>[
-                                  SizedBox(),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        Expanded(
+                            child: FlatButton.icon(
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (ctx) => AlertDialog(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(25.0))),
+                                contentPadding: EdgeInsets.only(top: 10.0),
+                                content: SizedBox(
+                                    height: infoWidget.screenHeight * 0.40,
+                                    width: infoWidget.screenWidth * 0.8,
+                                    child: SpecificSearch(useFilter: true,)),
+                                actions: <Widget>[
+                                  FlatButton(
+                                    child: Text('Cancel'),
+                                    onPressed: () {
+                                      Navigator.of(ctx).pop();
+                                    },
+                                  )
                                 ],
                               ),
-                            ),
-                            Center(
-                              child: Text('There no any Result'),
-                            ),
-                              ],
                             );
-                          } else {
-                            return ListView.builder(
-                              itemBuilder: (context, index) => Padding(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: infoWidget.defaultVerticalPadding,
-                                    horizontal:
-                                        infoWidget.defaultHorizontalPadding),
-                                child: Material(
-                                  shadowColor: Colors.blueAccent,
-                                  elevation: 2.0,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10)),
-                                  type: MaterialType.card,
-                                  child: Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        vertical:
-                                            infoWidget.defaultVerticalPadding,
-                                        horizontal: infoWidget
-                                                .defaultHorizontalPadding *
-                                            2),
-                                    child: Column(
-                                      children: <Widget>[
-                                        InkWell(
-                                          onTap: (){
-                                            Navigator.of(context).push(MaterialPageRoute(builder: (context)=> ShowUserProfile(
-                                              userData: data.searchResult[index]
-                                              .doctorData,
-                                              clinicData: data.searchResult[index]
-                                                  .clinicData,
-                                              type: 'doctor',
-                                            )));
-                                          }
-                                          ,child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: <Widget>[
-                                              Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: <Widget>[
-                                                  Container(
-                                                    child: ClipRRect(
-                                                      borderRadius: BorderRadius
-                                                          .all(Radius.circular(
-                                                              infoWidget.orientation ==
-                                                                      Orientation
-                                                                          .portrait
-                                                                  ? 35.0
-                                                                  : 55.0)),
-                                                      child: FadeInImage
-                                                          .assetNetwork(
-                                                        placeholder:
-                                                            'assets/user.png',
-                                                        image: data
-                                                            .searchResult[index]
-                                                            .doctorData
-                                                            .doctorImage
-                                                        //patientAppointment.registerData.doctorImage,
-                                                        ,
-                                                        fit: BoxFit.fill,
-                                                      ),
-                                                    ),
-                                                    width:
-                                                        infoWidget.screenWidth *
-                                                            0.18,
-                                                    height:
-                                                        infoWidget.screenWidth *
-                                                            0.18,
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                width: infoWidget
-                                                    .defaultVerticalPadding,
-                                              ),
-                                              Expanded(
-                                                child: Column(
+                          },
+                          icon: Icon(
+                            Icons.filter_list,
+                            color: Colors.white,
+                            size: infoWidget.orientation == Orientation.portrait
+                                ? infoWidget.screenWidth * 0.085
+                                : infoWidget.screenWidth * 0.05,
+                          ),
+                          label: Text(
+                            'Search by',
+                            style: infoWidget.titleButton,
+                          ),
+                          color: Colors.blue,
+                          shape: RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10))),
+                        )),
+                      ],
+                    ),
+                    Consumer<Auth>(builder: (context, data, _) {
+                            print('data.searchResult.length${data.searchResult.length}');
+                            if (data.searchResult.length == 0) {
+                              return SizedBox(
+                                height: infoWidget.screenHeight*0.85,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                Center(
+                                  child: Text('There no any Result'),
+                                ),
+                                  ],
+                                ),
+                              );
+                            } else {
+                              return ListView.builder(
+                                itemBuilder: (context, index) => Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: infoWidget.defaultVerticalPadding,
+                                      horizontal:
+                                          infoWidget.defaultHorizontalPadding),
+                                  child: Material(
+                                    shadowColor: Colors.blueAccent,
+                                    elevation: 2.0,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10)),
+                                    type: MaterialType.card,
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          vertical:
+                                              infoWidget.defaultVerticalPadding,
+                                          horizontal: infoWidget
+                                                  .defaultHorizontalPadding *
+                                              2),
+                                      child: Column(
+                                        children: <Widget>[
+                                          InkWell(
+                                            onTap: (){
+                                              Navigator.of(context).push(MaterialPageRoute(builder: (context)=> ShowUserProfile(
+                                                userData: data.searchResult[index]
+                                                .doctorData,
+                                                clinicData: data.searchResult[index]
+                                                    .clinicData,
+                                                type: 'doctor',
+                                              )));
+                                            }
+                                            ,child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceBetween,
+                                              children: <Widget>[
+                                                Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
                                                   children: <Widget>[
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceEvenly,
-                                                      children: <Widget>[
-                                                        Expanded(
-                                                          child: Text(
-                                                              'Dr. ${data.searchResult[index].doctorData.firstName} ${data.searchResult[index].doctorData.lastName}',
-                                                              maxLines: 2,
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                              style: infoWidget
-                                                                  .title),
+                                                    Container(
+                                                      child: ClipRRect(
+                                                        borderRadius: BorderRadius
+                                                            .all(Radius.circular(
+                                                                infoWidget.orientation ==
+                                                                        Orientation
+                                                                            .portrait
+                                                                    ? 35.0
+                                                                    : 55.0)),
+                                                        child: FadeInImage
+                                                            .assetNetwork(
+                                                          placeholder:
+                                                              'assets/user.png',
+                                                          image: data
+                                                              .searchResult[index]
+                                                              .doctorData
+                                                              .doctorImage
+                                                          //patientAppointment.registerData.doctorImage,
+                                                          ,
+                                                          fit: BoxFit.fill,
                                                         ),
-                                                        RatingBar(
-                                                          rating: 3,
-                                                          icon: Icon(
-                                                            Icons.star,
-                                                            size: infoWidget
-                                                                    .screenWidth *
-                                                                0.04,
-                                                            color: Colors.grey,
-                                                          ),
-                                                          starCount: 5,
-                                                          spacing: 2.0,
-                                                          size: infoWidget
-                                                                  .screenWidth *
-                                                              0.03,
-                                                          isIndicator: true,
-                                                          allowHalfRating: true,
-                                                          onRatingCallback: (double
-                                                                  value,
-                                                              ValueNotifier<bool>
-                                                                  isIndicator) {
-                                                            //change the isIndicator from false  to true ,the       RatingBar cannot support touch event;
-                                                            isIndicator.value =
-                                                                true;
-                                                          },
-                                                          color: Colors.amber,
-                                                        ),
-                                                      ],
+                                                      ),
+                                                      width:
+                                                          infoWidget.screenWidth *
+                                                              0.18,
+                                                      height:
+                                                          infoWidget.screenWidth *
+                                                              0.18,
                                                     ),
-                                                    Padding(
-                                                      padding: EdgeInsets.only(
-                                                          left: infoWidget
-                                                              .defaultVerticalPadding),
-                                                      child: Row(
+                                                  ],
+                                                ),
+                                                SizedBox(
+                                                  width: infoWidget
+                                                      .defaultVerticalPadding,
+                                                ),
+                                                Expanded(
+                                                  child: Column(
+                                                    children: <Widget>[
+                                                      Row(
                                                         mainAxisAlignment:
                                                             MainAxisAlignment
                                                                 .spaceEvenly,
                                                         children: <Widget>[
                                                           Expanded(
                                                             child: Text(
-                                                                'Speciality: ${data.searchResult[index].doctorData.speciality}'
-                                                                //${patientAppointment.registerData.speciality}',
-                                                                ,
+                                                                'Dr. ${data.searchResult[index].doctorData.firstName} ${data.searchResult[index].doctorData.lastName}',
+                                                                maxLines: 2,
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                                style: infoWidget
+                                                                    .title),
+                                                          ),
+                                                          RatingBar(
+                                                            rating: 3,
+                                                            icon: Icon(
+                                                              Icons.star,
+                                                              size: infoWidget
+                                                                      .screenWidth *
+                                                                  0.04,
+                                                              color: Colors.grey,
+                                                            ),
+                                                            starCount: 5,
+                                                            spacing: 2.0,
+                                                            size: infoWidget
+                                                                    .screenWidth *
+                                                                0.03,
+                                                            isIndicator: true,
+                                                            allowHalfRating: true,
+                                                            onRatingCallback: (double
+                                                                    value,
+                                                                ValueNotifier<bool>
+                                                                    isIndicator) {
+                                                              //change the isIndicator from false  to true ,the       RatingBar cannot support touch event;
+                                                              isIndicator.value =
+                                                                  true;
+                                                            },
+                                                            color: Colors.amber,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      Padding(
+                                                        padding: EdgeInsets.only(
+                                                            left: infoWidget
+                                                                .defaultVerticalPadding),
+                                                        child: Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceEvenly,
+                                                          children: <Widget>[
+                                                            Expanded(
+                                                              child: Text(
+                                                                  'Speciality: ${data.searchResult[index].doctorData.speciality}'
+                                                                  //${patientAppointment.registerData.speciality}',
+                                                                  ,
+                                                                  style: infoWidget
+                                                                      .subTitle
+                                                                      .copyWith(
+                                                                          fontWeight:
+                                                                              FontWeight
+                                                                                  .w500)),
+                                                            ),
+                                                            Text('Avilable',
                                                                 style: infoWidget
                                                                     .subTitle
                                                                     .copyWith(
                                                                         fontWeight:
                                                                             FontWeight
                                                                                 .w500)),
-                                                          ),
-                                                          Text('Avilable',
-                                                              style: infoWidget
-                                                                  .subTitle
-                                                                  .copyWith(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w500)),
-                                                        ],
+                                                          ],
+                                                        ),
                                                       ),
-                                                    ),
-                                                    Padding(
-                                                      padding: EdgeInsets.only(
-                                                          left: infoWidget
-                                                              .defaultVerticalPadding),
-                                                      child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceEvenly,
-                                                        children: <Widget>[
-                                                          Expanded(
-                                                            child: Text(
-                                                              'Location: ${data.searchResult[index].clinicData.address}'
-                                                              //${patientAppointment.registerData.address}',
-                                                              ,
-                                                              style: infoWidget
-                                                                  .subTitle
-                                                                  .copyWith(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w500),
-                                                              maxLines: 2,
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
+                                                      data.searchResult[index].clinicData==null?SizedBox():Padding(
+                                                        padding: EdgeInsets.only(
+                                                            left: infoWidget
+                                                                .defaultVerticalPadding),
+                                                        child: Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceEvenly,
+                                                          children: <Widget>[
+                                                            Expanded(
+                                                              child: Text(
+                                                                'Location: ${data.searchResult[index].clinicData.address}'
+                                                                //${patientAppointment.registerData.address}',
+                                                                ,
+                                                                style: infoWidget
+                                                                    .subTitle
+                                                                    .copyWith(
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .w500),
+                                                                maxLines: 2,
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                              ),
                                                             ),
-                                                          ),
-                                                        ],
+                                                          ],
+                                                        ),
                                                       ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              )
-                                            ],
+                                                    ],
+                                                  ),
+                                                )
+                                              ],
+                                            ),
                                           ),
-                                        ),
-                                        SizedBox(
-                                          height:
-                                              infoWidget.defaultVerticalPadding,
-                                        ),
-                                        RaisedButton(
-                                          onPressed: () {
-                                            Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        Booking(index: index,)));
-                                          },
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(10))),
-                                          color: Colors.blue,
-                                          child: Text(
-                                            'Booking now',
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 18),
+                                          SizedBox(
+                                            height:
+                                                infoWidget.defaultVerticalPadding,
                                           ),
-                                        )
-                                      ],
+                                          RaisedButton(
+                                            onPressed:  data.searchResult[index].clinicData==null?(){}:() {
+                                              Navigator.of(context).push(
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          Booking(index: index,)));
+                                            },
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(10))),
+                                            color:  data.searchResult[index].clinicData==null?Colors.grey:Colors.blue,
+                                            child: Text(
+                                              'Booking now',
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 18),
+                                            ),
+                                          )
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              shrinkWrap: true,
-                              itemCount: data.searchResult.length,
-                            );
-                          }
-                        }),
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                itemCount: data.searchResult.length,
+                              );
+                            }
+                          }),
 //                  ,InkWell(
 //                    onTap: (){
 //                      Navigator.of(context).push(MaterialPageRoute(builder: (context)=>UserProfile()));
@@ -523,7 +507,8 @@ class _SearchResultState extends State<SearchResult> {
 //                      ),
 //                    ),
 //                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

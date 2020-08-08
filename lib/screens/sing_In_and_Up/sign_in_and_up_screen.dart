@@ -38,17 +38,35 @@ class _LoginState extends State<Login> {
     await showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('An Error Occurred!'),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(
+                Radius.circular(25.0))),
+        contentPadding:
+        EdgeInsets.only(top: 10.0),
+        title: Text('An Error Occurred!',style: TextStyle(
+            fontSize: MediaQuery.of(context).orientation==Orientation.portrait?MediaQuery.of(context).size.width * 0.048:MediaQuery.of(context).size.width * 0.032,
+            color: Colors.blue,
+            fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
         content: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Text(message),
+            ConstrainedBox(child: Text(message,maxLines: 2,textAlign: TextAlign.center,style:  TextStyle(
+                fontSize: MediaQuery.of(context).orientation==Orientation.portrait?MediaQuery.of(context).size.width * 0.04:MediaQuery.of(context).size.width * 0.03,
+                color:Color(0xff484848),
+                fontWeight: FontWeight.bold),),constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height*0.20,
+              minWidth: MediaQuery.of(context).size.width*0.75,
+              maxWidth: MediaQuery.of(context).size.width*0.75,
+            ),),
           ],
         ),
         actions: <Widget>[
           FlatButton(
-            child: Text('Okay'),
+            child: Text('Okay',style: TextStyle(
+                fontSize: MediaQuery.of(context).orientation==Orientation.portrait?MediaQuery.of(context).size.width * 0.035:MediaQuery.of(context).size.width * 0.024,
+                color: Colors.blue,
+                fontWeight: FontWeight.bold),),
             onPressed: () {
               Navigator.of(ctx).pop();
             },

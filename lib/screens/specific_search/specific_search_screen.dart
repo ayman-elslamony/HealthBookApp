@@ -6,17 +6,22 @@ import 'package:healthbook/providers/auth_controller.dart';
 import 'package:healthbook/screens/specific_search/map.dart';
 import 'package:healthbook/screens/specific_search/search_result.dart';
 import 'package:provider/provider.dart';
+import 'package:toast/toast.dart';
 import './search_card.dart';
 import '../../list_of_infomation/list_of_information.dart';
 
 class SpecificSearch extends StatefulWidget {
+  final bool useFilter;
+
+  SpecificSearch({this.useFilter=false});
+
   @override
   _SpecificSearchState createState() => _SpecificSearchState();
 }
 
 class _SpecificSearchState extends State<SpecificSearch> {
   String _drName = '';
-
+  bool isLoading = false;
   String _location = '';
   TextEditingController _locationTextEditingController =
       TextEditingController();
@@ -32,10 +37,21 @@ class _SpecificSearchState extends State<SpecificSearch> {
   @override
   void initState() {
     super.initState();
-
     _auth = Provider.of<Auth>(context, listen: false);
   }
+ Future<bool> getSearchResult() async {
 
+    bool x=await _auth.getAllSearchResult(
+        name: _drName,
+        speciality: _specialty,
+        governorate: _governorate,
+      );
+      setState(() {
+        isLoading = false;
+      });
+      return x;
+
+  }
   Future<void> _getUserLocation() async {
     Position position = await Geolocator()
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
@@ -193,7 +209,7 @@ class _SpecificSearchState extends State<SpecificSearch> {
                         return "Invalid Dr Name!";
                       }
                     },
-                    onSaved: (value) {
+                    onChanged: (value) {
                       _drName = value.trim();
                     },
                     onFieldSubmitted: (_) {
@@ -204,59 +220,59 @@ class _SpecificSearchState extends State<SpecificSearch> {
                     },
                   ),
                 ),
-                SizedBox(
-                  height: infoWidget.screenHeight*0.03,
-                ),
-                InkWell(
-                    onTap: selectUserLocationType,
-                    child: Container(
-                      padding: EdgeInsets.symmetric(vertical: 7.0),
-                      height: infoWidget.orientation==Orientation.portrait?infoWidget.screenHeight*0.099:infoWidget.screenHeight*0.2,
-                      child: TextFormField(
-                        style: infoWidget.subTitle,
-                        controller: _locationTextEditingController,
-                        textInputAction: TextInputAction.done,
-                        enabled: _isEditLocationEnable,
-                        decoration: InputDecoration(
-                          suffixIcon: InkWell(
-                            onTap: selectUserLocationType,
-                            child: Icon(
-                              Icons.my_location,
-                              size: 20,
-                              color: Colors.blue,
-                            ),
-                          ),
-                          labelText: 'Location',
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(10.0)),
-                            borderSide: BorderSide(
-                              color: Colors.blue,
-                            ),
-                          ),
-                          disabledBorder: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(10.0)),
-                            borderSide: BorderSide(
-                              color: Colors.blue,
-                            ),
-                          ),
-                          errorBorder: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(10.0)),
-                            borderSide: BorderSide(
-                              color: Colors.blue,
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(10.0)),
-                            borderSide: BorderSide(color: Colors.blue),
-                          ),
-                        ),
-                        keyboardType: TextInputType.text,
-                      ),
-                    )),
+//                SizedBox(
+//                  height: infoWidget.screenHeight*0.03,
+//                ),
+//                InkWell(
+//                    onTap: selectUserLocationType,
+//                    child: Container(
+//                      padding: EdgeInsets.symmetric(vertical: 7.0),
+//                      height: infoWidget.orientation==Orientation.portrait?infoWidget.screenHeight*0.099:infoWidget.screenHeight*0.2,
+//                      child: TextFormField(
+//                        style: infoWidget.subTitle,
+//                        controller: _locationTextEditingController,
+//                        textInputAction: TextInputAction.done,
+//                        enabled: _isEditLocationEnable,
+//                        decoration: InputDecoration(
+//                          suffixIcon: InkWell(
+//                            onTap: selectUserLocationType,
+//                            child: Icon(
+//                              Icons.my_location,
+//                              size: 20,
+//                              color: Colors.blue,
+//                            ),
+//                          ),
+//                          labelText: 'Location',
+//                          focusedBorder: OutlineInputBorder(
+//                            borderRadius:
+//                                BorderRadius.all(Radius.circular(10.0)),
+//                            borderSide: BorderSide(
+//                              color: Colors.blue,
+//                            ),
+//                          ),
+//                          disabledBorder: OutlineInputBorder(
+//                            borderRadius:
+//                                BorderRadius.all(Radius.circular(10.0)),
+//                            borderSide: BorderSide(
+//                              color: Colors.blue,
+//                            ),
+//                          ),
+//                          errorBorder: OutlineInputBorder(
+//                            borderRadius:
+//                                BorderRadius.all(Radius.circular(10.0)),
+//                            borderSide: BorderSide(
+//                              color: Colors.blue,
+//                            ),
+//                          ),
+//                          enabledBorder: OutlineInputBorder(
+//                            borderRadius:
+//                                BorderRadius.all(Radius.circular(10.0)),
+//                            borderSide: BorderSide(color: Colors.blue),
+//                          ),
+//                        ),
+//                        keyboardType: TextInputType.text,
+//                      ),
+//                    )),
                 SpecialtyAndGovernrateCard(
                   name: 'Specialty',
                   listData: listSpecialty,
@@ -267,10 +283,63 @@ class _SpecificSearchState extends State<SpecificSearch> {
                   listData: governorateList,
                   selected: _getGovernorateSelected,
                 ),
-                InkWell(
-                  onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => SearchResult()));
+                isLoading?Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: CircularProgressIndicator(backgroundColor: Colors.blue,),
+                ):InkWell(
+                  onTap: () async{
+                    print(_drName);
+                    print(_specialty);
+                    print(_governorate);
+                    if(_drName != ''){
+                      setState(() {
+                        isLoading =true;
+                      });
+                      bool x = await getSearchResult();
+                      if(x){
+                        if(widget.useFilter){
+                          Navigator.of(context).pop();
+                        }else{
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => SearchResult(function: getSearchResult,)));
+                        }
+                      }else{
+                        Toast.show('Not found any doctor', context);
+                      }
+
+                    }else if(_specialty !=null){
+                      setState(() {
+                        isLoading =true;
+                      });
+                      bool x = await getSearchResult();
+                      if(x){
+                        if(widget.useFilter){
+                          Navigator.of(context).pop();
+                        }else{
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => SearchResult(function: getSearchResult,)));
+                        }
+                      }else{
+                        Toast.show('Not found any doctor', context);
+                      }
+                    }else if(_governorate !=null){
+                      setState(() {
+                        isLoading =true;
+                      });
+                      bool x = await getSearchResult();
+                      if(x){
+                        if(widget.useFilter){
+                          Navigator.of(context).pop();
+                        }else{
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => SearchResult(function: getSearchResult,)));
+                        }
+                      }else{
+                        Toast.show('Not found any doctor', context);
+                      }
+                    }else{
+                      Toast.show('Invalid search', context);
+                    }
                   },
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,

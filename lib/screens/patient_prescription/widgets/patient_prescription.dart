@@ -5,7 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:healthbook/core/models/device_info.dart';
 import 'package:healthbook/core/ui_components/info_widget.dart';
 import 'package:healthbook/models/doctor_appointment.dart';
+import 'package:healthbook/providers/auth_controller.dart';
 import 'package:healthbook/screens/patient_prescription/previous_prescription.dart';
+import 'package:provider/provider.dart';
+import 'package:toast/toast.dart';
 
 import 'ShowImage.dart';
 import 'add_radiology_and_analysis.dart';
@@ -38,11 +41,13 @@ class _PatientPrescriptionState extends State<PatientPrescription>
   String _description = '';
   File _imageFile;
   AgeDuration birthDate;
-  String _diagnose = '';
-  String _selectedProblem = ' Selected Diagnose ';
-  List<String> _listOfProblems = ['A', 'B', 'C', 'D', 'Add Diagnose'];
+  String _diagnoseDescription = '';
+  String _selectedDiagnose = ' Selected Diagnose ';
+  List<String> _listOfProblems = ['Add Diagnose'];
   int _counterImgRadiology = 0;
   int _activeTabIndex = 0;
+  String medicineName;
+  String medicineDosage;
   List<Widget> _allMedicine = List<Widget>();
   List<String> _listMedicineName = List<String>();
   List<String> _listMedicineDosage = List<String>();
@@ -52,6 +57,7 @@ class _PatientPrescriptionState extends State<PatientPrescription>
   static final _addAnalysisFormKey = new GlobalKey<FormState>();
   List<String> mybirth=[];
   DateTime today;
+  Auth _auth;
   _addMedicine() {
     Padding _medicineContainer = Padding(
       padding: const EdgeInsets.all(8.0),
@@ -110,8 +116,13 @@ class _PatientPrescriptionState extends State<PatientPrescription>
                     return 'Please enter medicine';
                   }
                 },
-                onSaved: (String val) {
-                  _listMedicineName.add(val);
+                onChanged: (String val) {
+                  medicineName =val;
+                },
+                onSaved: (val){
+                 if( _listMedicineName.contains(val)){
+                   _listMedicineName.add(val);
+                 }
                 },
               ),
               SizedBox(
@@ -171,8 +182,13 @@ class _PatientPrescriptionState extends State<PatientPrescription>
                           return 'Please enter dosage';
                         }
                       },
+                      onChanged: (val){
+                        medicineDosage =val;
+                      },
                       onSaved: (val) {
-                        _listMedicineDosage.add(val);
+                        if( _listMedicineDosage.contains(val)){
+                          _listMedicineDosage.add(val);
+                        }
                       },
                     ),
                   ),
@@ -213,9 +229,18 @@ class _PatientPrescriptionState extends State<PatientPrescription>
     DateTime birthday = DateTime(mybirth.length!=3?2020:int.parse(mybirth[2]),mybirth.length!=3?1:int.parse(mybirth[1]),mybirth.length!=3?1: int.parse(mybirth[0]));
     birthDate = Age.dateDifference(
         fromDate: birthday, toDate: today, includeToDate: false);
+    _auth = Provider.of<Auth>(context, listen: false);
+    _listOfProblems.insertAll(0, _auth.allDiagnose);
+    print(_listOfProblems.length);
+    getPrescriptionForSpecificDoctor();
     super.initState();
   }
 
+  getPrescriptionForSpecificDoctor() async {
+    await _auth.getPrescriptionForSpecificDoctor(
+        patientId: widget.doctorAppointment.registerData.id);
+
+  }
   _radiologyData(String name, String description, File url) {
     print(name);
     print(description);
@@ -258,6 +283,8 @@ class _PatientPrescriptionState extends State<PatientPrescription>
           FlatButton(
             child: Text('OK'),
             onPressed: () {
+              print(_name);
+              print(_description);
               setState(() {
                 if (type == 'Radiology') {
                   _radiologyList.add(RadiologyAndAnalysisResult(
@@ -268,8 +295,10 @@ class _PatientPrescriptionState extends State<PatientPrescription>
                   _analysisList.add(RadiologyAndAnalysisResult(
                       name: _name,
                       description: _description,
-                      imgUrl: _imageFile));
+                      ));
                 }
+                print(_radiologyList.length);
+                print(_analysisList.length);
               });
               Navigator.of(ctx).pop();
             },
@@ -284,11 +313,11 @@ class _PatientPrescriptionState extends State<PatientPrescription>
       ),
     );
   }
-
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   Widget _radiologyAndAnalysisContent({String type, int index,DeviceInfo infoWidget}) {
     String uniqueKey = '$type _ $index';
     RadiologyAndAnalysisResult item =
-        type == 'Radiology' ? _radiologyList[index] : _analysisList[index];
+    type == 'Radiology' ? _radiologyList[index] : _analysisList[index];
     return SizedBox(
       child: Dismissible(
           background: Container(
@@ -318,7 +347,7 @@ class _PatientPrescriptionState extends State<PatientPrescription>
                   ? _radiologyList.removeAt(index)
                   : _analysisList.removeAt(index);
             });
-            Scaffold.of(context).showSnackBar(SnackBar(
+            _scaffoldKey.currentState.showSnackBar(SnackBar(
               content: Text(
                   "${type == 'Radiology' ? 'Radiology ' : 'Analysis '}${index + 1} is dismissed"),
               action: SnackBarAction(
@@ -329,7 +358,7 @@ class _PatientPrescriptionState extends State<PatientPrescription>
                           ? _radiologyList.insert(index, item)
                           : _analysisList.insert(index, item);
                     });
-                    Scaffold.of(context).showSnackBar(SnackBar(
+                    _scaffoldKey.currentState.showSnackBar(SnackBar(
                       content: Text(
                           "${type == 'Radiology' ? 'Radiology ' : 'Analysis '}${index + 1} is Added"),
                       duration: Duration(seconds: 1),
@@ -350,61 +379,61 @@ class _PatientPrescriptionState extends State<PatientPrescription>
                   children: <Widget>[
                     type == 'Radiology'
                         ? _radiologyList[index].imgUrl == null
-                            ? SizedBox()
-                            : InkWell(
-                                onTap: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => ShowImage(
-                                            imageURL: type == 'Radiology'
-                                                ? _radiologyList[index].imgUrl
-                                                : _analysisList[index].imgUrl,
-                                          )));
-                                },
-                                child: Container(
-                                  height: infoWidget.orientation==Orientation.portrait?150:200,
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(10),
-                                          topRight: Radius.circular(10)),
-                                      border: Border.all(color: Colors.blue),
-                                      image: DecorationImage(
-                                          image: FileImage(
-                                            type == 'Radiology'
-                                                ? _radiologyList[index].imgUrl
-                                                : _analysisList[index].imgUrl,
-                                          ),
-                                          fit: BoxFit.fill)),
+                        ? SizedBox()
+                        : InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => ShowImage(
+                              imageURL: type == 'Radiology'
+                                  ? _radiologyList[index].imgUrl
+                                  : _analysisList[index].imgUrl,
+                            )));
+                      },
+                      child: Container(
+                        height: infoWidget.orientation==Orientation.portrait?150:200,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(10),
+                                topRight: Radius.circular(10)),
+                            border: Border.all(color: Colors.blue),
+                            image: DecorationImage(
+                                image: FileImage(
+                                  type == 'Radiology'
+                                      ? _radiologyList[index].imgUrl
+                                      : _analysisList[index].imgUrl,
                                 ),
-                              )
+                                fit: BoxFit.fill)),
+                      ),
+                    )
                         : _analysisList[index].imgUrl == null
-                            ? SizedBox()
-                            : InkWell(
-                                onTap: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => ShowImage(
-                                            imageURL: type == 'Radiology'
-                                                ? _radiologyList[index].imgUrl
-                                                : _analysisList[index].imgUrl,
-                                          )));
-                                },
-                                child: Container(
-                                  height: infoWidget.orientation==Orientation.portrait?150:200,
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(10),
-                                          topRight: Radius.circular(10)),
-                                      border: Border.all(color: Colors.blue),
-                                      image: DecorationImage(
-                                          image: FileImage(
-                                            type == 'Radiology'
-                                                ? _radiologyList[index].imgUrl
-                                                : _analysisList[index].imgUrl,
-                                          ),
-                                          fit: BoxFit.fill)),
+                        ? SizedBox()
+                        : InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => ShowImage(
+                              imageURL: type == 'Radiology'
+                                  ? _radiologyList[index].imgUrl
+                                  : _analysisList[index].imgUrl,
+                            )));
+                      },
+                      child: Container(
+                        height: infoWidget.orientation==Orientation.portrait?150:200,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(10),
+                                topRight: Radius.circular(10)),
+                            border: Border.all(color: Colors.blue),
+                            image: DecorationImage(
+                                image: FileImage(
+                                  type == 'Radiology'
+                                      ? _radiologyList[index].imgUrl
+                                      : _analysisList[index].imgUrl,
                                 ),
-                              ),
+                                fit: BoxFit.fill)),
+                      ),
+                    ),
                     _radiologyList[index].name==null?SizedBox():Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: SingleChildScrollView(
@@ -414,7 +443,7 @@ class _PatientPrescriptionState extends State<PatientPrescription>
                             Text(
                               '$type Name:',
                               style: infoWidget.subTitle.copyWith(color: Colors.black,fontWeight: FontWeight.w600)
-    ,
+                              ,
                             ),
                             Text(
                               type == 'Radiology'
@@ -429,13 +458,13 @@ class _PatientPrescriptionState extends State<PatientPrescription>
                     ),
                     _radiologyList[index].description ==null?SizedBox():Padding(
                       padding:
-                          const EdgeInsets.only(bottom: 8.0, right: 8.0, left: 8.0),
+                      const EdgeInsets.only(bottom: 8.0, right: 8.0, left: 8.0),
                       child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: Row(
                           children: <Widget>[
                             Text(
-                              'Description of $type: ',
+                                'Description of $type: ',
                                 style: infoWidget.subTitle.copyWith(color: Colors.black,fontWeight: FontWeight.w600)
 
                             ),
@@ -456,12 +485,13 @@ class _PatientPrescriptionState extends State<PatientPrescription>
           )),
     );
   }
-
+bool isLoading=false;
   @override
   Widget build(BuildContext context) {
     return InfoWidget(
       builder: (context,infoWidget){
         return Scaffold(
+key: _scaffoldKey,
           appBar: AppBar(
             leading: IconButton(
                 icon: Icon(
@@ -484,10 +514,57 @@ class _PatientPrescriptionState extends State<PatientPrescription>
                 }),
             actions: <Widget>[
               _activeTabIndex == 0
-                  ? Padding(
+                  ? isLoading?Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(child: Center(child: CircularProgressIndicator(backgroundColor: Colors.white30,))),
+                  ):Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: RaisedButton(
-                  onPressed: () {},
+                  onPressed: () async{
+                    if(medicineName !=null && medicineDosage !=null &&!_listMedicineName.contains(medicineName) && !_listMedicineDosage.contains(medicineDosage)){
+                      _listMedicineName.add(medicineName);
+                      _listMedicineDosage.add(medicineDosage);
+                    }
+                    print(_analysisList[0].description);
+                    print(_analysisList[0].name);
+                    print(_auth.allPrescriptionsForSpecificDoctor.length+1);
+                    print(_selectedDiagnose);
+                    print(_listMedicineName);
+                    print(_listMedicineDosage);
+                    print( widget.doctorAppointment.registerData.id);
+                    print(_radiologyList[0].description);
+                    print( _radiologyList[0].name);
+                    print(_radiologyList[0].imgUrl);
+                    print(_diagnoseDescription);
+                    if(widget.doctorAppointment.registerData.id!=null&&_selectedDiagnose== ' Selected Diagnose '&& _diagnoseDescription==''&&_listMedicineName.length !=0&&_listMedicineDosage.length!=0){
+                    setState(() {
+                      isLoading =true;
+                    });
+                  bool x = await  _auth.newPrescription(
+                     analysisDesc: _analysisList.length==0?[]:_analysisList[0].description,
+                     analysisName: _analysisList.length==0?[]:_analysisList[0].name,
+                     diagnoNum: (_auth.allPrescriptionsForSpecificDoctor.length+1).toString(),
+                     diagnose: _selectedDiagnose,
+                     medicine: _listMedicineName.length==0?[]:_listMedicineName,
+                     dosage: _listMedicineDosage.length==0?[]:_listMedicineDosage,
+                     patientID: widget.doctorAppointment.registerData.id,
+                     radioDesc: _radiologyList.length==0?[]:_radiologyList[0].description,
+                     radioName: _radiologyList.length==0?[]:_radiologyList[0].name,
+                     radioImage: _radiologyList.length==0?[]:_radiologyList[0].imgUrl,
+                     diagnoseDesc:_diagnoseDescription
+                   );
+                  if(x){
+                    Toast.show('succefully saved', context);
+                  }else{
+                    Toast.show('Please try again later', context);
+                  }
+                    setState(() {
+                      isLoading =false;
+                    });
+                    }else{
+                      Toast.show('Please complete prescription data', context);
+                    }
+                  },
                   elevation: 1.0,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10)),
@@ -589,15 +666,19 @@ class _PatientPrescriptionState extends State<PatientPrescription>
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                   children: <Widget>[
-                                    Expanded(
-                                      child: Text(
-                                        'Prescription: one',
-                                        style:
-                                        infoWidget.subTitle.copyWith(fontWeight: FontWeight.w500),
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
+                                    Consumer<Auth>(
+                                      builder: (context,data,_){
+                                        return Expanded(
+                                          child: Text(
+                                            'Prescription: ${_auth.allPrescriptionsForSpecificDoctor.length+1}',
+                                            style:
+                                            infoWidget.subTitle.copyWith(fontWeight: FontWeight.w500),
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        );
+                                      },
+                                    )
                                   ],),
                               ),
                               Padding(
@@ -643,7 +724,7 @@ class _PatientPrescriptionState extends State<PatientPrescription>
                                )
                                 ,child: Padding(
                                     padding: const EdgeInsets.only(left: 8.0,bottom: 5,top: 5,right: 5),
-                                    child: Text(_selectedProblem,
+                                    child: Text(_selectedDiagnose,
                                         maxLines: 4,
                                         style: infoWidget.subTitle.copyWith(color: Colors.white))),
                               ),
@@ -734,7 +815,7 @@ class _PatientPrescriptionState extends State<PatientPrescription>
                                                 onSaved: (String val) {
                                                   setState(() {
                                                     _isProblemSelected = true;
-                                                    _selectedProblem = val;
+                                                    _selectedDiagnose = val;
                                                     _listOfProblems.insert(
                                                         _listOfProblems.length -
                                                             1,
@@ -768,7 +849,7 @@ class _PatientPrescriptionState extends State<PatientPrescription>
                                       );
                                     } else {
                                       setState(() {
-                                        _selectedProblem = val;
+                                        _selectedDiagnose = val;
                                         _isProblemSelected = true;
                                       });
                                     }
@@ -821,7 +902,7 @@ class _PatientPrescriptionState extends State<PatientPrescription>
                               ),
                               maxLines: 3,
                               onChanged: (val) {
-                                _diagnose = val;
+                                _diagnoseDescription = val;
                               },
                             ),
                           ),
@@ -970,7 +1051,8 @@ class _PatientPrescriptionState extends State<PatientPrescription>
                                     itemCount:
                                     _radiologyList.length,
                                   ),
-                                  Padding(
+                                  _radiologyList.length == 0
+                                      ? Padding(
                                     padding:
                                     const EdgeInsets.only(bottom: 8.0),
                                     child: RaisedButton(
@@ -987,7 +1069,7 @@ class _PatientPrescriptionState extends State<PatientPrescription>
                                           style: infoWidget.subTitle.copyWith(color: Colors.white)
                                       ),
                                     ),
-                                  ),
+                                  ):SizedBox(),
                                 ],
                               ),
                             )
@@ -1052,13 +1134,19 @@ class _PatientPrescriptionState extends State<PatientPrescription>
                                     shrinkWrap: true,
                                     physics:
                                     NeverScrollableScrollPhysics(),
-                                    itemBuilder: (context, index) =>
-                                        _radiologyAndAnalysisContent(
-                                            type: 'Analysis',
-                                            index: index),
+                                    itemBuilder: (context, index){
+                                      print(index);
+                                      print( _analysisList.length);
+                                      return _radiologyAndAnalysisContent(
+                                          type: 'Analysis',
+                                          infoWidget: infoWidget,
+                                          index: index);
+                                    },
+
                                     itemCount: _analysisList.length,
                                   ),
-                                  Padding(
+                                  _analysisList.length == 0
+                                      ? Padding(
                                     padding:
                                     const EdgeInsets.only(bottom: 8.0),
                                     child: RaisedButton(
@@ -1075,7 +1163,7 @@ class _PatientPrescriptionState extends State<PatientPrescription>
                                         style: infoWidget.subTitle.copyWith(color: Colors.white),
                                       ),
                                     ),
-                                  ),
+                                  ):SizedBox(),
                                 ],
                               ),
                             )
@@ -1087,7 +1175,7 @@ class _PatientPrescriptionState extends State<PatientPrescription>
                   ],
                 ),
               ),
-              PreviousPrescription()
+              PreviousPrescription(patientId: widget.doctorAppointment.registerData.id,)
             ],
           ),
         );

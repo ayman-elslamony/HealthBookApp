@@ -28,155 +28,22 @@ class PatientHealthRecord extends StatefulWidget {
 
 class _PatientHealthRecordState extends State<PatientHealthRecord> {
   Auth _auth;
-  final List<DrugList> allDrugList = [
-    DrugList(
-        diagnoseName: 'Diabetes mellitus (ICD-250)',
-        diagnoseDate: '12-10-2020',
-        allDoctorsInEachDosage: [
-          DoctorsInEachDosage(
-              date: '5-6-77',
-              doctorData: RegisterData(
-                  firstName: 'ahmed',
-                  middleName: 'mohamed',
-                  lastName: 'nour',
-                  number: '01145523795',
-                  status: 'not',
-                  job: 'Doctor',
-                  government: 'Mansoura',
-                  gender: 'Male',
-                  birthDate: '12/5/2020',
-                  aboutYou: 'iam doctor',
-                  address: 'man man man ',
-                  speciality: 'doc',
-                  patientImage:
-                      'https://www.talkwalker.com/images/2020/blog-headers/image-analysis.png'),
-              allPrescription: [
-                Prescription(
-                    prescriptionDate: '12-1-2020',
-                    prescriptionName: 'Prescription One',
-                    allMedicine: [
-                      Medicine(
-                          medicineName: 'panadol extra',
-                          medicineDosage: 'each 4 hour'),
-                      Medicine(
-                          medicineName: 'extramol',
-                          medicineDosage: 'each 12 hour'),
-                    ],
-                    allAnalysis: [
-                      RadiologyAndAnalysisStructure(
-                          name: 'dfn',
-                          description: 'fedg etet tt',
-                          image:
-                              'https://www.mediclinicinfohub.co.za/wp-content/uploads/2018/10/GettyImages-769782917_Facebook.jpg'),
-                      RadiologyAndAnalysisStructure(
-                          name: 'ggg',
-                          description: 'fgdtet dgtt',
-                          image:
-                              'https://www.mediclinicinfohub.co.za/wp-content/uploads/2018/10/GettyImages-769782917_Facebook.jpg'),
-                    ],
-                    allRadiology: [
-                      RadiologyAndAnalysisStructure(
-                          name: 'drttrn',
-                          description: 'feazg ett',
-                          image:
-                              'https://www.mediclinicinfohub.co.za/wp-content/uploads/2018/10/GettyImages-769782917_Facebook.jpg'),
-                      RadiologyAndAnalysisStructure(
-                          name: 'giuoig',
-                          description: 'fgqqet dgtt',
-                          image:
-                              'https://www.mediclinicinfohub.co.za/wp-content/uploads/2018/10/GettyImages-769782917_Facebook.jpg'),
-                    ]),
-                Prescription(
-                    prescriptionDate: '8-11-2020',
-                    prescriptionName: 'Prescription two',
-                    allMedicine: [
-                      Medicine(
-                          medicineName: 'novadol',
-                          medicineDosage: 'each 24 hour'),
-                      Medicine(
-                          medicineName: 'omega3',
-                          medicineDosage: 'each 12 hour'),
-                    ]),
-              ]),
-          DoctorsInEachDosage(
-              date: '5-6-77',
-              doctorData: RegisterData(
-                  firstName: 'Ayman',
-                  middleName: 'Kamel',
-                  lastName: 'Elslamony',
-                  number: '01145523795',
-                  status: 'not',
-                  job: 'Doctor',
-                  government: 'Mansoura',
-                  gender: 'Male',
-                  birthDate: '12/5/2020',
-                  aboutYou: 'iam doctor',
-                  address: 'man man man ',
-                  speciality: 'doc',
-                  patientImage:
-                      'https://www.talkwalker.com/images/2020/blog-headers/image-analysis.png'),
-              allPrescription: [
-                Prescription(
-                    prescriptionDate: '2-1-2020',
-                    prescriptionName: 'Prescription three',
-                    allMedicine: [
-                      Medicine(
-                          medicineName: 'zeta', medicineDosage: 'each 2 hour'),
-                      Medicine(
-                          medicineName: 'beta', medicineDosage: 'each 1 hour'),
-                    ]),
-                Prescription(
-                    prescriptionDate: '8-1-2020',
-                    prescriptionName: 'Prescription one',
-                    allMedicine: [
-                      Medicine(
-                          medicineName: 'zeta', medicineDosage: 'each 2 hour'),
-                      Medicine(
-                          medicineName: 'beta', medicineDosage: 'each 1 hour'),
-                    ]),
-              ]),
-        ]),
-    DrugList(
-        diagnoseName: 'mellitus (ICD-250)',
-        diagnoseDate: '1-1-2020',
-        allDoctorsInEachDosage: [
-          DoctorsInEachDosage(
-              date: '5-6-77',
-              doctorData: RegisterData(
-                  firstName: 'nour',
-                  middleName: 'marwan',
-                  lastName: 'nemar',
-                  number: '01145523795',
-                  status: 'not',
-                  job: 'Doctor',
-                  government: 'Mansoura',
-                  gender: 'Male',
-                  birthDate: '12/5/2020',
-                  aboutYou: 'iam doctor',
-                  address: 'man man man ',
-                  speciality: 'doc',
-                  patientImage:
-                      'https://www.talkwalker.com/images/2020/blog-headers/image-analysis.png'),
-              allPrescription: [
-                Prescription(
-                    prescriptionDate: '12-1-2020',
-                    prescriptionName: 'Prescription One',
-                    allMedicine: [
-                      Medicine(
-                          medicineName: 'panadol extra',
-                          medicineDosage: 'each 4 hour')
-                    ]),
-              ]),
-        ])
-  ];
-
+  bool isLoading = true;
   final GlobalKey<ScaffoldState> _patientHealthRecordState =
       GlobalKey<ScaffoldState>();
-
   @override
   void initState() {
-    _auth =Provider.of<Auth>(context,listen: false);
+    _auth = Provider.of<Auth>(context, listen: false);
+    getHistory();
     super.initState();
+  }
+
+  getHistory() async {
+    print('widget.doctorAppointment.registerData.id${widget.doctorAppointment.registerData.id}');
+    await _auth.getAllDiagnoseName(patientId: widget.doctorAppointment.registerData.id);
+    setState(() {
+      isLoading = false;
+    });
   }
   @override
   Widget build(BuildContext context) {
@@ -315,7 +182,6 @@ class _PatientHealthRecordState extends State<PatientHealthRecord> {
         ),
       );
     }
-
     return InfoWidget(
       builder: (context, infoWidget) {
         return Scaffold(
@@ -498,32 +364,81 @@ class _PatientHealthRecordState extends State<PatientHealthRecord> {
                     height: 6,
                     color: Colors.blue,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) => RaisedButton(
-                        onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(builder: (context)=>ShowHealthRecord(
-                            allDrugList: allDrugList,
-                            diagnoseName: allDrugList[index].diagnoseName,
-                            indexForDrugList: index,
-                          )));
-                        },
-                        color: Colors.blue,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                        child: Padding(
-                          padding: EdgeInsets.all(8),
-                          child: Text(
-                            allDrugList[index].diagnoseName,
-                            style: infoWidget.titleButton,
+                  isLoading
+                      ? SizedBox(
+                    width: infoWidget.screenWidth,
+                        height: infoWidget.screenHeight*0.65,
+                        child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                        Center(
+                          child: CircularProgressIndicator(
+                            backgroundColor: Colors.blue,
                           ),
                         ),
-                      ),
-                      itemCount: allDrugList.length,
-                    ),
+                    ],
+                  ),
+                      )
+                      : Consumer<Auth>(
+                    builder: (context,data,_){
+                      if(data.allDiagnose.length == 0){
+                        return SizedBox(
+                          width: infoWidget.screenWidth,
+                          height: infoWidget.screenHeight*0.65,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              SizedBox(
+                                width: infoWidget.screenWidth,
+                                height: infoWidget.screenHeight * 0.05,
+                                child:
+                                ListView(
+                                  shrinkWrap: true,
+                                  children: <Widget>[
+                                    SizedBox(),
+                                  ],
+                                ),
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Text('There in no any records yet',style: infoWidget.titleButton.copyWith(color: Colors.blue),maxLines: 3,),
+                                ],
+                              )
+                            ],
+                          ),
+                        );
+                      }else{
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemBuilder: (context, index) => RaisedButton(
+                              onPressed: () {
+                                Navigator.of(context).push(MaterialPageRoute(builder: (context)=>ShowHealthRecord(
+                                  diagnoseName: data.allDiagnose[index],
+                                )));
+                              },
+                              color: Colors.blue,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Padding(
+                                padding: EdgeInsets.all(8),
+                                child: Text(
+                                  data.allDiagnose[index],
+                                  style: infoWidget.titleButton,
+                                ),
+                              ),
+                            ),
+                            itemCount: data.allDiagnose.length,
+                          ),
+                        );
+                      }
+                    },
                   )
                 ],
               ),

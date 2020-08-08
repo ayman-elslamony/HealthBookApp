@@ -24,7 +24,8 @@ class NetWork {
               jsonResponse =json.decode(response.toString());
             }
 
-          }catch(e){print(e);}
+          }catch(e){
+            print('error$e');}
       return jsonResponse;
     } else if (response == null) {
       return response;
@@ -43,9 +44,7 @@ class NetWork {
       var jsonResponse;
       Response response;
       if(formData ==null){
-        print('datadata$data');
         response = await dio.post(url, data: data);
-        print('dbvdb');
       }else {
         response = await dio.post(url, data: formData);
       }

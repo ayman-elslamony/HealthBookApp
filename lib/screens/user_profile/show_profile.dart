@@ -24,6 +24,7 @@ class _ShowUserProfileState extends State<ShowUserProfile> {
  
   @override
   Widget build(BuildContext context) {
+    print(widget.clinicData);
     return InfoWidget(
       builder: (context,infoWidget){
         return  Scaffold(
@@ -214,7 +215,7 @@ class _ShowUserProfileState extends State<ShowUserProfile> {
 //            _isDoctor? SizedBox(): UserVitals(),
 //            _isDoctor? SizedBox():UserLabResult(),
         widget.type == 'doctor'?
-        widget.clinicData==null?SizedBox():ClinicInfoCard(
+        widget.clinicData.clinicName==null?SizedBox():ClinicInfoCard(
         name: widget.clinicData.clinicName,
         address:  widget.clinicData.address,
         governorate: widget.clinicData.government,
