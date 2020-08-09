@@ -10,6 +10,7 @@ import 'package:healthbook/screens/patient_prescription/previous_prescription.da
 import 'package:provider/provider.dart';
 import 'package:toast/toast.dart';
 
+import '../../main_screen.dart';
 import 'ShowImage.dart';
 import 'add_radiology_and_analysis.dart';
 class RadiologyAndAnalysisResult {
@@ -555,8 +556,8 @@ key: _scaffoldKey,
                    );
                   if(x){
                     await _auth.deleteAppointmentForPatAndDoc(appointmentId: widget.doctorAppointment.appointmentId);
-
-                    Toast.show('succefully saved', context);
+                    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>HomeScreen()));
+                    Toast.show('succefully saved', context,duration: 2);
                   }else{
                     Toast.show('Please try again later', context);
                   }
@@ -690,7 +691,7 @@ key: _scaffoldKey,
                                   children: <Widget>[
                                     Expanded(
                                       child:  Text(
-                                        'Appointement at ${widget.doctorAppointment.appointStart} PM',
+                                        'Appointement at ${widget.doctorAppointment.appointStart} o\'clock',
                                         style: infoWidget.subTitle.copyWith(fontWeight: FontWeight.w500),
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,

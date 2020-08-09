@@ -9,7 +9,8 @@ import '../user_profile/user_profile.dart';
 class DoctorAppointmentCard extends StatefulWidget {
   final Function cancelButton;
   final DoctorAppointment doctorAppointment;
-  DoctorAppointmentCard({this.cancelButton,this.doctorAppointment});
+  final int index;
+  DoctorAppointmentCard({this.cancelButton,this.doctorAppointment,this.index});
 
   @override
   _DoctorAppointmentCardState createState() => _DoctorAppointmentCardState();
@@ -21,7 +22,7 @@ class _DoctorAppointmentCardState extends State<DoctorAppointmentCard> {
   @override
   void initState() {
     DateTime today = DateTime.now();
-    mybirth=widget.doctorAppointment.registerData.birthDate.split('/');
+    mybirth=widget.doctorAppointment.registerData.birthDate.split('-');
     print(mybirth);
     DateTime birthday = DateTime(mybirth.length!=3?2020:int.parse(mybirth[2]),mybirth.length!=3?1:int.parse(mybirth[1]),mybirth.length!=3?1: int.parse(mybirth[0]));
     birthDate = Age.dateDifference(
@@ -123,7 +124,7 @@ class _DoctorAppointmentCardState extends State<DoctorAppointmentCard> {
                                   children: <Widget>[
                                     Expanded(
                                       child: Text(
-                                    'Appointement number: 1',
+                                    'Appointement number: ${widget.index+1}',
                                         style:
                                         infoWidget.subTitle.copyWith(fontWeight: FontWeight.w500),
                                         maxLines: 2,
@@ -139,7 +140,7 @@ class _DoctorAppointmentCardState extends State<DoctorAppointmentCard> {
                                   children: <Widget>[
                                     Expanded(
                                       child:  Text(
-                                        'Appointement at ${widget.doctorAppointment.appointStart} PM',
+                                        'Appointement at ${widget.doctorAppointment.appointStart} o\'clock',
                                         style: infoWidget.subTitle.copyWith(fontWeight: FontWeight.w500),
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,

@@ -82,6 +82,7 @@ class _RegisterUserDataState extends State<RegisterUserData> {
   void initState() {
     super.initState();
     _auth = Provider.of<Auth>(context, listen: false);
+    print(_auth.userData.number);
     if (widget.isEditingEnable) {
       _firstTextEditingController.text = _auth.userData.firstName??'';
       _middleTextEditingController.text = _auth.userData.middleName??'';

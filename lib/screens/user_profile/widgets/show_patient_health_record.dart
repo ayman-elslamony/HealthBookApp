@@ -1106,12 +1106,12 @@ class _ShowHealthRecordState extends State<ShowHealthRecord> {
                                                             scrollDirection:
                                                             Axis.horizontal,
                                                             child: Text(
-                                                                data
+                                                                'Prescription number: ${data
                                                                     .allDoctorsInEachDosage[
                                                                 indexForDoctors]
                                                                     .allPrescription[
                                                                 indexForPrescription]
-                                                                    .prescriptionNumber,
+                                                                    .prescriptionNumber}',
                                                                 maxLines:
                                                                 1,
                                                                 style: infoWidget

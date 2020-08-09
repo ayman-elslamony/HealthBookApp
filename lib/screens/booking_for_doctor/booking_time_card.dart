@@ -7,7 +7,8 @@ import 'package:provider/provider.dart';
 import 'package:toast/toast.dart';
 
 class BookingInfoCard extends StatefulWidget {
-   final bool showBookingTime;List<BookingTime> bookingTime=[];
+   final bool showBookingTime;
+   List<BookingTime> bookingTime=[];
   final int indexForSearchResult;
   BookingInfoCard({this.indexForSearchResult,this.showBookingTime=false,this.bookingTime});
 

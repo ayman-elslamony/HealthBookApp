@@ -683,9 +683,9 @@ class _PreviousPrescriptionState extends State<PreviousPrescription> {
                                             scrollDirection:
                                             Axis.horizontal,
                                             child: Text(
-                                                data.allPrescriptionsForSpecificDoctor[
+                                                'Prescription number: ${data.allPrescriptionsForSpecificDoctor[
                                                 indexForPrescription]
-                                                    .prescriptionNumber,
+                                                    .prescriptionNumber}',
                                                 maxLines: 1,
                                                 style: infoWidget
                                                     .titleButton

@@ -726,84 +726,88 @@ class _ShowAllDoctorsInDiagnoseState extends State<ShowAllDoctorsInDiagnose> {
                               backgroundColor: Colors.blue)),
                     ],
                   )
-                : Consumer<Auth>(
-                    builder: (context, data, _) {
-                      if (data.allDoctorsInEachDosage.length == 0) {
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            SizedBox(
+                : RefreshIndicator(
+              backgroundColor: Colors.white,
+              color: Colors.blue,
+              onRefresh: ()async{
+                await _auth.getDataForSpecificDiagnoseName(
+                    diagnoseName: widget.diagnoseName);
+              },
+                  child: Consumer<Auth>(
+                      builder: (context, data, _) {
+                        if (data.allDoctorsInEachDosage.length == 0) {
+                          return SingleChildScrollView(
+                            child: SizedBox(
                               width: infoWidget.screenWidth,
-                              height: infoWidget.screenHeight * 0.10,
-                              child: ListView(
-                                shrinkWrap: true,
+                              height: infoWidget.screenHeight,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
-                                  SizedBox(),
+
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: <Widget>[
+                                      Text(
+                                        'There in no any data yet',
+                                        style: infoWidget.titleButton
+                                            .copyWith(color: Colors.blue),
+                                        maxLines: 3,
+                                      ),
+                                    ],
+                                  )
                                 ],
                               ),
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                Text(
-                                  'There in no any data yet',
-                                  style: infoWidget.titleButton
-                                      .copyWith(color: Colors.blue),
-                                  maxLines: 3,
-                                ),
-                              ],
-                            )
-                          ],
-                        );
-                      } else {
-                        return ListView.builder(
-                          itemBuilder: (context, indexForDoctors) => Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Material(
-                              color: Color(0xfffafbff),
-                              shadowColor: Colors.blueAccent,
-                              elevation: 2.0,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10)),
-                              type: MaterialType.card,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: <Widget>[
-                                  InkWell(
-                                      onTap: () {
-                                        setState(() {
-                                          data
-                                                  .allDoctorsInEachDosage[
-                                                      indexForDoctors]
-                                                  .showDoctorSet =
-                                              !data
-                                                  .allDoctorsInEachDosage[
-                                                      indexForDoctors]
-                                                  .showDoctorGet;
-                                        });
-                                      },
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Row(
-                                          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: <Widget>[
-                                            Expanded(
-                                              child: SingleChildScrollView(
-                                                scrollDirection:
-                                                    Axis.horizontal,
-                                                child: Text(
-                                                    "Dr: ${data.allDoctorsInEachDosage[indexForDoctors].doctorData.firstName} ${data.allDoctorsInEachDosage[indexForDoctors].doctorData.lastName}",
-                                                    maxLines: 1,
-                                                    style: infoWidget.title
-                                                        .copyWith(
-                                                            color: Colors.blue,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w500)),
+                          );
+                        } else {
+                          return ListView.builder(
+                            itemBuilder: (context, indexForDoctors) => Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Material(
+                                color: Color(0xfffafbff),
+                                shadowColor: Colors.blueAccent,
+                                elevation: 2.0,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10)),
+                                type: MaterialType.card,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: <Widget>[
+                                    InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            data
+                                                    .allDoctorsInEachDosage[
+                                                        indexForDoctors]
+                                                    .showDoctorSet =
+                                                !data
+                                                    .allDoctorsInEachDosage[
+                                                        indexForDoctors]
+                                                    .showDoctorGet;
+                                          });
+                                        },
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Row(
+                                            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: <Widget>[
+                                              Expanded(
+                                                child: SingleChildScrollView(
+                                                  scrollDirection:
+                                                      Axis.horizontal,
+                                                  child: Text(
+                                                      "Dr: ${data.allDoctorsInEachDosage[indexForDoctors].doctorData.firstName} ${data.allDoctorsInEachDosage[indexForDoctors].doctorData.lastName}",
+                                                      maxLines: 1,
+                                                      style: infoWidget.title
+                                                          .copyWith(
+                                                              color: Colors.blue,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500)),
+                                                ),
                                               ),
-                                            ),
 //                                            Padding(
 //                                              padding: const EdgeInsets.only(
 //                                                  right: 8.0),
@@ -819,472 +823,473 @@ class _ShowAllDoctorsInDiagnoseState extends State<ShowAllDoctorsInDiagnose> {
 //                                                    color: Colors.grey,
 //                                                  )),
 //                                            ),
-                                            Icon(
-                                              data
-                                                      .allDoctorsInEachDosage[
-                                                          indexForDoctors]
-                                                      .showDoctorGet
-                                                  ? Icons.keyboard_arrow_up
-                                                  : Icons.keyboard_arrow_down,
-                                              size: infoWidget.orientation ==
-                                                      Orientation.portrait
-                                                  ? infoWidget.screenWidth *
-                                                      0.065
-                                                  : infoWidget.screenWidth *
-                                                      0.049,
-                                            ),
-                                          ],
-                                        ),
-                                      )),
-                                  data.allDoctorsInEachDosage[indexForDoctors]
-                                          .showDoctorGet
-                                      ? Padding(
-                                          padding: const EdgeInsets.only(
-                                              bottom: 8.0),
-                                          child: Divider(
-                                            color: Colors.grey,
-                                            height: 4,
+                                              Icon(
+                                                data
+                                                        .allDoctorsInEachDosage[
+                                                            indexForDoctors]
+                                                        .showDoctorGet
+                                                    ? Icons.keyboard_arrow_up
+                                                    : Icons.keyboard_arrow_down,
+                                                size: infoWidget.orientation ==
+                                                        Orientation.portrait
+                                                    ? infoWidget.screenWidth *
+                                                        0.065
+                                                    : infoWidget.screenWidth *
+                                                        0.049,
+                                              ),
+                                            ],
                                           ),
-                                        )
-                                      : SizedBox(),
-                                  data.allDoctorsInEachDosage[indexForDoctors]
-                                          .showDoctorGet
-                                      ? Padding(
-                                          padding: EdgeInsets.only(
-                                              bottom: infoWidget
-                                                  .defaultVerticalPadding,
-                                              left: infoWidget
-                                                  .defaultHorizontalPadding,
-                                              right: infoWidget
-                                                  .defaultHorizontalPadding),
-                                          child: Column(children: <Widget>[
-                                            Container(
+                                        )),
+                                    data.allDoctorsInEachDosage[indexForDoctors]
+                                            .showDoctorGet
+                                        ? Padding(
+                                            padding: const EdgeInsets.only(
+                                                bottom: 8.0),
+                                            child: Divider(
+                                              color: Colors.grey,
+                                              height: 4,
+                                            ),
+                                          )
+                                        : SizedBox(),
+                                    data.allDoctorsInEachDosage[indexForDoctors]
+                                            .showDoctorGet
+                                        ? Padding(
+                                            padding: EdgeInsets.only(
+                                                bottom: infoWidget
+                                                    .defaultVerticalPadding,
+                                                left: infoWidget
+                                                    .defaultHorizontalPadding,
+                                                right: infoWidget
+                                                    .defaultHorizontalPadding),
+                                            child: Column(children: <Widget>[
+                                              Container(
 //
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(4.0),
-                                                child: InkWell(
-                                                  onTap: (){
-                                                    Navigator.of(context).push(MaterialPageRoute(builder: (context)=>
-                                                    ShowUserProfile(
-                                                      type: 'doctor',
-                                                      userData: data
-                                                          .allDoctorsInEachDosage[
-                                                      indexForDoctors]
-                                                          .doctorData,
-                                                      clinicData: data
-                                                          .allDoctorsInEachDosage[
-                                                      indexForDoctors]
-                                                          .clinicData,
-                                                    )
-                                                    ));
-                                                  },
-                                                  child: Row(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment.center,
-                                                    children: <Widget>[
-                                                      Column(
-                                                        children: <Widget>[
-                                                          Container(
-                                                            child: ClipRRect(
-                                                              borderRadius: BorderRadius.all(
-                                                                  Radius.circular(infoWidget
-                                                                              .orientation ==
-                                                                          Orientation
-                                                                              .portrait
-                                                                      ? 35.0
-                                                                      : 55.0)),
-                                                              child: FadeInImage
-                                                                  .assetNetwork(
-                                                                placeholder:
-                                                                    'assets/user.png',
-                                                                image: data
-                                                                        .allDoctorsInEachDosage[
-                                                                            indexForDoctors]
-                                                                        .doctorData
-                                                                        .doctorImage ??
-                                                                    ''
-                                                                //patientAppointment.registerData.doctorImage,
-                                                                ,
-                                                                fit: BoxFit.fill,
-                                                              ),
-                                                            ),
-                                                            width: infoWidget
-                                                                    .screenWidth *
-                                                                0.18,
-                                                            height: infoWidget
-                                                                    .screenWidth *
-                                                                0.18,
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      SizedBox(
-                                                        width: infoWidget
-                                                            .defaultVerticalPadding,
-                                                      ),
-                                                      Expanded(
-                                                        child: Column(
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(4.0),
+                                                  child: InkWell(
+                                                    onTap: (){
+                                                      Navigator.of(context).push(MaterialPageRoute(builder: (context)=>
+                                                      ShowUserProfile(
+                                                        type: 'doctor',
+                                                        userData: data
+                                                            .allDoctorsInEachDosage[
+                                                        indexForDoctors]
+                                                            .doctorData,
+                                                        clinicData: data
+                                                            .allDoctorsInEachDosage[
+                                                        indexForDoctors]
+                                                            .clinicData,
+                                                      )
+                                                      ));
+                                                    },
+                                                    child: Row(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment.center,
+                                                      children: <Widget>[
+                                                        Column(
                                                           children: <Widget>[
-                                                            Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .spaceEvenly,
-                                                              children: <Widget>[
-                                                                Expanded(
-                                                                  child: Text(
-                                                                      "Dr: ${data.allDoctorsInEachDosage[indexForDoctors].doctorData.firstName} ${data.allDoctorsInEachDosage[indexForDoctors].doctorData.lastName}",
-                                                                      //${patientAppointment.registerData.firstName} ${patientAppointment.registerData.lastName}',
-                                                                      maxLines: 2,
-                                                                      overflow:
-                                                                          TextOverflow
-                                                                              .ellipsis,
-                                                                      style: infoWidget
-                                                                          .title
-                                                                          .copyWith(
-                                                                              fontWeight:
-                                                                                  FontWeight.w400)),
+                                                            Container(
+                                                              child: ClipRRect(
+                                                                borderRadius: BorderRadius.all(
+                                                                    Radius.circular(infoWidget
+                                                                                .orientation ==
+                                                                            Orientation
+                                                                                .portrait
+                                                                        ? 35.0
+                                                                        : 55.0)),
+                                                                child: FadeInImage
+                                                                    .assetNetwork(
+                                                                  placeholder:
+                                                                      'assets/user.png',
+                                                                  image: data
+                                                                          .allDoctorsInEachDosage[
+                                                                              indexForDoctors]
+                                                                          .doctorData
+                                                                          .doctorImage ??
+                                                                      ''
+                                                                  //patientAppointment.registerData.doctorImage,
+                                                                  ,
+                                                                  fit: BoxFit.fill,
                                                                 ),
-                                                                RatingBar(
-                                                                  rating: 3,
-                                                                  icon: Icon(
-                                                                    Icons.star,
-                                                                    size: infoWidget
-                                                                            .screenWidth *
-                                                                        0.04,
-                                                                    color: Colors
-                                                                        .grey,
-                                                                  ),
-                                                                  starCount: 5,
-                                                                  spacing: 2.0,
-                                                                  size: infoWidget
-                                                                          .screenWidth *
-                                                                      0.03,
-                                                                  isIndicator:
-                                                                      true,
-                                                                  allowHalfRating:
-                                                                      true,
-                                                                  onRatingCallback: (double
-                                                                          value,
-                                                                      ValueNotifier<
-                                                                              bool>
-                                                                          isIndicator) {
-                                                                    //change the isIndicator from false  to true ,the       RatingBar cannot support touch event;
-                                                                    isIndicator
-                                                                            .value =
-                                                                        true;
-                                                                  },
-                                                                  color: Colors
-                                                                      .amber,
-                                                                ),
-                                                              ],
+                                                              ),
+                                                              width: infoWidget
+                                                                      .screenWidth *
+                                                                  0.18,
+                                                              height: infoWidget
+                                                                      .screenWidth *
+                                                                  0.18,
                                                             ),
-                                                            Padding(
-                                                              padding: EdgeInsets.only(
-                                                                  left: infoWidget
-                                                                      .defaultVerticalPadding),
-                                                              child: Row(
+                                                          ],
+                                                        ),
+                                                        SizedBox(
+                                                          width: infoWidget
+                                                              .defaultVerticalPadding,
+                                                        ),
+                                                        Expanded(
+                                                          child: Column(
+                                                            children: <Widget>[
+                                                              Row(
                                                                 mainAxisAlignment:
                                                                     MainAxisAlignment
                                                                         .spaceEvenly,
-                                                                children: <
-                                                                    Widget>[
+                                                                children: <Widget>[
                                                                   Expanded(
                                                                     child: Text(
-                                                                        'Speciality: ${data.allDoctorsInEachDosage[indexForDoctors].doctorData.speciality}'
-                                                                        //${patientAppointment.registerData.speciality}',
+                                                                        "Dr: ${data.allDoctorsInEachDosage[indexForDoctors].doctorData.firstName} ${data.allDoctorsInEachDosage[indexForDoctors].doctorData.lastName}",
+                                                                        //${patientAppointment.registerData.firstName} ${patientAppointment.registerData.lastName}',
+                                                                        maxLines: 2,
+                                                                        overflow:
+                                                                            TextOverflow
+                                                                                .ellipsis,
+                                                                        style: infoWidget
+                                                                            .title
+                                                                            .copyWith(
+                                                                                fontWeight:
+                                                                                    FontWeight.w400)),
+                                                                  ),
+                                                                  RatingBar(
+                                                                    rating: 3,
+                                                                    icon: Icon(
+                                                                      Icons.star,
+                                                                      size: infoWidget
+                                                                              .screenWidth *
+                                                                          0.04,
+                                                                      color: Colors
+                                                                          .grey,
+                                                                    ),
+                                                                    starCount: 5,
+                                                                    spacing: 2.0,
+                                                                    size: infoWidget
+                                                                            .screenWidth *
+                                                                        0.03,
+                                                                    isIndicator:
+                                                                        true,
+                                                                    allowHalfRating:
+                                                                        true,
+                                                                    onRatingCallback: (double
+                                                                            value,
+                                                                        ValueNotifier<
+                                                                                bool>
+                                                                            isIndicator) {
+                                                                      //change the isIndicator from false  to true ,the       RatingBar cannot support touch event;
+                                                                      isIndicator
+                                                                              .value =
+                                                                          true;
+                                                                    },
+                                                                    color: Colors
+                                                                        .amber,
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              Padding(
+                                                                padding: EdgeInsets.only(
+                                                                    left: infoWidget
+                                                                        .defaultVerticalPadding),
+                                                                child: Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .spaceEvenly,
+                                                                  children: <
+                                                                      Widget>[
+                                                                    Expanded(
+                                                                      child: Text(
+                                                                          'Speciality: ${data.allDoctorsInEachDosage[indexForDoctors].doctorData.speciality}'
+                                                                          //${patientAppointment.registerData.speciality}',
+                                                                          ,
+                                                                          style: infoWidget
+                                                                              .subTitle
+                                                                              .copyWith(
+                                                                                  fontWeight: FontWeight.w400)),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                              Padding(
+                                                                padding: EdgeInsets.only(
+                                                                    left: infoWidget
+                                                                        .defaultVerticalPadding),
+                                                                child: Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .spaceEvenly,
+                                                                  children: <
+                                                                      Widget>[
+                                                                    Expanded(
+                                                                      child: Text(
+                                                                        'Location: ${data.allDoctorsInEachDosage[indexForDoctors].doctorData.address}'
+                                                                        //${patientAppointment.registerData.address}',
                                                                         ,
                                                                         style: infoWidget
                                                                             .subTitle
                                                                             .copyWith(
-                                                                                fontWeight: FontWeight.w400)),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            Padding(
-                                                              padding: EdgeInsets.only(
-                                                                  left: infoWidget
-                                                                      .defaultVerticalPadding),
-                                                              child: Row(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .spaceEvenly,
-                                                                children: <
-                                                                    Widget>[
-                                                                  Expanded(
-                                                                    child: Text(
-                                                                      'Location: ${data.allDoctorsInEachDosage[indexForDoctors].doctorData.address}'
-                                                                      //${patientAppointment.registerData.address}',
-                                                                      ,
-                                                                      style: infoWidget
-                                                                          .subTitle
-                                                                          .copyWith(
-                                                                              fontWeight:
-                                                                                  FontWeight.w400),
-                                                                      maxLines: 2,
-                                                                      overflow:
-                                                                          TextOverflow
-                                                                              .ellipsis,
+                                                                                fontWeight:
+                                                                                    FontWeight.w400),
+                                                                        maxLines: 2,
+                                                                        overflow:
+                                                                            TextOverflow
+                                                                                .ellipsis,
+                                                                      ),
                                                                     ),
-                                                                  ),
-                                                                ],
+                                                                  ],
+                                                                ),
                                                               ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      )
-                                                    ],
+                                                            ],
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
                                                   ),
                                                 ),
                                               ),
-                                            ),
-                                            SizedBox(
-                                              height: 5,
-                                            ),
-                                            ListView.builder(
-                                              shrinkWrap: true,
-                                              physics:
-                                                  NeverScrollableScrollPhysics(),
-                                              itemBuilder: (context,
-                                                      indexForPrescription) =>
-                                                  Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: infoWidget
-                                                        .defaultHorizontalPadding,
-                                                    right: infoWidget
-                                                        .defaultHorizontalPadding,
-                                                    bottom: infoWidget
-                                                        .defaultVerticalPadding),
-                                                child: Material(
-                                                  shadowColor:
-                                                      Colors.blueAccent,
-                                                  color: data
-                                                          .allDoctorsInEachDosage[
-                                                              indexForDoctors]
-                                                          .allPrescription[
-                                                              indexForPrescription]
-                                                          .showPrescriptionGet
-                                                      ? Colors.white
-                                                      : Colors.blue,
-                                                  elevation: data
-                                                          .allDoctorsInEachDosage[
-                                                              indexForDoctors]
-                                                          .allPrescription[
-                                                              indexForPrescription]
-                                                          .showPrescriptionGet
-                                                      ? 2
-                                                      : 1.0,
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(10)),
-                                                  type: MaterialType.card,
-                                                  child: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    children: <Widget>[
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(8.0),
-                                                        child: InkWell(
-                                                            onTap: () {
-                                                              setState(() {
-                                                                data
-                                                                        .allDoctorsInEachDosage[
-                                                                            indexForDoctors]
-                                                                        .allPrescription[
-                                                                            indexForPrescription]
-                                                                        .showPrescriptionSet =
-                                                                    !data
-                                                                        .allDoctorsInEachDosage[
-                                                                            indexForDoctors]
-                                                                        .allPrescription[
-                                                                            indexForPrescription]
-                                                                        .showPrescriptionGet;
-                                                              });
-                                                            },
-                                                            child: Row(
-                                                              children: <
-                                                                  Widget>[
-                                                                Expanded(
-                                                                  child:
-                                                                      SingleChildScrollView(
-                                                                    scrollDirection:
-                                                                        Axis.horizontal,
-                                                                    child: Text(
-                                                                        data
-                                                                            .allDoctorsInEachDosage[
-                                                                                indexForDoctors]
-                                                                            .allPrescription[
-                                                                                indexForPrescription]
-                                                                            .prescriptionNumber,
-                                                                        maxLines:
-                                                                            1,
-                                                                        style: infoWidget
-                                                                            .titleButton
-                                                                            .copyWith(
-                                                                          color: data.allDoctorsInEachDosage[indexForDoctors].allPrescription[indexForPrescription].showPrescriptionGet
-                                                                              ? Colors.blue
-                                                                              : Colors.white,
-                                                                        )),
-                                                                  ),
-                                                                ),
-                                                                SizedBox(
-                                                                  width: 3,
-                                                                ),
-                                                                Text(
-                                                                    data
-                                                                        .allDoctorsInEachDosage[
-                                                                            indexForDoctors]
-                                                                        .allPrescription[
-                                                                            indexForPrescription]
-                                                                        .prescriptionDate,
-                                                                    style: infoWidget
-                                                                        .titleButton
-                                                                        .copyWith(
-                                                                      color: data
-                                                                              .allDoctorsInEachDosage[indexForDoctors]
-                                                                              .allPrescription[indexForPrescription]
-                                                                              .showPrescriptionGet
-                                                                          ? Colors.grey
-                                                                          : Colors.white,
-                                                                    )),
-                                                                Icon(
+                                              SizedBox(
+                                                height: 5,
+                                              ),
+                                              ListView.builder(
+                                                shrinkWrap: true,
+                                                physics:
+                                                    NeverScrollableScrollPhysics(),
+                                                itemBuilder: (context,
+                                                        indexForPrescription) =>
+                                                    Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: infoWidget
+                                                          .defaultHorizontalPadding,
+                                                      right: infoWidget
+                                                          .defaultHorizontalPadding,
+                                                      bottom: infoWidget
+                                                          .defaultVerticalPadding),
+                                                  child: Material(
+                                                    shadowColor:
+                                                        Colors.blueAccent,
+                                                    color: data
+                                                            .allDoctorsInEachDosage[
+                                                                indexForDoctors]
+                                                            .allPrescription[
+                                                                indexForPrescription]
+                                                            .showPrescriptionGet
+                                                        ? Colors.white
+                                                        : Colors.blue,
+                                                    elevation: data
+                                                            .allDoctorsInEachDosage[
+                                                                indexForDoctors]
+                                                            .allPrescription[
+                                                                indexForPrescription]
+                                                            .showPrescriptionGet
+                                                        ? 2
+                                                        : 1.0,
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(10)),
+                                                    type: MaterialType.card,
+                                                    child: Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment.start,
+                                                      children: <Widget>[
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(8.0),
+                                                          child: InkWell(
+                                                              onTap: () {
+                                                                setState(() {
                                                                   data
                                                                           .allDoctorsInEachDosage[
                                                                               indexForDoctors]
                                                                           .allPrescription[
                                                                               indexForPrescription]
-                                                                          .showPrescriptionGet
-                                                                      ? Icons
-                                                                          .keyboard_arrow_up
-                                                                      : Icons
-                                                                          .keyboard_arrow_down,
-                                                                  size: infoWidget
-                                                                              .orientation ==
-                                                                          Orientation
-                                                                              .portrait
-                                                                      ? infoWidget
-                                                                              .screenWidth *
-                                                                          0.058
-                                                                      : infoWidget
-                                                                              .screenWidth *
-                                                                          0.042,
-                                                                ),
-                                                              ],
-                                                            )),
-                                                      ),
-                                                      data
-                                                              .allDoctorsInEachDosage[
-                                                                  indexForDoctors]
-                                                              .allPrescription[
-                                                                  indexForPrescription]
-                                                              .showPrescriptionGet
-                                                          ? Divider(
-                                                              color:
-                                                                  Colors.grey,
-                                                              height: 1,
-                                                            )
-                                                          : SizedBox(),
-                                                      data
-                                                              .allDoctorsInEachDosage[
-                                                                  indexForDoctors]
-                                                              .allPrescription[
-                                                                  indexForPrescription]
-                                                              .showPrescriptionGet
-                                                          ? Padding(
-                                                              padding: EdgeInsets.only(
-                                                                  bottom: infoWidget
-                                                                      .defaultVerticalPadding,
-                                                                  left: infoWidget
-                                                                      .defaultHorizontalPadding,
-                                                                  right: infoWidget
-                                                                      .defaultHorizontalPadding,
-                                                                  top: infoWidget
-                                                                      .defaultVerticalPadding),
-                                                              child: Column(
+                                                                          .showPrescriptionSet =
+                                                                      !data
+                                                                          .allDoctorsInEachDosage[
+                                                                              indexForDoctors]
+                                                                          .allPrescription[
+                                                                              indexForPrescription]
+                                                                          .showPrescriptionGet;
+                                                                });
+                                                              },
+                                                              child: Row(
                                                                 children: <
                                                                     Widget>[
-                                                                  Padding(
-                                                                    padding: EdgeInsets.only(
-                                                                        top: infoWidget
-                                                                            .defaultVerticalPadding,
-                                                                        left: infoWidget
-                                                                            .defaultHorizontalPadding),
-                                                                    child: Row(
-                                                                      children: <
-                                                                          Widget>[
-                                                                        Text(
-                                                                          'Diagnose Description: ',
+                                                                  Expanded(
+                                                                    child:
+                                                                        SingleChildScrollView(
+                                                                      scrollDirection:
+                                                                          Axis.horizontal,
+                                                                      child: Text(
+                                                                          'Prescription number: ${data
+                                                                              .allDoctorsInEachDosage[
+                                                                          indexForDoctors]
+                                                                              .allPrescription[
+                                                                          indexForPrescription]
+                                                                              .prescriptionNumber}',
+                                                                          maxLines:
+                                                                              1,
                                                                           style: infoWidget
-                                                                              .subTitle
+                                                                              .titleButton
                                                                               .copyWith(
-                                                                            color:
-                                                                                Colors.black,
-                                                                            //fontWeight: FontWeight.w500
-                                                                          ),
-                                                                        ),
-                                                                        Expanded(
-                                                                            child:
-                                                                                Text(
-                                                                          data
-                                                                              .allDoctorsInEachDosage[indexForDoctors]
-                                                                              .allPrescription[indexForPrescription]
-                                                                              .diagnoseDescription,
-                                                                          style: infoWidget
-                                                                              .subTitle
-
-                                                                        ))
-                                                                      ],
+                                                                            color: data.allDoctorsInEachDosage[indexForDoctors].allPrescription[indexForPrescription].showPrescriptionGet
+                                                                                ? Colors.blue
+                                                                                : Colors.white,
+                                                                          )),
                                                                     ),
                                                                   ),
-                                                                  widget
-                                                                          .isShowMedicine
-                                                                      ? _showMedicine(
-                                                                          infoWidget:
-                                                                              infoWidget,
-                                                                          indexForDoctors:
-                                                                              indexForDoctors,
-                                                                          indexForPrescription:
-                                                                              indexForPrescription)
-                                                                      : Column(
-                                                                          children: <
-                                                                              Widget>[
-                                                                            contentOfRadiologyAndAnalysis(
-                                                                                infoWidget: infoWidget,
-                                                                                isAnalysis: false,
-                                                                                indexForDoctors: indexForDoctors,
-                                                                                indexForPrescription: indexForPrescription),
-                                                                            contentOfRadiologyAndAnalysis(
-                                                                                infoWidget: infoWidget,
-                                                                                indexForDoctors: indexForDoctors,
-                                                                                indexForPrescription: indexForPrescription),
-                                                                          ],
-                                                                        )
+                                                                  SizedBox(
+                                                                    width: 3,
+                                                                  ),
+                                                                  Text(
+                                                                      data
+                                                                          .allDoctorsInEachDosage[
+                                                                              indexForDoctors]
+                                                                          .allPrescription[
+                                                                              indexForPrescription]
+                                                                          .prescriptionDate,
+                                                                      style: infoWidget
+                                                                          .titleButton
+                                                                          .copyWith(
+                                                                        color: data
+                                                                                .allDoctorsInEachDosage[indexForDoctors]
+                                                                                .allPrescription[indexForPrescription]
+                                                                                .showPrescriptionGet
+                                                                            ? Colors.grey
+                                                                            : Colors.white,
+                                                                      )),
+                                                                  Icon(
+                                                                    data
+                                                                            .allDoctorsInEachDosage[
+                                                                                indexForDoctors]
+                                                                            .allPrescription[
+                                                                                indexForPrescription]
+                                                                            .showPrescriptionGet
+                                                                        ? Icons
+                                                                            .keyboard_arrow_up
+                                                                        : Icons
+                                                                            .keyboard_arrow_down,
+                                                                    size: infoWidget
+                                                                                .orientation ==
+                                                                            Orientation
+                                                                                .portrait
+                                                                        ? infoWidget
+                                                                                .screenWidth *
+                                                                            0.058
+                                                                        : infoWidget
+                                                                                .screenWidth *
+                                                                            0.042,
+                                                                  ),
                                                                 ],
-                                                              ))
-                                                          : SizedBox(),
-                                                    ],
+                                                              )),
+                                                        ),
+                                                        data
+                                                                .allDoctorsInEachDosage[
+                                                                    indexForDoctors]
+                                                                .allPrescription[
+                                                                    indexForPrescription]
+                                                                .showPrescriptionGet
+                                                            ? Divider(
+                                                                color:
+                                                                    Colors.grey,
+                                                                height: 1,
+                                                              )
+                                                            : SizedBox(),
+                                                        data
+                                                                .allDoctorsInEachDosage[
+                                                                    indexForDoctors]
+                                                                .allPrescription[
+                                                                    indexForPrescription]
+                                                                .showPrescriptionGet
+                                                            ? Padding(
+                                                                padding: EdgeInsets.only(
+                                                                    bottom: infoWidget
+                                                                        .defaultVerticalPadding,
+                                                                    left: infoWidget
+                                                                        .defaultHorizontalPadding,
+                                                                    right: infoWidget
+                                                                        .defaultHorizontalPadding,
+                                                                    top: infoWidget
+                                                                        .defaultVerticalPadding),
+                                                                child: Column(
+                                                                  children: <
+                                                                      Widget>[
+                                                                    Padding(
+                                                                      padding: EdgeInsets.only(
+                                                                          top: infoWidget
+                                                                              .defaultVerticalPadding,
+                                                                          left: infoWidget
+                                                                              .defaultHorizontalPadding),
+                                                                      child: Row(
+                                                                        children: <
+                                                                            Widget>[
+                                                                          Text(
+                                                                            'Diagnose Description: ',
+                                                                            style: infoWidget
+                                                                                .subTitle
+                                                                                .copyWith(
+                                                                              color:
+                                                                                  Colors.black,
+                                                                              //fontWeight: FontWeight.w500
+                                                                            ),
+                                                                          ),
+                                                                          Expanded(
+                                                                              child:
+                                                                                  Text(
+                                                                            data
+                                                                                .allDoctorsInEachDosage[indexForDoctors]
+                                                                                .allPrescription[indexForPrescription]
+                                                                                .diagnoseDescription,
+                                                                            style: infoWidget
+                                                                                .subTitle
+
+                                                                          ))
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                    widget
+                                                                            .isShowMedicine
+                                                                        ? _showMedicine(
+                                                                            infoWidget:
+                                                                                infoWidget,
+                                                                            indexForDoctors:
+                                                                                indexForDoctors,
+                                                                            indexForPrescription:
+                                                                                indexForPrescription)
+                                                                        : Column(
+                                                                            children: <
+                                                                                Widget>[
+                                                                              contentOfRadiologyAndAnalysis(
+                                                                                  infoWidget: infoWidget,
+                                                                                  isAnalysis: false,
+                                                                                  indexForDoctors: indexForDoctors,
+                                                                                  indexForPrescription: indexForPrescription),
+                                                                              contentOfRadiologyAndAnalysis(
+                                                                                  infoWidget: infoWidget,
+                                                                                  indexForDoctors: indexForDoctors,
+                                                                                  indexForPrescription: indexForPrescription),
+                                                                            ],
+                                                                          )
+                                                                  ],
+                                                                ))
+                                                            : SizedBox(),
+                                                      ],
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                              itemCount: data
-                                                  .allDoctorsInEachDosage[
-                                                      indexForDoctors]
-                                                  .allPrescription
-                                                  .length,
-                                            )
-                                          ]))
-                                      : SizedBox(),
-                                ],
+                                                itemCount: data
+                                                    .allDoctorsInEachDosage[
+                                                        indexForDoctors]
+                                                    .allPrescription
+                                                    .length,
+                                              )
+                                            ]))
+                                        : SizedBox(),
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                          itemCount: data.allDoctorsInEachDosage.length,
-                        );
-                      }
-                    },
-                  ));
+                            itemCount: data.allDoctorsInEachDosage.length,
+                          );
+                        }
+                      },
+                    ),
+                ));
       },
     );
   }

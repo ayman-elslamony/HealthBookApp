@@ -284,9 +284,10 @@ bool isLoading=true;
                               PatientAppointmentCard(patientAppointment: appointements.allAppointmentOfPatient[index])
                           ): DoctorAppointmentCard(
                             cancelButton: _cancelButton,
-                            //see app as doctor
+                            index: index,
                             doctorAppointment: appointements.allAppointment[index],
                           ),
+                          shrinkWrap: true,
                           itemCount:
                           _auth.getUserType == 'doctor'?
                           appointements.allAppointment.length :appointements.allAppointmentOfPatient.length,

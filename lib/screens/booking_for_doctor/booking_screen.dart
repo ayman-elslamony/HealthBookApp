@@ -388,7 +388,7 @@ class _BookingState extends State<Booking> {
                           _data(title: 'Wating Time:', content: _searchResult.clinicData.waitingTime,textStyle: infoWidget.titleButton),
                           _data(title: 'Address:', content: _searchResult.clinicData.address,textStyle: infoWidget.titleButton),
 
-                          // _data(title: 'Governorate:', content: widget.governorate),
+                          _data(title: 'Governorate:', content: _searchResult.clinicData.government,textStyle: infoWidget.titleButton),
 
                           _data(title: 'Fees:', content: _searchResult.clinicData.fees,textStyle: infoWidget.titleButton),
                         ],

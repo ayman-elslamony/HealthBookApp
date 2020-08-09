@@ -53,7 +53,7 @@ class Auth with ChangeNotifier {
       _allDoctorsInEachDosage;
   List<SearchResult> _searchResult = [];
   static ClinicData clinicData;
-
+  List<Appointment> allAppointmentTime = [];
   bool get isAuth {
     return token != null;
   }
@@ -186,8 +186,8 @@ class Auth with ChangeNotifier {
         'Authorization': 'Bearer $_token',
       });
       print('dataForClinicdataForClinicdataForClinic$dataForClinic');
-      if (dataForClinic['clinic'] != null) {
-        clinicData = ClinicData.fromJson(dataForClinic['clinic']);
+      if (dataForClinic['searchedDoctor'] != null) {
+        clinicData = ClinicData.fromJson(dataForClinic['searchedDoctor'][0]);
         print(clinicData);
       }
       return;
@@ -284,7 +284,7 @@ class Auth with ChangeNotifier {
           _allDoctorsInEachDosage.add(DoctorsInEachDosage.fromJson(
               _allPrescriptions['Diagno'],
               userData['doctor'],
-              clinicData,
+              clinicData['searchedDoctor'][0],
               diagnoseName));
         }
       }
@@ -302,13 +302,15 @@ class Auth with ChangeNotifier {
               .getData(url: 'doctor/clinic/${_allDoctorsId[i]}', headers: {
             'Authorization': 'Bearer $_token',
           });
+          print(clinicData['searchedDoctor'][0]);
           print(userData);
           print(clinicData);
+
           _allDoctorsInEachDosage.clear();
           _allDoctorsInEachDosage.add(DoctorsInEachDosage.fromJson(
               _allPrescriptions['Diagno'],
               userData['doctor'],
-              clinicData,
+              clinicData['searchedDoctor'][0],
               diagnoseName));
         }
       }
@@ -712,9 +714,9 @@ bool x=true;
       for(int i=0; i <result['searchedDoctor'].length; i++){
         print(result['searchedDoctor'][i]['_id']);
         var clinicData = await _netWork
-            .getData(url: 'clinic/5f2f20705f55ac0017a2cef5');
+            .getData(url: 'doctor/clinic/${result['searchedDoctor'][i]['_id']}');
         print(clinicData);
-        allResult.add(SearchResult.fromJson(result['searchedDoctor'][i], clinicData['clinic']));
+        allResult.add(SearchResult.fromJson(result['searchedDoctor'][i], clinicData['searchedDoctor'][0]));
       }
       _searchResult = allResult;
       notifyListeners();
@@ -723,7 +725,7 @@ bool x=true;
   }
 
   Future<List<Appointment>> availableTime({String clinicId}) async {
-    List<Appointment> allAppointment = [];
+    if(allAppointmentTime.length ==0){
     var appointmentData;
     appointmentData = await _netWork.getData(
         url: 'appoint/appoint-clinic/$clinicId',
@@ -735,11 +737,12 @@ bool x=true;
     print('appointmentData$appointmentData');
     if (appointmentData['clinic'].length != 0) {
       for (int i = 0; i < appointmentData['clinic'].length; i++) {
-        allAppointment.add(Appointment.fromJson(appointmentData['clinic'][i]));
+        allAppointmentTime.add(Appointment.fromJson(appointmentData['clinic'][i]));
       }
     }
-    print('allAppointment${allAppointment.length}');
-    return allAppointment;
+    print('allAppointment${allAppointmentTime.length}');
+    }
+    return allAppointmentTime;
   }
 
   Future<bool> patientReservationInDoctor(
@@ -815,6 +818,5 @@ bool x=true;
     _userType = 'patient';
     final prefs = await SharedPreferences.getInstance();
     prefs.clear();
-    print('fbnfnfnf');
   }
 }

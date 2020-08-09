@@ -54,9 +54,7 @@ class DoctorsInEachDosage {
   DoctorsInEachDosage.fromJson(
       List json, Map<String, dynamic> doctorData,Map<String, dynamic> clinicData,String diagnoseName) {
     this.doctorData = RegisterData.fromJson(doctorData, 'doctor');
-    if(clinicData !=null){
       this.clinicData = ClinicData.fromJson(clinicData);
-    }
     for(int i=0; i< json.length; i++){
       if(diagnoseName == json[i]['diagnose']){
     this.allPrescription.add(Prescription.fromJson(json[i]));
