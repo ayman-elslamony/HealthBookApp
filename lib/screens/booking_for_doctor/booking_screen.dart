@@ -57,11 +57,16 @@ class _BookingState extends State<Booking> {
       ),
     );
   }
+  String _workingDays='';
 @override
   void initState() {
     _dateTime =DateTime.now();
     _auth = Provider.of<Auth>(context,listen: false);
     _searchResult =_auth.searchResult[widget.index];
+    for(int i=0; i<_searchResult.clinicData.workingDays.length; i++){
+      _workingDays = _workingDays + _searchResult.clinicData.workingDays[i];
+    }
+
     getBookingTimeAvailable();
     super.initState();
   }
@@ -81,7 +86,7 @@ class _BookingState extends State<Booking> {
 //      _minuteTextEditingController.text = _auth.getClinicData.waitingTime;
 //    }
     bookingTime.clear();
-     for(int i = 8; i<  13; i++){
+     for(int i = int.parse(_searchResult.clinicData.openingTime); i<  int.parse(_searchResult.clinicData.clossingTime); i++){
        var time = i*60 + 15;
        var hour = time ~/ 60;
        var minutes = time % 60;
@@ -378,8 +383,8 @@ class _BookingState extends State<Booking> {
                           _data(title: 'Clinic Name:', content: _searchResult.clinicData.clinicName,textStyle: infoWidget.titleButton),
                           _data(
                               title: 'Working Time:',
-                              content: 'From ${_searchResult.clinicData.openingTime} AM To ${_searchResult.clinicData.clossingTime} PM ',textStyle: infoWidget.titleButton),
-                          _data(title: 'Working Days:', content: _searchResult.clinicData.waitingTime,textStyle: infoWidget.titleButton),
+                              content: 'From ${_searchResult.clinicData.openingTime} To ${_searchResult.clinicData.clossingTime} ',textStyle: infoWidget.titleButton),
+                          _data(title: 'Working Days:', content: _workingDays,textStyle: infoWidget.titleButton),
                           _data(title: 'Wating Time:', content: _searchResult.clinicData.waitingTime,textStyle: infoWidget.titleButton),
                           _data(title: 'Address:', content: _searchResult.clinicData.address,textStyle: infoWidget.titleButton),
 

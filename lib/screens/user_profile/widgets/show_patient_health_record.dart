@@ -11,10 +11,11 @@ import '../show_profile.dart';
 
 class ShowHealthRecord extends StatefulWidget {
   final String diagnoseName;
-
+final String patientId;
   ShowHealthRecord(
       {
         this.diagnoseName,
+        this.patientId
        });
 
   @override
@@ -35,8 +36,9 @@ class _ShowHealthRecordState extends State<ShowHealthRecord> {
   }
 
   getDataForSpecificDiagnoseName() async {
+    print('widget.patientIdwidget.patientId${widget.patientId}');
     await _auth.getDataForSpecificDiagnoseName(
-        diagnoseName: widget.diagnoseName);
+        diagnoseName: widget.diagnoseName,patientId: widget.patientId);
     print('aaaaaaaaaaaaaaaaa');
     setState(() {
       isLoading = false;

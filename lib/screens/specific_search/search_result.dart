@@ -6,6 +6,7 @@ import 'package:healthbook/screens/booking_for_doctor/booking_screen.dart';
 import 'package:healthbook/screens/user_profile/show_profile.dart';
 import 'package:healthbook/screens/user_profile/user_profile.dart';
 import 'package:provider/provider.dart';
+import 'package:toast/toast.dart';
 
 import 'specific_search_screen.dart';
 
@@ -363,7 +364,9 @@ class _SearchResultState extends State<SearchResult> {
                                                 infoWidget.defaultVerticalPadding,
                                           ),
                                           RaisedButton(
-                                            onPressed:  data.searchResult[index].clinicData==null?(){}:() {
+                                            onPressed:  data.searchResult[index].clinicData==null?(){
+                                              Toast.show('Not avilable now please try again later', context);
+                                            }:() {
                                               Navigator.of(context).push(
                                                   MaterialPageRoute(
                                                       builder: (context) =>

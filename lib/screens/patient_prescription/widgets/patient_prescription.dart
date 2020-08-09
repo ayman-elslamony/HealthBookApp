@@ -525,35 +525,37 @@ key: _scaffoldKey,
                       _listMedicineName.add(medicineName);
                       _listMedicineDosage.add(medicineDosage);
                     }
-                    print(_analysisList[0].description);
-                    print(_analysisList[0].name);
-                    print(_auth.allPrescriptionsForSpecificDoctor.length+1);
-                    print(_selectedDiagnose);
-                    print(_listMedicineName);
-                    print(_listMedicineDosage);
-                    print( widget.doctorAppointment.registerData.id);
-                    print(_radiologyList[0].description);
-                    print( _radiologyList[0].name);
-                    print(_radiologyList[0].imgUrl);
-                    print(_diagnoseDescription);
-                    if(widget.doctorAppointment.registerData.id!=null&&_selectedDiagnose== ' Selected Diagnose '&& _diagnoseDescription==''&&_listMedicineName.length !=0&&_listMedicineDosage.length!=0){
+//                    print(_analysisList[0].description);
+//                    print(_analysisList[0].name);
+//                    print(_auth.allPrescriptionsForSpecificDoctor.length+1);
+//                    print(_selectedDiagnose);
+//                    print(_listMedicineName);
+//                    print(_listMedicineDosage);
+//                    print( widget.doctorAppointment.registerData.id);
+//                    print(_radiologyList[0].description);
+//                    print( _radiologyList[0].name);
+//                    print(_radiologyList[0].imgUrl);
+//                    print(_diagnoseDescription);
+                    if(widget.doctorAppointment.registerData.id!=null&&_selectedDiagnose!= ' Selected Diagnose '&& _diagnoseDescription!=''&&_listMedicineName.length !=0&&_listMedicineDosage.length!=0){
                     setState(() {
                       isLoading =true;
                     });
                   bool x = await  _auth.newPrescription(
-                     analysisDesc: _analysisList.length==0?[]:_analysisList[0].description,
-                     analysisName: _analysisList.length==0?[]:_analysisList[0].name,
+                     analysisDesc: _analysisList.length==0?'':_analysisList[0].description,
+                     analysisName: _analysisList.length==0?'':_analysisList[0].name,
                      diagnoNum: (_auth.allPrescriptionsForSpecificDoctor.length+1).toString(),
                      diagnose: _selectedDiagnose,
                      medicine: _listMedicineName.length==0?[]:_listMedicineName,
                      dosage: _listMedicineDosage.length==0?[]:_listMedicineDosage,
                      patientID: widget.doctorAppointment.registerData.id,
-                     radioDesc: _radiologyList.length==0?[]:_radiologyList[0].description,
-                     radioName: _radiologyList.length==0?[]:_radiologyList[0].name,
-                     radioImage: _radiologyList.length==0?[]:_radiologyList[0].imgUrl,
+                     radioDesc: _radiologyList.length==0?'':_radiologyList[0].description,
+                     radioName: _radiologyList.length==0?'':_radiologyList[0].name,
+                     radioImage: _radiologyList.length==0?null:_radiologyList[0].imgUrl,
                      diagnoseDesc:_diagnoseDescription
                    );
                   if(x){
+                    await _auth.deleteAppointmentForPatAndDoc(appointmentId: widget.doctorAppointment.appointmentId);
+
                     Toast.show('succefully saved', context);
                   }else{
                     Toast.show('Please try again later', context);

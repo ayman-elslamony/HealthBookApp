@@ -120,63 +120,59 @@ class _DrugAndRadiologyAndAnalysisState
                         ),
                       ],
                     )
-                  : Consumer<Auth>(
+                  : SingleChildScrollView(
+                    child: Consumer<Auth>(
                 builder: (context,data,_){
-                  if(data.allDiagnose.length == 0){
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                                                SizedBox(
-                          width: infoWidget.screenWidth,
-                          height: infoWidget.screenHeight * 0.20,
-                          child:
-                          ListView(
-                            shrinkWrap: true,
-                            children: <Widget>[
-                              SizedBox(),
-                            ],
-                          ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                    if(data.allDiagnose.length == 0){
+                      return SizedBox(
+                        height: infoWidget.screenHeight,
+                        child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            Text('There in no any ${widget.isDrugs?'Drugs':'Radiology and Analysis'} yet',style: infoWidget.titleButton.copyWith(color: Colors.blue),maxLines: 3,),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Text('There in no any ${widget.isDrugs?'Drugs':'Radiology and Analysis'} yet',style: infoWidget.titleButton.copyWith(color: Colors.blue),maxLines: 3,),
+                              ],
+                            )
                           ],
-                        )
-                      ],
-                    );
-                  }else{
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ListView.builder(
-                        itemBuilder: (context, index) => RaisedButton(
-                          onPressed: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => ShowAllDoctorsInDiagnose(
-                                  diagnoseName:
-                                  data.allDiagnose[index],
-                                  isShowMedicine: widget.isDrugs,
-                                )));
-                          },
-                          color: Colors.blue,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10)),
-                          child: Padding(
-                            padding: EdgeInsets.all(8),
-                            child: Text(
-                              data.allDiagnose[index],
-                              style: infoWidget.titleButton,
+                        ),
+                      );
+                    }else{
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemBuilder: (context, index) => RaisedButton(
+                            onPressed: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => ShowAllDoctorsInDiagnose(
+                                    diagnoseName:
+                                    data.allDiagnose[index],
+                                    isShowMedicine: widget.isDrugs,
+                                  )));
+                            },
+                            color: Colors.blue,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                            child: Padding(
+                              padding: EdgeInsets.all(8),
+                              child: Text(
+                                data.allDiagnose[index],
+                                style: infoWidget.titleButton,
+                              ),
                             ),
                           ),
+                          itemCount: data.allDiagnose.length,
                         ),
-                        itemCount: data.allDiagnose.length,
-                      ),
-                    );
-                  }
+                      );
+                    }
                 },
-              )),
+              ),
+                  )),
         );
       },
     );

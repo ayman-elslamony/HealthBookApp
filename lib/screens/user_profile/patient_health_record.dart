@@ -421,6 +421,7 @@ class _PatientHealthRecordState extends State<PatientHealthRecord> {
                               onPressed: () {
                                 Navigator.of(context).push(MaterialPageRoute(builder: (context)=>ShowHealthRecord(
                                   diagnoseName: data.allDiagnose[index],
+                                  patientId: widget.doctorAppointment.registerData.id,
                                 )));
                               },
                               color: Colors.blue,

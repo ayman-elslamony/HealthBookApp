@@ -11,7 +11,6 @@ import './drugs_radiology_analysis.dart';
 class ShowAllDoctorsInDiagnose extends StatefulWidget {
   final String diagnoseName;
   final bool isShowMedicine;
-
   ShowAllDoctorsInDiagnose({
     this.isShowMedicine,
     this.diagnoseName,

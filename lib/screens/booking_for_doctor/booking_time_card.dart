@@ -152,7 +152,7 @@ Widget _createBookingTime({int index,TextStyle textStyle}){
                       child: GridView.builder(
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),
-                          itemCount: widget.bookingTime == null ?0:widget.bookingTime.length,
+                          itemCount: widget.bookingTime == null ?0:widget.bookingTime.length-1,
                           gridDelegate:
                           SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 3,

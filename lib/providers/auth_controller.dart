@@ -101,7 +101,7 @@ class Auth with ChangeNotifier {
   String get email {
     return _email;
   }
-
+//finish
   Future<String> signIn(
       {String email, String password, bool isCommingFromSignUp = false}) async {
     print(email);
@@ -133,7 +133,7 @@ class Auth with ChangeNotifier {
     }
     return data['message'];
   }
-
+//finish
   Future<String> signUp(
       {String email, String password, String nationalID}) async {
     _userType = 'patient';
@@ -152,7 +152,7 @@ class Auth with ChangeNotifier {
     print(data['message']);
     return data['message'];
   }
-
+//finish
   Future<void> getUserData() async {
     var userData;
     print('_userType_userType$_userType');
@@ -193,7 +193,7 @@ class Auth with ChangeNotifier {
       return;
     }
   }
-
+//finish
   Future<void> getUserAppointment() async {
     var appointmentData;
     print('Iam Here _userType$_userType');
@@ -232,7 +232,8 @@ class Auth with ChangeNotifier {
           isAppoitment: true);
       print('appointmentDataappointmentData$appointmentData');
       print(appointmentData);
-      if (appointmentData['patient'].length != 0) {
+      appointmentForPatient.clear();
+      if (appointmentData['patient'].length > 0) {
         List<PatientAppointment> allAppointment = [];
         print(userData);
         for (int i = 0; i < appointmentData['patient'].length; i++) {
@@ -250,36 +251,69 @@ class Auth with ChangeNotifier {
               userData['doctor'],
               clinicData['clinic']));
         }
+
         appointmentForPatient = allAppointment;
+        print(appointmentForPatient.length);
         notifyListeners();
       }
     }
   }
 
-  Future<void> getDataForSpecificDiagnoseName({String diagnoseName}) async {
+  Future<void> getDataForSpecificDiagnoseName({String diagnoseName,String patientId}) async {
     var userData;
     var clinicData;
     var _allPrescriptions;
-    if (_allDoctorsId.length > 0) {
-      for (int i = 0; i < _allDoctorsId.length; i++) {
-        _allPrescriptions = await _netWork.getData(
-            url: 'diagno/5ee2b0029bc9ad0017fba2fa/${_allDoctorsId[i]}');
-        userData = await _netWork.getData(url: 'doctor/${_allDoctorsId[i]}');
-        print('_allPrescriptions_allPrescriptions$_allPrescriptions');
-        clinicData = await _netWork
-            .getData(url: 'doctor/clinic/${_allDoctorsId[i]}', headers: {
-          'Authorization': 'Bearer $_token',
-        });
-        print(userData);
-        print(clinicData);
-        _allDoctorsInEachDosage.clear();
-        _allDoctorsInEachDosage.add(DoctorsInEachDosage.fromJson(
-            _allPrescriptions['Diagno'],
-            userData['doctor'],
-            clinicData,
-            diagnoseName));
+    print(_allDoctorsId.length);
+    if(_userType == 'doctor'){
+      if (_allDoctorsId.length > 0) {
+        for (int i = 0; i < _allDoctorsId.length; i++) {
+          print('_allDoctorsId[i]${_allDoctorsId[i]}');
+          _allPrescriptions = await _netWork.getData(
+              url: 'diagno/$patientId/${_allDoctorsId[i]}',headers: {
+            'Authorization': 'Bearer $_token',
+          });
+          userData = await _netWork.getData(url: 'doctor/${_allDoctorsId[i]}');
+          print('_allPrescriptions_allPrescriptions$_allPrescriptions');
+          clinicData = await _netWork
+              .getData(url: 'doctor/clinic/${_allDoctorsId[i]}', headers: {
+            'Authorization': 'Bearer $_token',
+          });
+          print(userData);
+          print(clinicData);
+          _allDoctorsInEachDosage.clear();
+          _allDoctorsInEachDosage.add(DoctorsInEachDosage.fromJson(
+              _allPrescriptions['Diagno'],
+              userData['doctor'],
+              clinicData,
+              diagnoseName));
+        }
+      }
+    }else{
+      if (_allDoctorsId.length > 0) {
+        for (int i = 0; i < _allDoctorsId.length; i++) {
+          print('_allDoctorsId[i]${_allDoctorsId[i]}');
+          _allPrescriptions = await _netWork.getData(
+              url: 'diagno/$_userId/${_allDoctorsId[i]}',headers: {
+            'Authorization': 'Bearer $_token',
+          });
+          userData = await _netWork.getData(url: 'doctor/${_allDoctorsId[i]}');
+          print('_allPrescriptions_allPrescriptions$_allPrescriptions');
+          clinicData = await _netWork
+              .getData(url: 'doctor/clinic/${_allDoctorsId[i]}', headers: {
+            'Authorization': 'Bearer $_token',
+          });
+          print(userData);
+          print(clinicData);
+          _allDoctorsInEachDosage.clear();
+          _allDoctorsInEachDosage.add(DoctorsInEachDosage.fromJson(
+              _allPrescriptions['Diagno'],
+              userData['doctor'],
+              clinicData,
+              diagnoseName));
+        }
       }
     }
+
     print(
         '_allDoctorsInEachDosage_allDoctorsInEachDosage${_allDoctorsInEachDosage[0]
             .allPrescription.length}');
@@ -299,7 +333,7 @@ class Auth with ChangeNotifier {
       {String patientId, bool enableNotify = true}) async {
     if (_allPrescriptionsForSpecificDoctor.length == 0) {
       var _allPrescriptions = await _netWork.getData(
-          url: 'diagno/5ee2b0029bc9ad0017fba2fa/$_userId');
+          url: 'diagno/$patientId/$_userId');
       if (_allPrescriptions != null && _allPrescriptions['Diagno'].length > 0) {
         _allPrescriptionsForSpecificDoctor.clear();
         for (int i = 0; i < _allPrescriptions['Diagno'].length; i++) {
@@ -321,7 +355,7 @@ class Auth with ChangeNotifier {
     var _allPrescriptions;
     if (patientId != null) {
       _allPrescriptions = await _netWork.getData(
-          url: 'diagno/patient/5ee2b0029bc9ad0017fba2fa');
+          url: 'diagno/patient/$patientId');
     } else {
       _allPrescriptions =
       await _netWork.getData(url: 'diagno/patient/$_userId');
@@ -329,6 +363,7 @@ class Auth with ChangeNotifier {
 
     print(_allPrescriptions['Diagno']);
     if (_allPrescriptions['Diagno'].length > 0) {
+      _allDoctorsId=[];
       for (int i = 0; i < _allPrescriptions['Diagno'].length; i++) {
         if (!allDiagnosesName
             .contains(_allPrescriptions['Diagno'][i]['diagnose'])) {
@@ -336,7 +371,7 @@ class Auth with ChangeNotifier {
         }
         if (!_allDoctorsId
             .contains(_allPrescriptions['Diagno'][i]['doctorID'])) {
-          _allDoctorsId.add(_allPrescriptions['Diagno'][i]['doctorID']);
+          _allDoctorsId.add(_allPrescriptions['Diagno'][i]['doctorID']??'');
         }
       }
 //   List<ListOfDiagnoseName> list = List(allDiagnoses.length);
@@ -432,7 +467,7 @@ class Auth with ChangeNotifier {
       return false;
     }
   }
-
+//finish
   Future<String> registerUserDataAndEditing(
       {Map<String, dynamic> listOfData}) async {
     print(listOfData);
@@ -514,6 +549,7 @@ class Auth with ChangeNotifier {
     }
   }
 
+  //not enabled
   Future<String> registerClinicDataAndEditing(
       {Map<String, dynamic> listOfClinicData, bool isEditing = false}) async {
     print('clinicDataclinicDataclinicData$clinicData');
@@ -575,19 +611,22 @@ class Auth with ChangeNotifier {
     var formData;
     DateTime time = DateTime.now();
     if (radioName != null) {
-      fileName = radioImage.path
-          .split('/')
-          .last;
+      if(radioImage!=null &&!radioImage.toString().contains('https:')){
+        fileName = radioImage.path
+            .split('/')
+            .last;
+      }
       formData = FormData.fromMap({
         'diagnose': diagnose,
         'diagnoseDesc':diagnoseDesc,
         'medicine':medicine,
         'dosage':dosage,
-        'radioImage':await MultipartFile.fromFile(radioImage.path,
-            filename: fileName),
+        'radioImage':!radioImage.toString().contains('https:') && radioImage !=null?await MultipartFile.fromFile(radioImage.path,
+            filename: fileName):null,
         'radioName':radioName,
         'radioDesc':radioDesc,
         'patientID':patientID ,
+        'doctorID':_userId,
         'analysisName':analysisName,
         'analysisDesc':analysisDesc,
         'diagnoNum':diagnoNum,
@@ -602,6 +641,7 @@ class Auth with ChangeNotifier {
         'radioName':radioName,
         'radioDesc':radioDesc,
         'patientID':patientID ,
+        'doctorID':_userId,
         'analysisName':analysisName,
         'analysisDesc':analysisDesc,
         'diagnoNum':diagnoNum,
@@ -670,8 +710,9 @@ bool x=true;
     print(result['searchedDoctor'].length);
       List<SearchResult> allResult = [];
       for(int i=0; i <result['searchedDoctor'].length; i++){
+        print(result['searchedDoctor'][i]['_id']);
         var clinicData = await _netWork
-            .getData(url: 'doctor/clinic/${result['searchedDoctor'][i]['_id']}');
+            .getData(url: 'clinic/5f2f20705f55ac0017a2cef5');
         print(clinicData);
         allResult.add(SearchResult.fromJson(result['searchedDoctor'][i], clinicData['clinic']));
       }
@@ -692,9 +733,9 @@ bool x=true;
         },
         isAppoitment: true);
     print('appointmentData$appointmentData');
-    if (appointmentData.length != 0) {
-      for (int i = 0; i < appointmentData.length; i++) {
-        allAppointment.add(Appointment.fromJson(appointmentData[i]));
+    if (appointmentData['clinic'].length != 0) {
+      for (int i = 0; i < appointmentData['clinic'].length; i++) {
+        allAppointment.add(Appointment.fromJson(appointmentData['clinic'][i]));
       }
     }
     print('allAppointment${allAppointment.length}');
@@ -707,13 +748,21 @@ bool x=true;
     DateTime dateTime = DateTime.now();
     try {
       int time;
+      int wattingTime=0;
       if (appointStart.contains(':')) {
         List<String> splitTime = appointStart.split(':');
         time = int.parse(splitTime[0]) * 60 + int.parse(splitTime[1]);
       } else {
         time = int.parse(appointStart);
       }
-      time = time + int.parse(_searchResult[index].clinicData.waitingTime);
+      if (_searchResult[index].clinicData.waitingTime.contains(':')) {
+        List<String> splitTime = _searchResult[index].clinicData.waitingTime.split(':');
+        wattingTime = int.parse(splitTime[1]);
+      } else {
+        wattingTime = int.parse(appointStart);
+      }
+
+      time = time + wattingTime;
       int hour = time ~/ 60;
       int minutes = time % 60;
       appointmentData = await _netWork.postData(url: 'appoint/', headers: {
@@ -727,6 +776,9 @@ bool x=true;
         "patientID": _userId,
         'clinicID': _searchResult[index].clinicData.sId
       });
+      if(appointmentData['message'] == 'Appointement created'){
+        appointmentForPatient=[];
+      }
       print(appointmentData);
       return appointmentData['message'] == 'Appointement created'
           ? true

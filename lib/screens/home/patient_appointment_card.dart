@@ -158,7 +158,6 @@ class PatientAppointmentCard extends StatelessWidget {
                         onTap: () {
                           launch(
                               "tel:${patientAppointment.registerData.number}");
-                          Navigator.of(context).pop();
                         },
                         child: Container(
                             decoration: BoxDecoration(
@@ -184,11 +183,10 @@ class PatientAppointmentCard extends StatelessWidget {
                       ),
                       InkWell(
                         onTap: () {
-//                        sendSMS(message: 'Hello Patient', recipients: ['+201145523795'])
+//                        sendSMS(message: 'Hello Patient ', recipients: [patientAppointment.registerData.number])
 //                            .catchError((onError) {
 //                          print(onError);
 //                        });
-                          Navigator.of(context).pop();
                         },
                         child: Container(
                             decoration: BoxDecoration(
