@@ -39,7 +39,7 @@ dependencies:
   device_preview: ^0.4.7
   cloud_firestore: ^0.13.7
   agora_rtc_engine: ^1.0.13
-  permission_handler: 3.0.0
+  permission_handler: ^3.0.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
