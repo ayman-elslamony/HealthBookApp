@@ -64,54 +64,90 @@ class _BookingState extends State<Booking> {
     _auth = Provider.of<Auth>(context,listen: false);
     _searchResult =_auth.searchResult[widget.index];
     for(int i=0; i<_searchResult.clinicData.workingDays.length; i++){
-      _workingDays = _workingDays + _searchResult.clinicData.workingDays[i];
+      _workingDays = '$_workingDays ' + _searchResult.clinicData.workingDays[i];
     }
 
     getBookingTimeAvailable();
     super.initState();
   }
   getBookingTimeAvailable()async{
-    print('_searchResult.clinicData.sId${_searchResult.clinicData.sId}');
-     List<Appointment> appointment= await _auth.availableTime(clinicId: _searchResult.clinicData.sId);
-
-     print(_searchResult.clinicData.openingTime);
-     print(_searchResult.clinicData.clossingTime);
-//    double time = double.parse(_auth.getClinicData.waitingTime);
-//    if (time > 59) {
-//      final int hour = time ~/ 60;
-//      final double minutes = time % 60;
-//      _hourTextEditingController.text = hour.toString();
-//      _minuteTextEditingController.text = minutes.toString();
-//    } else {
-//      _minuteTextEditingController.text = _auth.getClinicData.waitingTime;
-//    }
+    List<Appointment> appointment= await _auth.availableTime(clinicId: _searchResult.clinicData.sId);
     bookingTime.clear();
-     for(int i = int.parse(_searchResult.clinicData.openingTime); i<  int.parse(_searchResult.clinicData.clossingTime); i++){
-       var time = i*60 + 15;
-       var hour = time ~/ 60;
-       var minutes = time % 60;
-       bookingTime.add(BookingTime('${minutes==0?'$hour':'$hour:$minutes'}', true));
-       for(int x =0; x < 60/15; x++){
-         time = time + 15;
-         var hour = time ~/ 60;
-         var minutes = time % 60;
-         bookingTime.add(BookingTime('${minutes==0?'$hour':'$hour:$minutes'}', true));
-       }
+    var time ;
+    var hour ;
+    var minutes;
+    int watingTime;
+    print("dateTime.hourثلريثيس");
+    DateTime dateTime = DateTime.now();
+    print("dateTime.hour");
+    print(dateTime.hour);
+    if(int.parse(_searchResult.clinicData.openingTime) < dateTime.hour){
+      print("use time now");
+      if(_searchResult.clinicData.waitingTime.contains(':')){
+        List<String> splitWatingTime= _searchResult.clinicData.waitingTime.split(':');
+        watingTime= int.parse(splitWatingTime[1]);
+      }else{
+        watingTime= int.parse(_searchResult.clinicData.waitingTime);
+      }
+      if(int.parse(_searchResult.clinicData.clossingTime) > dateTime.hour){
+        bookingTime.add(BookingTime('${dateTime.hour}', true));
+        time = dateTime.hour*60 + watingTime;
+        hour = time ~/ 60;
+        minutes = time % 60;
+        bookingTime.add(BookingTime('${minutes==0?'$hour':'$hour:$minutes'}', true));
+      }
+      for(int i = dateTime.hour; i<  int.parse(_searchResult.clinicData.clossingTime); i++){
+        time = i*60 + watingTime;
+        for(int x =0; x < 60/watingTime; x++){
+          time = time + watingTime;
+          hour = time ~/ 60;
+          minutes = time % 60;
+          bookingTime.add(BookingTime('${minutes==0?'$hour':'$hour:$minutes'}', true));
+        }
+      }
     }
-     for(int i=0; i<appointment.length; i++) {
-       if (appointment[i].appointDate == '${_dateTime.day}-${_dateTime.month}-${_dateTime.year}'){
-         print('appointment[i].appointStart${appointment[i].appointStart}');
-         for(int x=0; x<bookingTime.length;x++){
-           if(bookingTime[x].time == appointment[i].appointStart){
-             bookingTime[x].isAvailable=false;
-           }
-         }
-       }
-     }
-     setState(() {
-       isBookingTimeLoading=false;
-     });
-     print(bookingTime);
+    else{
+      print("use open time");
+      if(_searchResult.clinicData.waitingTime.contains(':')){
+        List<String> splitWatingTime= _searchResult.clinicData.waitingTime.split(':');
+        watingTime= int.parse(splitWatingTime[1]);
+      }else{
+        watingTime= int.parse(_searchResult.clinicData.waitingTime);
+      }
+      if(int.parse(_searchResult.clinicData.clossingTime) > dateTime.hour){
+        bookingTime.add(BookingTime(_searchResult.clinicData.openingTime, true));
+        time = int.parse(_searchResult.clinicData.openingTime)*60 + watingTime;
+        hour = time ~/ 60;
+        minutes = time % 60;
+        bookingTime.add(BookingTime('${minutes==0?'$hour':'$hour:$minutes'}', true));
+      }
+      for(int i = int.parse(_searchResult.clinicData.openingTime); i<  int.parse(_searchResult.clinicData.clossingTime); i++){
+        time = i*60 + watingTime;
+        for(int x =0; x < 60/watingTime; x++){
+          time = time + watingTime;
+          hour = time ~/ 60;
+          minutes = time % 60;
+          bookingTime.add(BookingTime('${minutes==0?'$hour':'$hour:$minutes'}', true));
+        }
+      }
+    }
+
+
+
+    for(int i=0; i<appointment.length; i++) {
+      if (appointment[i].appointDate == '${_dateTime.day}-${_dateTime.month}-${_dateTime.year}'){
+        print('appointment[i].appointStart${appointment[i].appointStart}');
+        for(int x=0; x<bookingTime.length;x++){
+          if(bookingTime[x].time == appointment[i].appointStart){
+            bookingTime[x].isAvailable=false;
+          }
+        }
+      }
+    }
+    setState(() {
+      isBookingTimeLoading=false;
+    });
+    print(bookingTime);
   }
   @override
   Widget build(BuildContext context) {
@@ -383,9 +419,9 @@ class _BookingState extends State<Booking> {
                           _data(title: 'Clinic Name:', content: _searchResult.clinicData.clinicName,textStyle: infoWidget.titleButton),
                           _data(
                               title: 'Working Time:',
-                              content: 'From ${_searchResult.clinicData.openingTime} To ${_searchResult.clinicData.clossingTime} ',textStyle: infoWidget.titleButton),
+                              content: 'From ${_searchResult.clinicData.openingTime} To ${_searchResult.clinicData.clossingTime} o\'clock ',textStyle: infoWidget.titleButton),
                           _data(title: 'Working Days:', content: _workingDays,textStyle: infoWidget.titleButton),
-                          _data(title: 'Wating Time:', content: _searchResult.clinicData.waitingTime,textStyle: infoWidget.titleButton),
+                          _data(title: 'Wating Time:', content: '${_searchResult.clinicData.waitingTime} min',textStyle: infoWidget.titleButton),
                           _data(title: 'Address:', content: _searchResult.clinicData.address,textStyle: infoWidget.titleButton),
 
                           _data(title: 'Governorate:', content: _searchResult.clinicData.government,textStyle: infoWidget.titleButton),

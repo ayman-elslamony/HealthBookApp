@@ -115,7 +115,7 @@ class _PersonalInfoCardState extends State<PersonalInfoCard> {
                         widget.gender==''?SizedBox():_data(title: 'Gender:', content: widget.gender),
                         widget.governorate==''?SizedBox():_data(title: 'Governorate:', content: widget.governorate),
                         widget.maritalStatus==''?SizedBox():_data(
-                            title: 'Marital Status:',
+                            title: 'Social status:',
                             content: widget.maritalStatus),
                         _data(title: 'Language:', content: widget.language),
                       ],

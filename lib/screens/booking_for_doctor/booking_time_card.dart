@@ -145,7 +145,15 @@ Widget _createBookingTime({int index,TextStyle textStyle}){
                 )
                     : SizedBox(),
                 _showBookingInfo
-                    ? Padding(
+                    ? widget.bookingTime.length==0? Padding(
+                    padding: const EdgeInsets.only(
+                        bottom: 8.0, left: 15, right: 15, top: 6.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text('There in no any booking time',style: infoWidget.subTitle,)
+                      ],
+                    )):Padding(
                     padding: const EdgeInsets.only(
                         bottom: 8.0, left: 15, right: 15, top: 6.0),
                     child: Container(
@@ -153,7 +161,7 @@ Widget _createBookingTime({int index,TextStyle textStyle}){
                       child: GridView.builder(
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),
-                          itemCount: widget.bookingTime == null ?0:widget.bookingTime.length-1,
+                          itemCount: widget.bookingTime == null ?0:widget.bookingTime.length-2,
                           gridDelegate:
                           SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 3,

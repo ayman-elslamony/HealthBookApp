@@ -132,7 +132,7 @@ class PatientAppointmentCard extends StatelessWidget {
                                 children: <Widget>[
                                   Expanded(
                                     child:  Text(
-                                      'Appointement at ${patientAppointment.appointStart} PM',
+                                      'Appointement at ${patientAppointment.appointStart} o\'clock',
                                       style: infoWidget.subTitle.copyWith(fontWeight: FontWeight.w500),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,

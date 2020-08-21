@@ -28,18 +28,67 @@ class _ClinicInfoState extends State<ClinicInfo> {
   getBookingTimeAvailable()async{
     List<Appointment> appointment= await _auth.availableTime(clinicId: _auth.getClinicData.sId);
     bookingTime.clear();
-    for(int i = int.parse(_auth.getClinicData.openingTime); i<  int.parse(_auth.getClinicData.clossingTime); i++){
-      var time = i*60 + 15;
-      var hour = time ~/ 60;
-      var minutes = time % 60;
-      bookingTime.add(BookingTime('${minutes==0?'$hour':'$hour:$minutes'}', true));
-      for(int x =0; x < 60/15; x++){
-        time = time + 15;
-        var hour = time ~/ 60;
-        var minutes = time % 60;
+    var time ;
+    var hour ;
+    var minutes;
+    int watingTime;
+    print("dateTime.hourثلريثيس");
+    DateTime dateTime = DateTime.now();
+    print("dateTime.hour");
+    print(dateTime.hour);
+    if(int.parse(_auth.getClinicData.openingTime) < dateTime.hour){
+      print("use time now");
+      if(_auth.getClinicData.waitingTime.contains(':')){
+        List<String> splitWatingTime= _auth.getClinicData.waitingTime.split(':');
+        watingTime= int.parse(splitWatingTime[1]);
+      }else{
+        watingTime= int.parse(_auth.getClinicData.waitingTime);
+      }
+      if(int.parse(_auth.getClinicData.clossingTime) > dateTime.hour){
+        bookingTime.add(BookingTime('${dateTime.hour}', true));
+        time = dateTime.hour*60 + watingTime;
+        hour = time ~/ 60;
+        minutes = time % 60;
         bookingTime.add(BookingTime('${minutes==0?'$hour':'$hour:$minutes'}', true));
       }
+      for(int i = dateTime.hour; i<  int.parse(_auth.getClinicData.clossingTime); i++){
+        time = i*60 + watingTime;
+        for(int x =0; x < 60/watingTime; x++){
+          time = time + watingTime;
+          hour = time ~/ 60;
+          minutes = time % 60;
+          bookingTime.add(BookingTime('${minutes==0?'$hour':'$hour:$minutes'}', true));
+        }
+      }
     }
+   else{
+      print("use open time");
+      if(_auth.getClinicData.waitingTime.contains(':')){
+        List<String> splitWatingTime= _auth.getClinicData.waitingTime.split(':');
+        watingTime= int.parse(splitWatingTime[1]);
+      }else{
+        watingTime= int.parse(_auth.getClinicData.waitingTime);
+      }
+      if(int.parse(_auth.getClinicData.clossingTime) > dateTime.hour){
+        bookingTime.add(BookingTime(_auth.getClinicData.openingTime, true));
+        time = int.parse(_auth.getClinicData.openingTime)*60 + watingTime;
+        hour = time ~/ 60;
+        minutes = time % 60;
+        bookingTime.add(BookingTime('${minutes==0?'$hour':'$hour:$minutes'}', true));
+      }
+      for(int i = int.parse(_auth.getClinicData.openingTime); i<  int.parse(_auth.getClinicData.clossingTime); i++){
+        time = i*60 + watingTime;
+        for(int x =0; x < 60/watingTime; x++){
+          time = time + watingTime;
+          hour = time ~/ 60;
+          minutes = time % 60;
+          bookingTime.add(BookingTime('${minutes==0?'$hour':'$hour:$minutes'}', true));
+        }
+      }
+    }
+
+
+
     for(int i=0; i<appointment.length; i++) {
       if (appointment[i].appointDate == '${_dateTime.day}-${_dateTime.month}-${_dateTime.year}'){
         print('appointment[i].appointStart${appointment[i].appointStart}');

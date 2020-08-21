@@ -333,7 +333,6 @@ class Auth with ChangeNotifier {
 
   Future<void> getPrescriptionForSpecificDoctor(
       {String patientId, bool enableNotify = true}) async {
-    if (_allPrescriptionsForSpecificDoctor.length == 0) {
       var _allPrescriptions = await _netWork.getData(
           url: 'diagno/$patientId/$_userId');
       if (_allPrescriptions != null && _allPrescriptions['Diagno'].length > 0) {
@@ -346,7 +345,7 @@ class Auth with ChangeNotifier {
       if (enableNotify) {
         notifyListeners();
       }
-    }
+
     print(
         '_allPrescriptionsForSpecificDoctor_allPrescriptionsForSpecificDoctor${_allPrescriptionsForSpecificDoctor
             .length}');
@@ -470,7 +469,7 @@ class Auth with ChangeNotifier {
     }
   }
 //finish
-  Future<String> registerUserDataAndEditing(
+  Future<String> registerUserData(
       {Map<String, dynamic> listOfData}) async {
     print(listOfData);
     String birthDate =
@@ -481,9 +480,6 @@ class Auth with ChangeNotifier {
         government = governorateList[i];
       }
     }
-    //'aboutYou': listOfData['aboutYouOrBio'],
-//       'lat': listOfData['lat'],
-//       'long': listOfData['long'],
     String fileName='';
     print(listOfData['UrlImg']);
     print(listOfData['Phone number'].toString());
@@ -494,7 +490,6 @@ class Auth with ChangeNotifier {
         print("File Name : $fileName");
     }
     FormData formData;
-    if (_userType == 'patient') {
       formData = FormData.fromMap({
         'phone': '0${listOfData['Phone number']}',
         'address': listOfData['Location'],
@@ -510,47 +505,124 @@ class Auth with ChangeNotifier {
         'gender': listOfData['gender'],
         'government': government,
       });
-    } else {
-      formData = FormData.fromMap({
-        'number': '0${listOfData['Phone number']}',
-        'address': listOfData['Location'],
-        'status': listOfData['materialStatus'],
-        'lastName': listOfData['Last name'],
-        'firstName': listOfData['First name'],
-        'middleName': listOfData['Middle name'],
-        'birthDate': birthDate,
-        'bio': listOfData['aboutYouOrBio'],
-        'doctorImage':
-        !listOfData['UrlImg'].toString().contains('https:')?await MultipartFile.fromFile(listOfData['UrlImg'].path,
-            filename: fileName):null,
-        'job': listOfData['Job'],
-        'gender': listOfData['gender'],
-        'government': government,
-        'speciality': listOfData['speciatly'],
-      });
-    }
-
-    var data;
-    if (_userType == 'patient') {
-      data = await _netWork
+    var data = await _netWork
           .updateData(url: 'patient/$_userId', formData: formData, headers: {
         'Authorization': 'Bearer $_token',
       });
-    } else {
-      data = await _netWork
-          .updateData(url: 'doctor/$_userId', formData: formData, headers: {
-        'Authorization': 'Bearer $_token',
-      });
-    }
     print('data $data');
     if (data != null) {
-      rgisterData = RegisterData.fromJson(data, 'patient');
+      rgisterData = RegisterData.fromJson(data['patient'], 'patient');
       return 'success';
     } else {
       return 'failed';
     }
   }
 
+ Future<bool> editProfile({String type,String address,String phone,File image,String job,String social,String bio})async{
+    FormData formData;
+    var data;
+    try{
+      if(type =='bio'){
+        formData = FormData.fromMap({
+          'bio': bio,
+        });
+        data = await _netWork
+            .updateData(url: 'doctor/$_userId', formData: formData, headers: {
+          'Authorization': 'Bearer $_token',
+        });
+        print('data $data');
+      }
+      if(type == 'image'){
+        String fileName = image.path
+            .split('/')
+            .last;
+        if(_userType == 'doctor'){
+          formData = FormData.fromMap({
+            'doctorImage': await MultipartFile.fromFile(image.path,
+                filename: fileName)
+          });
+        }else{
+          formData = FormData.fromMap({
+            'patientImage': await MultipartFile.fromFile(image.path,
+                filename: fileName)
+          });
+        }
+        data = await _netWork
+            .updateData(url: _userType=='doctor'?'doctor/$_userId':'patient/$_userId', formData: formData, headers: {
+          'Authorization': 'Bearer $_token',
+        });
+        print(data);
+      }
+      if(type == 'job'){
+        formData = FormData.fromMap({
+          'job': job,
+        });
+        data = await _netWork
+            .updateData(url: _userType=='doctor'?'doctor/$_userId':'patient/$_userId', formData: formData, headers: {
+          'Authorization': 'Bearer $_token',
+        });
+        print('data $data');
+      }
+      if(type == 'address'){
+        String government = '';
+        for (int i = 0; i < governorateList.length; i++) {
+          if (address.contains(governorateList[i])) {
+            government = governorateList[i];
+          }
+        }
+        formData = FormData.fromMap({
+          'address': address,
+          'government': government,
+        });
+        data = await _netWork
+            .updateData(url: _userType=='doctor'?'doctor/$_userId':'patient/$_userId', formData: formData, headers: {
+          'Authorization': 'Bearer $_token',
+        });
+        print('data $data');
+      }
+      if(type == 'phone'){
+        if(_userType == 'doctor') {
+          formData = FormData.fromMap({
+            'number': '0$phone',
+          });
+        }else{
+          formData = FormData.fromMap({
+            'phone': '0$phone',
+          });
+        }
+        data = await _netWork
+            .updateData(url: _userType=='doctor'?'doctor/$_userId':'patient/$_userId', formData: formData, headers: {
+          'Authorization': 'Bearer $_token',
+        });
+        print('data $data');
+      }
+      if(type == 'social'){
+        formData = FormData.fromMap({
+          'status': social,
+        });
+        data = await _netWork
+            .updateData(url: _userType=='doctor'?'doctor/$_userId':'patient/$_userId', formData: formData, headers: {
+          'Authorization': 'Bearer $_token',
+        });
+        print('data $data');
+      }
+      if (data != null) {
+        if(_userType =='doctor'){
+          rgisterData = RegisterData.fromJson(data['doctor'], 'doctor');
+        }else{
+          rgisterData = RegisterData.fromJson(data['patient'], 'patient');
+        }
+        print('svfdsb');
+        notifyListeners();
+        return true;
+      }else{
+        return false;
+      }
+    }catch (e){
+      print(e);
+      return false;
+    }
+  }
   //not enabled
   Future<String> registerClinicDataAndEditing(
       {Map<String, dynamic> listOfClinicData, bool isEditing = false}) async {

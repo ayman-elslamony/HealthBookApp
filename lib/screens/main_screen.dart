@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import '../providers/auth_controller.dart';
 import 'callscreens/pickup/pickup_layout.dart';
 import 'clinic_info/clinic_info.dart';
+import 'edit_user_data/edit_user_data.dart';
 import 'home/home_for_doctor_and_patient.dart';
 import 'register_user_data/register_user_data.dart';
 import 'sing_In_and_Up/sign_in_and_up_screen.dart';
@@ -176,7 +177,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ? Colors.blue
                             : Colors.white,
                         child: Text(
-                          "${_auth.userData.firstName.substring(0, 1)
+                          "${_auth.userData.firstName.substring(0,1)
                               .toUpperCase()}",
                           style: TextStyle(fontSize: 40.0),
                         ),
@@ -218,11 +219,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         name: "Edit Profile",
                         imgPath: 'assets/icons/profile.png',
                         infoWidget: infoWidget,
-                        onTap: () async {
+                        onTap: () {
                           print('njb');
-                          await Navigator.of(context).push(MaterialPageRoute(
+                          Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) =>
-                                  RegisterUserData(isEditingEnable: true,)));
+                                  EditProfile()));
                         }),
                     _auth.getUserType == 'doctor' ? SizedBox() : _drawerListTile(
                         name: "Drug List",
