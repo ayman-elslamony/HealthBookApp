@@ -1,0 +1,191 @@
+import 'dart:convert';
+import 'package:dio/dio.dart';
+
+class NetWork {
+  Dio dio = Dio();
+
+  String baseUrl = 'https://fathomless-tundra-83455.herokuapp.com/';
+
+  Future<dynamic> getData(
+      {String url, Map<String, dynamic> headers,bool isAppoitment=false}) async {
+    var jsonResponse;
+    dio.options.baseUrl = baseUrl;
+
+    headers != null ? dio.options.headers = headers : '';
+
+    Response response = await dio.get('$url').catchError((err) {print(err);});
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+          try{
+
+            if(isAppoitment){
+              var encodeFirst = json.encode(response.data);
+              jsonResponse =json.decode(encodeFirst);
+            }else{
+              jsonResponse =json.decode(response.toString());
+            }
+
+          }catch(e){
+            print('error$e');}
+      return jsonResponse;
+    } else if (response == null) {
+      return response;
+    } else {
+      return response;
+    }
+  }
+
+  Future<dynamic> postData(
+      {Map<String,dynamic> data,FormData formData, Map<String, dynamic> headers, String url}) async {
+    try {
+      dio.options.baseUrl = baseUrl;
+      headers != null ? dio.options.headers = headers : '';
+      print(headers);
+      print(url);
+      var jsonResponse;
+      Response response;
+      if(formData ==null){
+        response = await dio.post(url, data: data);
+      }else {
+        response = await dio.post(url, data: formData);
+      }
+      jsonResponse = json.decode(response.toString());
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        jsonResponse = json.decode(response.toString());
+        return jsonResponse;
+      } else if (response == null) {
+        return response;
+      } else {
+        return response;
+      }
+    } on DioError catch (e) {
+      print(e);
+      return e.response.data;
+    }
+  }
+Future<dynamic> updateData(
+      {Map<String,dynamic> data,FormData formData, Map<String, dynamic> headers, String url}) async {
+    try {
+      dio.options.baseUrl = baseUrl;
+      headers != null ? dio.options.headers = headers : '';
+
+      var jsonResponse;
+      Response response;
+      if(formData ==null){
+        print(data);
+        response = await dio.patch(url, data: data);
+      }else {
+
+        response = await dio.patch(url, data: formData);
+      }
+     // jsonResponse = json.decode(response.toString());
+      print(response.statusCode);
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        print('success');
+        jsonResponse = json.decode(response.toString());
+        return jsonResponse;
+      } else if (response == null) {
+        return response;
+      } else {
+        return response;
+      }
+    } on DioError catch (e) {
+      return e.response.data;
+    }
+  }
+
+
+  Future<dynamic> deleteAppointment(
+      {Map<String, dynamic> headers, String url}) async {
+    try {
+      dio.options.baseUrl = baseUrl;
+      headers != null ? dio.options.headers = headers : '';
+
+      var jsonResponse;
+      Response response;
+      response = await dio.delete(url);
+      print(response.statusCode);
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        print('success');
+        jsonResponse = json.decode(response.toString());
+        return jsonResponse;
+      } else if (response == null) {
+        return response;
+      } else {
+        return response;
+      }
+    } on DioError catch (e) {
+      return e.response.data;
+    }
+  }
+
+
+//  Future<dynamic> postData(
+//      {FormData formData, Map<String, dynamic> headers, String url}) async {
+//    dio.options.baseUrl = baseUrl;
+//    headers != null ? dio.options.headers = headers : '';
+//    var jsonResponse;
+//    Response response = await dio.post(url, data: formData);
+//    jsonResponse = json.decode(response.toString());
+//    if (response.statusCode >= 200 && response.statusCode < 300) {
+//      jsonResponse = json.decode(response.toString());
+//      return jsonResponse;
+//    } else if (response == null) {
+//      return response;
+//    } else {
+//      return response;
+//    }
+//  }
+}
+
+//class NetWork {
+//  Dio dio = Dio();
+//
+//  String baseUrl = 'http://easy.taha.rmal.com.sa/api/';
+//
+//  Future<dynamic> getData(
+//      {String url, List<Map<String, dynamic>> headers}) async {
+//    var jsonResponse;
+//    dio.options.baseUrl = baseUrl;
+//
+//    headers != null ? dio.options.headers = headers[0] : '';
+//
+//    Response response = await dio.get('$url').catchError((err) {});
+//    if (response.statusCode >= 200 && response.statusCode < 300) {
+//      jsonResponse = json.decode(response.toString());
+//      return jsonResponse;
+//    } else if (response == null) {
+//      return response;
+//    } else {
+//      return response;
+//    }
+//  }
+//
+//  Future<dynamic> postData(
+//      {FormData formData, Map<String, dynamic> headers, String url}) async {
+//    try {
+//      dio.options.baseUrl = baseUrl;
+//      headers != null ? dio.options.headers = headers : '';
+//      // var jsonResponse;
+//      Response response = await dio.post(url, data: formData);
+//      print(response.toString());
+//      // jsonResponse = json.decode(response.toString());
+//      // if (response.statusCode >= 200 && response.statusCode < 300) {
+//      // jsonResponse = json.decode(response.toString());
+//      return response;
+//      // } else if (response == null) {
+//      //   return response;
+//      // } else {
+//      //   return response;
+//      // }
+//    } on DioError catch (e) {
+//      print("I am here ${e.response.statusCode}");
+//      print("11111111111");
+//      print(e.response.data);
+//      print("2222");
+//      print(e.response.headers);
+//      print("33333333");
+//      print(e.response.request);
+//      return e.response;
+//    }
+//  }
+//}

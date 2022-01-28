@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "3847198625",
+    "firebase_url": "https://health-book-d4fd7.firebaseio.com",
+    "project_id": "health-book-d4fd7",
+    "storage_bucket": "health-book-d4fd7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:3847198625:android:5288ace9f4aecb76ce5de0",
+        "android_client_info": {
+          "package_name": "com.coder.healthbook"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "3847198625-ou08k3bue6ehuhrn2jvvo9tte8p2r9q1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.coder.healthbook",
+            "certificate_hash": "6f3767f5214eea58791a3f76a9a4f613f9dfcd59"
+          }
+        },
+        {
+          "client_id": "3847198625-jdu3aflmtln8e9il5ja3358pr3ar42pn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCCX3jP9pnNjgZ-QJltKUcZvde6a8YqQD0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "3847198625-jdu3aflmtln8e9il5ja3358pr3ar42pn.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "3847198625-fpfn1g8rn8oosdkgp04usc2902dq8efk.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.fci.healthbook"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
