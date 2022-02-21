@@ -43,11 +43,10 @@ It's a flutter application responsible for helping the patient to keep all perso
 * Work with models.
 * Easy to modify user interface.
 
-## Screenshots for patient
-
-## Screenshots for doctor
-
-
+#### Screenshots for patient:
+[see video](https://drive.google.com/file/d/1jED1usM5l7nqemgT5fKXX5qal21yQoFk/view?usp=sharing)
+#### Screenshots for doctor:
+[see video](https://drive.google.com/file/d/1bDlpOhAkQMD2U4Ml1KTG-xbiOTUjLspu/view?usp=sharing)
 
 #### Dependencies:
 - provider
@@ -59,9 +58,7 @@ It's a flutter application responsible for helping the patient to keep all perso
 - firebase_storage
 - shared_preferences
 - fluttertoast
-- 
-
-
+  
 # What's Next?
  - [ ] Add complex protection.
  - [ ] Add an alert during the time of each dose.
